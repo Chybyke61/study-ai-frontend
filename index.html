@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study.AI | Premium Learning Copilot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root { --brand-primary: #6366f1; --brand-accent: #10b981; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%); }
+        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        
+        .markdown-content { text-align: left !important; }
+        .markdown-content h1, .markdown-content h2 { color: #818cf8; font-family: 'Plus Jakarta Sans'; margin-top: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; }
+        .markdown-content p { margin-bottom: 1rem; line-height: 1.8; color: #cbd5e1; }
+        .markdown-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1.5rem; }
+        .markdown-content li { margin-bottom: 0.5rem; }
+        .markdown-content code { background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.9em; color: #f472b6; }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="max-w-[1400px] mx-auto px-4 py-6 h-screen flex flex-col">
+        <header class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20"><i data-lucide="graduation-cap" class="text-white"></i></div>
+                <h1 class="text-2xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">STUDY.AI <span class="text-indigo-500 text-sm font-medium ml-1">PRO</span></h1>
+            </div>
+            <button onclick="loadBooks()" class="group flex items-center gap-2 px-4 py-2 rounded-full glass-card hover:bg-white/5 transition-all text-sm font-medium text-slate-300">
+                <i data-lucide="refresh-cw" class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500"></i> Sync Library
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 overflow-hidden pb-6">
+            <aside class="lg:col-span-4 xl:col-span-3 flex flex-col gap-6 overflow-hidden">
+                <div class="glass-card rounded-3xl p-6 border-indigo-500/20">
+                    <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-4">Ingest Knowledge</h3>
+                    <input type="file" id="bookFile" class="hidden" onchange="updateFileName()" accept="image/*,.pdf,.doc,.docx,.txt">
+                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-2xl cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all">
+                        <i data-lucide="image-plus" class="w-8 h-8 text-slate-500 mb-2"></i>
+                        <span id="fileNameDisplay" class="text-xs text-slate-400 text-center px-4">PDF, Doc, or Study Image</span>
+                    </label>
+                    
+                    <button onclick="uploadBook()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-2">
+                        <i data-lucide="zap" class="w-4 h-4"></i> Index File
+                    </button>
+                    
+                    <div id="progWrapper" class="hidden mt-4">
+                        <div class="flex justify-between text-[10px] mb-1 font-bold">
+                            <span id="progLabel" class="text-slate-400 uppercase">Indexing Knowledge...</span>
+                        </div>
+                        <div class="w-full bg-slate-800 rounded-full h-1.5 animate-pulse">
+                            <div class="bg-indigo-500 h-1.5 rounded-full w-full"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl p-6 flex-1 flex flex-col overflow-hidden">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest">Library (<span id="bookCount">0</span>)</h3>
+                        <i data-lucide="library" class="w-4 h-4 text-slate-500"></i>
+                    </div>
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-3"></div>
+                </div>
+            </aside>
+
+            <main class="lg:col-span-8 xl:col-span-9 flex flex-col gap-6 overflow-hidden">
+                <div class="glass-card rounded-3xl p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div class="relative"><i data-lucide="message-square" class="absolute left-4 top-4 w-5 h-5 text-indigo-400"></i><input id="topic" type="text" placeholder="Explain the diagram/topic..." class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl py-3.5 pl-12 pr-4 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"></div>
+                        <div class="relative"><i data-lucide="layers" class="absolute left-4 top-4 w-5 h-5 text-emerald-400"></i>
+                            <select id="level" class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl py-3.5 pl-12 pr-4 focus:outline-none appearance-none cursor-pointer">
+                                <option value="University">University</option>
+                                <option value="Secondary">Secondary</option>
+                                <option value="Primary">Primary</option>
+                            </select>
+                        </div>
+                        <div class="relative"><i data-lucide="book" class="absolute left-4 top-4 w-5 h-5 text-amber-400"></i>
+                            <select id="bookSelector" class="w-full bg-slate-900/80 border border-slate-700 rounded-2xl py-3.5 pl-12 pr-4 focus:outline-none appearance-none cursor-pointer">
+                                <option value="all">All Library</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="requestAI('explain')" class="flex-1 bg-slate-800 hover:bg-indigo-600 text-white py-3 rounded-xl transition-all flex items-center justify-center gap-2"><i data-lucide="book-open" class="w-4 h-4"></i> Deep Explain</button>
+                        <button onclick="requestAI('quiz')" class="flex-1 bg-slate-800 hover:bg-emerald-600 text-white py-3 rounded-xl transition-all flex items-center justify-center gap-2"><i data-lucide="help-circle" class="w-4 h-4"></i> Take Quiz</button>
+                        <button onclick="requestAI('notes')" class="flex-1 bg-slate-800 hover:bg-amber-600 text-white py-3 rounded-xl transition-all flex items-center justify-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> Detailed Notes</button>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl flex-1 overflow-hidden flex flex-col">
+                    <div id="result" class="flex-1 p-8 overflow-y-auto custom-scrollbar markdown-content text-slate-300">
+                        <div class="h-full flex flex-col items-center justify-center opacity-30">
+                            <i data-lucide="sparkles" class="w-12 h-12 mb-4"></i>
+                            <p>Ready to analyze. Explanations will now be highly detailed.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        const api = "http://localhost:5000";
+        let allBooks = [];
+        lucide.createIcons();
+
+        function updateFileName() {
+            const input = document.getElementById('bookFile');
+            if (input.files[0]) {
+                document.getElementById('fileNameDisplay').innerText = input.files[0].name;
+            }
+        }
+
+        async function loadBooks() {
+            try {
+                const res = await fetch(`${api}/books`);
+                allBooks = await res.json();
+                renderBooks();
+            } catch (err) {
+                console.error("Failed to load books", err);
+            }
+        }
+
+        function renderBooks() {
+            const container = document.getElementById("books");
+            const selector = document.getElementById("bookSelector");
+            container.innerHTML = "";
+            selector.innerHTML = '<option value="all">All Library</option>';
+            document.getElementById("bookCount").innerText = allBooks.length;
+
+            allBooks.forEach(book => {
+                const displayName = book.name.split('_').slice(1).join('_') || book.name;
+                const div = document.createElement("div");
+                div.className = "group bg-slate-900/40 border border-slate-800/50 p-3 rounded-2xl flex items-center justify-between";
+                div.innerHTML = `<div class="flex items-center gap-3 overflow-hidden"><i data-lucide="file" class="w-4 h-4 text-indigo-400"></i><span class="text-xs truncate">${displayName}</span></div><button onclick="deleteBook('${encodeURIComponent(book.name)}')" class="p-1 hover:text-red-400"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>`;
+                container.appendChild(div);
+
+                const opt = document.createElement("option");
+                opt.value = book.name;
+                opt.innerText = displayName;
+                selector.appendChild(opt);
+            });
+            lucide.createIcons();
+        }
+
+        async function uploadBook() {
+            const fileInput = document.getElementById("bookFile");
+            const file = fileInput.files[0];
+            const resultBox = document.getElementById("result");
+            const progWrapper = document.getElementById("progWrapper");
+            
+            if (!file) {
+                alert("Please select a file first.");
+                return;
+            }
+
+            const maxSize = 500 * 1024 * 1024;
+            if (file.size > maxSize) {
+                resultBox.innerHTML = `<p class='text-red-400'>Error: File is larger than 500MB.</p>`;
+                return;
+            }
+
+            const form = new FormData();
+            form.append("book", file);
+            
+            progWrapper.classList.remove('hidden');
+            resultBox.innerHTML = "<p class='animate-pulse text-indigo-400 font-bold'>Uploading and Indexing PDF... This might take a minute.</p>";
+
+            try {
+                const res = await fetch(`${api}/upload`, { 
+                    method: "POST", 
+                    body: form 
+                });
+                const data = await res.json();
+
+                if (res.ok) {
+                    await loadBooks();
+                    resultBox.innerHTML = `<p class='text-emerald-400 font-bold'>Success! ${data.name} has been indexed and is ready to use.</p>`;
+                    fileInput.value = "";
+                    document.getElementById('fileNameDisplay').innerText = "PDF, Doc, or Study Image";
+                } else {
+                    resultBox.innerHTML = `<p class='text-red-400 font-bold'>Upload Failed: ${data.error || 'Unknown error'}</p>`;
+                }
+            } catch (err) {
+                resultBox.innerHTML = `<p class='text-red-400 font-bold'>Connection Error: Server might have crashed or timed out.</p>`;
+                console.error(err);
+            } finally {
+                progWrapper.classList.add('hidden');
+            }
+        }
+
+        async function deleteBook(name) {
+            if(!confirm("Delete this document?")) return;
+            await fetch(`${api}/delete-book/${name}`, { method: "DELETE" });
+            loadBooks();
+        }
+
+        async function requestAI(type) {
+            const topic = document.getElementById("topic").value;
+            if (!topic) return;
+            
+            const actionText = type === 'quiz' ? 'Generating Quiz' : type === 'notes' ? 'Compiling Notes' : 'Reasoning Context';
+            document.getElementById("result").innerHTML = `<p class='animate-pulse text-indigo-400 font-bold'>${actionText}...</p>`;
+            
+            try {
+                const res = await fetch(`${api}/${type}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value })
+                });
+                const data = await res.json();
+                // Dynamically look for explanation, quiz, or notes depending on the button clicked
+                const raw = data.explanation || data.quiz || data.notes;
+                document.getElementById("result").innerHTML = marked.parse(raw);
+            } catch (err) {
+                document.getElementById("result").innerHTML = "<p class='text-red-400 font-bold'>AI Request Failed.</p>";
+            }
+        }
+
+        loadBooks();
+    </script>
+</body>
+</html>
+
