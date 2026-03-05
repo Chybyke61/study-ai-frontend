@@ -166,8 +166,7 @@
             }
 
             const form = new FormData();
-            form.append("book", file);
-            
+            form.append("file", file);
             progWrapper.classList.remove('hidden');
             resultBox.innerHTML = "<p class='animate-pulse text-indigo-400 font-bold'>Uploading and Indexing PDF... This might take a minute.</p>";
 
