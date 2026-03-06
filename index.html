@@ -159,6 +159,11 @@
                 return;
             }
 
+            if (file.size > 500 * 1024 * 1024) {
+               alert("File too large. Maximum allowed size is 500MB.");
+               return;
+            }
+
             const maxSize = 500 * 1024 * 1024;
             if (file.size > maxSize) {
                 resultBox.innerHTML = `<p class='text-red-400'>Error: File is larger than 500MB.</p>`;
