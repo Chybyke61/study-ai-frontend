@@ -196,6 +196,20 @@
     alert("Account created successfully. Please login.");
 }
 
+function showToast(message){
+
+    const toast = document.getElementById("toast")
+
+    toast.textContent = message
+    toast.classList.remove("opacity-0")
+    toast.classList.add("opacity-100")
+
+    setTimeout(() => {
+        toast.classList.remove("opacity-100")
+        toast.classList.add("opacity-0")
+    }, 3000)
+
+}
 async function login() {
 
     const email = document.getElementById("email").value;
@@ -207,11 +221,11 @@ async function login() {
     });
 
     if (error) {
-        alert(error.message);
+        showToast(error.message);
         return;
     }
 
-    alert("Login successful!");
+    showToast("Login successful!");
     getCurrentUser();
 }
 
@@ -379,6 +393,9 @@ getCurrentUser();
 
         loadBooks();
     </script>
+    <div id="toast"
+class="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300">
+</div>
 </div>
 </body>
 </html>

@@ -75,6 +75,21 @@
             supabaseKey
         )
 
+    function showToast(message){
+
+        const toast = document.getElementById("toast")
+
+        toast.textContent = message
+        toast.classList.remove("opacity-0")
+        toast.classList.add("opacity-100")
+
+        setTimeout(() => {
+        toast.classList.remove("opacity-100")
+        toast.classList.add("opacity-0")
+        }, 3000)
+
+    }
+
         async function signUp(){
             const email = document.getElementById("email").value
             const password = document.getElementById("password").value
@@ -102,10 +117,16 @@
 
             await supabaseClient.auth.signOut() // Sign out immediately to prevent auto-login
 
-            alert("Account created successfully. Please login.")
-            window.location.href = "index.html?email=" + encodeURIComponent(email)
+            showToast("Account created successfully. Please login.")
+            setTimeout(() => {
+                window.location.href = "index.html?email=" + encodeURIComponent(email)
+            }, 2000)
         }
     </script>
+
+    <div id="toast"
+class="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300">
+</div>
 
 </body>
 </html>
