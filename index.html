@@ -167,14 +167,7 @@
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let currentUser = null;
-
-        async function getUser() {
-            const { data } = await supabaseClient.auth.getUser();
-            currentUser = data.user;
-        }
-
-getUser();
-
+        
         document.addEventListener("DOMContentLoaded", () => {
 
     const params = new URLSearchParams(window.location.search);
@@ -255,12 +248,12 @@ async function getCurrentUser() {
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
 
+        loadBooks();
+
     } else {
 
         document.getElementById("loginScreen").style.display = "flex";
         document.getElementById("appContainer").style.display = "none";
-
-        loadBooks();
 
     }
 
@@ -284,7 +277,7 @@ getCurrentUser();
         async function loadBooks() {
             try {
                 const res = await fetch(`${api}/books`, {
-                    headers: { "x-user-id": currentUser?.id    
+                    headers: { "x-user-id": currentUser.id    
                      }
                 });
                 allBooks = await res.json();
