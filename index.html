@@ -250,7 +250,7 @@ async function getCurrentUser() {
 
     if (data.user) {
 
-        currentUser = data.user.id;
+        currentUser = data.user;
 
         document.getElementById("loginScreen").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
