@@ -106,6 +106,10 @@
 
     <script>
         const api = "https://study-ai-tq7i.onrender.com";
+
+        const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
+        localStorage.setItem("studyai_session", sessionId)
+
         let allBooks = [];
         lucide.createIcons();
 
@@ -221,7 +225,7 @@
                 const res = await fetch(`${api}/${endpoint}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value })
+                    body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value, sessionId })
                 });
                 const data = await res.json();
                 // Dynamically look for explanation, quiz, or notes depending on the button clicked
