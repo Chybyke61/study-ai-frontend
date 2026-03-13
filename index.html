@@ -166,6 +166,14 @@
         const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        let currentUser = null;
+
+        async function getUser() {
+            const { data } = await supabaseClient.auth.getUser();
+            currentUser = data.user;
+        }
+
+getUser();
 
         document.addEventListener("DOMContentLoaded", () => {
 
@@ -229,7 +237,7 @@ async function login() {
     getCurrentUser();
 }
 
-let currentUser = null;
+currentUser = null;
 
 async function getCurrentUser() {
 
