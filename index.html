@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
         :root { --brand-primary: #6366f1; --brand-accent: #10b981; }
         body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%); }
@@ -106,6 +107,11 @@
 
     <script>
         const api = "https://study-ai-tq7i.onrender.com";
+
+        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
+        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
         localStorage.setItem("studyai_session", sessionId)
