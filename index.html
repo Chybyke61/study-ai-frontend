@@ -260,6 +260,8 @@ async function getCurrentUser() {
         document.getElementById("loginScreen").style.display = "flex";
         document.getElementById("appContainer").style.display = "none";
 
+        loadBooks();
+
     }
 
 }
@@ -282,7 +284,7 @@ getCurrentUser();
         async function loadBooks() {
             try {
                 const res = await fetch(`${api}/books`, {
-                    headers: { "x-user-id": currentUser    
+                    headers: { "x-user-id": currentUser?.id    
                      }
                 });
                 allBooks = await res.json();
@@ -344,7 +346,7 @@ getCurrentUser();
             try {
                 const res = await fetch(`${api}/upload`, { 
                     method: "POST", 
-                    headers: { "x-user-id": currentUser },
+                    headers: { "x-user-id": currentUser?.id },
                     body: form 
                 });
                 const data = await res.json();
@@ -387,7 +389,7 @@ getCurrentUser();
                 
                 const res = await fetch(`${api}/${endpoint}`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "x-user-id": currentUser },
+                    headers: { "Content-Type": "application/json", "x-user-id": currentUser?.id },
                     body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value, sessionId })
                 });
                 const data = await res.json();
@@ -399,7 +401,6 @@ getCurrentUser();
             }
         }
 
-        loadBooks();
     </script>
     <div id="toast"
 class="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300">
