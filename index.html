@@ -150,6 +150,26 @@ async function login() {
     location.reload();
 }
 
+let currentUser = null;
+
+async function getCurrentUser() {
+
+    const { data, error } = await supabaseClient.auth.getUser();
+
+    if (error) {
+        console.error(error);
+        return;
+    }
+
+    if (data.user) {
+        currentUser = data.user.id;
+        console.log("Logged user:", currentUser);
+    }
+
+}
+
+getCurrentUser();
+
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
         localStorage.setItem("studyai_session", sessionId)
 
