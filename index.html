@@ -185,7 +185,10 @@ getCurrentUser();
 
         async function loadBooks() {
             try {
-                const res = await fetch(`${api}/books`);
+                const res = await fetch(`${api}/books`, {
+                    headers: { "x-user-id": currentUser    
+                     }
+                });
                 allBooks = await res.json();
                 renderBooks();
             } catch (err) {
@@ -245,6 +248,7 @@ getCurrentUser();
             try {
                 const res = await fetch(`${api}/upload`, { 
                     method: "POST", 
+                    headers: { "x-user-id": currentUser },
                     body: form 
                 });
                 const data = await res.json();
@@ -287,7 +291,7 @@ getCurrentUser();
                 
                 const res = await fetch(`${api}/${endpoint}`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: { "Content-Type": "application/json", "x-user-id": currentUser },
                     body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value, sessionId })
                 });
                 const data = await res.json();
