@@ -212,7 +212,13 @@
             document.getElementById("result").innerHTML = `<p class='animate-pulse text-indigo-400 font-bold'>${actionText}...</p>`;
             
             try {
-                const res = await fetch(`${api}/${type}`, {
+                let endpoint = type;
+
+                if (type === "explain") {
+                    endpoint = "deep-explain";
+                }
+                
+                const res = await fetch(`${api}/${endpoint}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value })
@@ -230,4 +236,3 @@
     </script>
 </body>
 </html>
-
