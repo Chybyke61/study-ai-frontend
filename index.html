@@ -252,105 +252,63 @@
         }
 
         // --- REAL PROGRESS UPLOAD ---
-        async function uploadBook() {
-            const fileInput = document.getElementById("bookFile");
-            const file = fileInput.files[0];
+async function uploadBook() {
 
-            // Step 1: request signed upload URL
-            const signedRes = await fetch(`${api}/generate-upload-url`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                     "x-user-id": currentUser.id
-                },
-                 body: JSON.stringify({ filename: file.name })
-            });
+    const fileInput = document.getElementById("bookFile");
+    const file = fileInput.files[0];
 
-            const { uploadUrl, fileKey } = await signedRes.json();
+    if (!file) {
+        return showToast("⚠️ Select a file first.");
+    }
 
-            // Step 2: upload file directly to R2
-          await fetch(uploadUrl, {
+    try {
+
+        // STEP 1 — request signed upload URL
+        const signedRes = await fetch(`${api}/generate-upload-url`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-user-id": currentUser.id
+            },
+            body: JSON.stringify({ filename: file.name })
+        });
+
+        const { uploadUrl, fileKey } = await signedRes.json();
+
+        // STEP 2 — upload file directly to Cloudflare R2
+        await fetch(uploadUrl, {
             method: "PUT",
             body: file
-          });
+        });
 
-          // Step 3: tell backend to index the file
-            await fetch(`${api}/upload`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-user-id": currentUser.id
-                },
-                body: JSON.stringify({
+        // STEP 3 — tell backend to index the file
+        await fetch(`${api}/upload`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-user-id": currentUser.id
+            },
+            body: JSON.stringify({
                 fileKey,
                 filename: file.name
             })
-            });
-            const progWrapper = document.getElementById("progWrapper");
-            const progBar = document.getElementById("progBar");
-            const progText = document.getElementById("progText");
-            
-            if (!file) return showToast("⚠️ Select a file first.");
+        });
 
-            const formData = new FormData();
-            formData.append("book", file);
-            
-            // Show progress UI
-            progWrapper.classList.remove('hidden');
-            progBar.style.width = '0%';
-            progBar.classList.remove('bg-red-500', 'bg-emerald-500');
-            progBar.classList.add('bg-indigo-500');
-            progText.innerText = 'Uploading... 0%';
-            progText.classList.remove('text-red-400', 'text-emerald-400');
-            progText.classList.add('text-indigo-400');
+        showToast("✅ Document uploaded successfully");
 
-            const xhr = new XMLHttpRequest();
-            xhr.open("POST", `${api}/upload`, true);
-            xhr.setRequestHeader("x-user-id", currentUser.id);
+        loadBooks();
 
-            // Track Upload Progress
-            xhr.upload.onprogress = function(e) {
-                if (e.lengthComputable) {
-                    const percentComplete = Math.round((e.loaded / e.total) * 100);
-                    // Hold at 90% visually while the backend processes/indexes the text
-                    const visualPercent = Math.min(percentComplete, 90); 
-                    progBar.style.width = visualPercent + '%';
-                    progText.innerText = `Uploading... ${visualPercent}%`;
-                }
-            };
+        fileInput.value = "";
+        document.getElementById("fileNameDisplay").innerText = "Select PDF, Image or Doc";
 
-            // Handle Response
-            xhr.onload = function() {
-                if (xhr.status >= 200 && xhr.status < 300) {
-                    progBar.style.width = '100%';
-                    progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
-                    progText.innerText = '✅ Success! Document Indexed.';
-                    progText.classList.replace('text-indigo-400', 'text-emerald-400');
-                    
-                    showToast("✅ Document ready for AI analysis");
-                    loadBooks();
-                    fileInput.value = "";
-                    document.getElementById('fileNameDisplay').innerText = "Select PDF, Image or Doc";
-                    
-                    // Hide progress bar after a few seconds
-                    setTimeout(() => progWrapper.classList.add('hidden'), 3500);
-                } else {
-                    handleUploadError();
-                }
-            };
+    } catch (err) {
 
-            xhr.onerror = function() { handleUploadError(); };
-            xhr.send(formData);
+        console.error(err);
+        showToast("❌ Upload failed");
 
-            function handleUploadError() {
-                progBar.style.width = '100%';
-                progBar.classList.replace('bg-indigo-500', 'bg-red-500');
-                progText.innerText = '❌ Upload Failed.';
-                progText.classList.replace('text-indigo-400', 'text-red-400');
-                showToast("❌ Failed to process document.");
-                setTimeout(() => progWrapper.classList.add('hidden'), 4000);
-            }
-        }
+    }
+
+}
 
         async function deleteBook(name) {
             if (!confirm("Are you sure you want to remove this document from your library?")) return;
