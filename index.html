@@ -252,9 +252,40 @@
         }
 
         // --- REAL PROGRESS UPLOAD ---
-        function uploadBook() {
+        async function uploadBook() {
             const fileInput = document.getElementById("bookFile");
             const file = fileInput.files[0];
+
+            // Step 1: request signed upload URL
+            const signedRes = await fetch(`${api}/generate-upload-url`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                     "x-user-id": currentUser.id
+                },
+                 body: JSON.stringify({ filename: file.name })
+            });
+
+            const { uploadUrl, fileKey } = await signedRes.json();
+
+            // Step 2: upload file directly to R2
+          await fetch(uploadUrl, {
+            method: "PUT",
+            body: file
+          });
+
+          // Step 3: tell backend to index the file
+            await fetch(`${api}/upload`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "x-user-id": currentUser.id
+                },
+                body: JSON.stringify({
+                fileKey,
+                filename: file.name
+            })
+            });
             const progWrapper = document.getElementById("progWrapper");
             const progBar = document.getElementById("progBar");
             const progText = document.getElementById("progText");
