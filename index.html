@@ -16,121 +16,136 @@
             background-color: #020617; 
             color: #f8fafc;
             background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
         }
-        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
         
         /* Markdown Styling */
         .markdown-content h1, .markdown-content h2 { color: #818cf8; font-family: 'Plus Jakarta Sans'; margin-top: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; font-weight: 700; }
-        .markdown-content p { margin-bottom: 1rem; line-height: 1.7; color: #cbd5e1; }
-        .markdown-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; }
+        .markdown-content p { margin-bottom: 1rem; line-height: 1.8; color: #cbd5e1; }
+        .markdown-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; }
         .markdown-content code { background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.9em; color: #f472b6; }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-card rounded-[2.5rem] p-10 w-full max-w-md shadow-2xl">
+        <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl">
             <div class="text-center mb-10">
-                <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
-                    <i data-lucide="graduation-cap" class="text-white w-7 h-7"></i>
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
+                    <i data-lucide="graduation-cap" class="text-white w-8 h-8"></i>
                 </div>
                 <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-['Plus_Jakarta_Sans']">Welcome Back</h2>
                 <p class="text-slate-400 text-sm font-medium">Elevate your study session with AI</p>
             </div>
 
             <div class="space-y-4">
-                <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
-                <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-all">
+                <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                 <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
             </div>
         </div>
     </div>
 
     <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <nav class="border-b border-white/5 bg-slate-950/50 backdrop-blur-md px-6 h-20 flex justify-between items-center sticky top-0 z-50">
+        <nav class="border-b border-white/5 bg-slate-950/50 backdrop-blur-md px-4 sm:px-6 h-20 flex justify-between items-center sticky top-0 z-50">
             <div class="flex items-center gap-3">
                 <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="zap" class="text-white w-5 h-5"></i></div>
-                <h1 class="text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] uppercase tracking-wider">Study.AI <span class="text-indigo-500 text-xs">PRO</span></h1>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] uppercase tracking-wider">Study.AI <span class="text-indigo-500 text-xs hidden sm:inline">PRO</span></h1>
             </div>
-            <div class="flex items-center gap-4">
-                <button onclick="loadBooks()" class="p-2.5 rounded-xl glass-card hover:bg-white/5 transition-all text-slate-400">
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button onclick="loadBooks()" class="p-2 sm:p-2.5 rounded-xl glass-card hover:bg-white/5 transition-all text-slate-400" title="Sync Library">
                     <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                 </button>
-                <button onclick="logout()" class="px-5 py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-bold rounded-xl transition-all">
+                <button onclick="logout()" class="px-4 sm:px-5 py-2 sm:py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-bold rounded-xl transition-all">
                     LOGOUT
                 </button>
             </div>
         </nav>
 
-        <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-4 lg:p-8 gap-8 overflow-hidden">
-            <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-6 overflow-hidden">
-                <div class="glass-card rounded-[2rem] p-6 shrink-0">
-                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4">Ingest Material</h3>
+        <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-4 lg:p-8 gap-6 lg:gap-8 overflow-hidden">
+            
+            <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-6 flex-shrink-0 lg:h-[calc(100vh-8rem)]">
+                <div class="glass-card rounded-[2rem] p-6 shrink-0 shadow-lg">
+                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                        <i data-lucide="upload-cloud" class="w-3 h-3"></i> Ingest Material
+                    </h3>
                     <input type="file" id="bookFile" class="hidden" onchange="updateFileName()">
-                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-800 rounded-3xl cursor-pointer hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all group">
-                        <i data-lucide="plus" class="w-6 h-6 text-slate-500 group-hover:text-indigo-400 mb-2"></i>
-                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center">PDF, Image or Doc</span>
+                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-700 rounded-3xl cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group">
+                        <i data-lucide="plus-circle" class="w-6 h-6 text-slate-500 group-hover:text-indigo-400 mb-2 transition-colors"></i>
+                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center font-medium">Select PDF, Image or Doc</span>
                     </label>
-                    <button onclick="uploadBook()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all active:scale-95">
-                        Index Knowledge
+                    <button onclick="uploadBook()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="database-zap" class="w-4 h-4"></i> Index Knowledge
                     </button>
-                    <div id="progWrapper" class="hidden mt-4">
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                            <div class="bg-indigo-500 h-full w-1/2 animate-[progress_2s_infinite_linear]"></div>
+                    
+                    <div id="progWrapper" class="hidden mt-4 bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+                        <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
+                            <span id="progText">Uploading... 0%</span>
+                        </div>
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                            <div id="progBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-[2rem] p-6 flex-1 flex flex-col overflow-hidden">
+                <div class="glass-card rounded-[2rem] p-6 flex-1 flex flex-col overflow-hidden shadow-lg min-h-[250px]">
                     <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Library (<span id="bookCount">0</span>)</h3>
-                        <i data-lucide="database" class="w-3 h-3 text-slate-600"></i>
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Your Library (<span id="bookCount" class="text-indigo-400">0</span>)</h3>
+                        <i data-lucide="library" class="w-4 h-4 text-slate-600"></i>
                     </div>
-                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-1">
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-2">
                         </div>
                 </div>
             </aside>
 
-            <main class="flex-1 flex flex-col gap-6 overflow-hidden">
-                <div class="glass-card rounded-[2rem] p-6 lg:p-8">
-                    <div class="flex flex-col xl:flex-row gap-4 mb-6">
-                        <div class="relative flex-1">
-                            <i data-lucide="search" class="absolute left-5 top-5 w-5 h-5 text-indigo-400"></i>
-                            <input id="topic" type="text" placeholder="What should the AI analyze today?" class="w-full bg-slate-900/50 border border-slate-800 rounded-2xl py-4.5 pl-14 pr-6 font-medium text-white focus:outline-none focus:border-indigo-500">
+            <main class="flex-1 flex flex-col gap-6 overflow-hidden min-h-[500px]">
+                <div class="glass-card rounded-[2rem] p-5 sm:p-6 lg:p-8 shadow-lg shrink-0">
+                    
+                    <div class="relative w-full mb-5 group">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400 group-focus-within:text-indigo-300 transition-colors"></i>
                         </div>
-                        <div class="flex gap-4">
-                            <select id="level" class="bg-slate-900/50 border border-slate-800 rounded-2xl px-6 py-4 text-sm font-semibold appearance-none cursor-pointer">
+                        <input id="topic" type="text" placeholder="What should the AI analyze or explain today?" class="w-full bg-slate-900/60 border border-slate-700/80 rounded-2xl py-4 sm:py-5 pl-14 pr-6 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all shadow-inner text-sm sm:text-base">
+                    </div>
+
+                    <div class="flex flex-col xl:flex-row gap-4">
+                        <div class="flex gap-3 sm:gap-4 flex-1">
+                            <select id="level" class="bg-slate-900/60 border border-slate-700/80 rounded-2xl px-4 sm:px-6 py-3.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/30">
                                 <option value="University">University</option>
                                 <option value="Secondary">Secondary</option>
                                 <option value="Primary">Primary</option>
                             </select>
-                            <select id="bookSelector" class="bg-slate-900/50 border border-slate-800 rounded-2xl px-6 py-4 text-sm font-semibold appearance-none cursor-pointer min-w-[140px]">
-                                <option value="all">Global Library</option>
+                            <select id="bookSelector" class="bg-slate-900/60 border border-slate-700/80 rounded-2xl px-4 sm:px-6 py-3.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 truncate">
+                                <option value="all">All Library Files</option>
                             </select>
                         </div>
-                    </div>
-                    
-                    <div class="flex flex-wrap gap-3">
-                        <button onclick="requestAI('explain')" class="flex-1 min-w-[140px] bg-indigo-600 hover:bg-indigo-500 text-white py-4 rounded-2xl transition-all font-bold flex items-center justify-center gap-2 group">
-                            <i data-lucide="book-open" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Deep Explain
-                        </button>
-                        <button onclick="requestAI('quiz')" class="flex-1 min-w-[140px] bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-2xl transition-all font-bold flex items-center justify-center gap-2 group">
-                            <i data-lucide="help-circle" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Take Quiz
-                        </button>
-                        <button onclick="requestAI('notes')" class="flex-1 min-w-[140px] bg-amber-600 hover:bg-amber-500 text-white py-4 rounded-2xl transition-all font-bold flex items-center justify-center gap-2 group">
-                            <i data-lucide="file-text" class="w-5 h-5 group-hover:scale-110 transition-transform"></i> Study Notes
-                        </button>
+                        
+                        <div class="flex gap-2 sm:gap-3 flex-wrap xl:flex-nowrap">
+                            <button onclick="requestAI('explain')" class="flex-1 xl:flex-none min-w-[120px] bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
+                                <i data-lucide="book-open" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Explain
+                            </button>
+                            <button onclick="requestAI('quiz')" class="flex-1 xl:flex-none min-w-[120px] bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
+                                <i data-lucide="help-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Quiz
+                            </button>
+                            <button onclick="requestAI('notes')" class="flex-1 xl:flex-none min-w-[120px] bg-amber-600 hover:bg-amber-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
+                                <i data-lucide="file-text" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Notes
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-[2rem] flex-1 overflow-hidden flex flex-col shadow-2xl">
-                    <div id="result" class="flex-1 p-8 lg:p-12 overflow-y-auto custom-scrollbar markdown-content text-slate-300">
-                        <div class="h-full flex flex-col items-center justify-center opacity-20 text-center">
-                            <i data-lucide="brain-circuit" class="w-16 h-16 mb-4"></i>
-                            <h4 class="text-xl font-bold font-['Plus_Jakarta_Sans']">AI Neural Engine Ready</h4>
-                            <p class="max-w-xs mt-2 text-sm">Select a document and enter a topic to begin your deep learning session.</p>
+                <div class="glass-card rounded-[2rem] flex-1 overflow-hidden flex flex-col shadow-2xl relative">
+                    <div id="result" class="flex-1 p-6 sm:p-8 lg:p-12 overflow-y-auto custom-scrollbar markdown-content text-slate-300">
+                        <div class="h-full flex flex-col items-center justify-center opacity-30 text-center">
+                            <div class="bg-slate-800 p-4 rounded-full mb-4">
+                                <i data-lucide="brain-circuit" class="w-10 h-10 text-indigo-400"></i>
+                            </div>
+                            <h4 class="text-xl font-bold font-['Plus_Jakarta_Sans'] text-white">Neural Engine Ready</h4>
+                            <p class="max-w-sm mt-3 text-sm leading-relaxed">Select a document from your library, type a concept above, and let the AI generate deep explanations, notes, or quizzes.</p>
                         </div>
                     </div>
                 </div>
@@ -138,7 +153,7 @@
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-8 py-4 rounded-2xl shadow-2xl opacity-0 transition-all duration-300 z-[100] font-bold pointer-events-none"></div>
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 z-[100] font-bold text-sm pointer-events-none border border-slate-600 flex items-center gap-2"></div>
 
     <script>
         const api = "https://study-ai-tq7i.onrender.com";
@@ -171,8 +186,8 @@
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
             const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) return showToast(error.message);
-            showToast("Authenticated Successfully");
+            if (error) return showToast(`⚠️ ${error.message}`);
+            showToast("✅ Authenticated Successfully");
             checkUser();
         }
 
@@ -189,77 +204,149 @@
                 });
                 allBooks = await res.json();
                 renderBooks();
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Error loading books:", err); }
         }
 
         function renderBooks() {
             const container = document.getElementById("books");
             const selector = document.getElementById("bookSelector");
+            
             container.innerHTML = "";
-            selector.innerHTML = '<option value="all">Global Library</option>';
+            selector.innerHTML = '<option value="all">All Library Files</option>';
             document.getElementById("bookCount").innerText = allBooks.length;
 
+            if (allBooks.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center mt-4">No documents indexed yet.</p>`;
+                return;
+            }
+
             allBooks.forEach(book => {
-                const displayName = book.filename.split('_').slice(1).join('_') || book.filename;
+                const fileNameSafe = book.filename || book.name; // Fallback to handle backend variations
+                if (!fileNameSafe) return; 
+                
+                const displayName = fileNameSafe.split('_').slice(1).join('_') || fileNameSafe;
                 
                 // Sidebar Item
                 const div = document.createElement("div");
-                div.className = "group bg-slate-900/40 border border-slate-800/50 p-3 rounded-2xl flex items-center justify-between transition-all hover:border-indigo-500/30";
+                div.className = "group bg-slate-900/60 border border-slate-700/50 p-3.5 rounded-2xl flex items-center justify-between transition-all hover:border-indigo-500/50 hover:bg-slate-800/80";
                 div.innerHTML = `
                     <div class="flex items-center gap-3 overflow-hidden">
-                        <i data-lucide="file" class="w-4 h-4 text-indigo-400"></i>
+                        <div class="bg-indigo-500/10 p-1.5 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors shrink-0">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
+                        </div>
                         <span class="text-xs truncate text-slate-300 font-medium">${displayName}</span>
                     </div>
-                    <button onclick="deleteBook('${encodeURIComponent(book.filename)}')" class="p-1 text-slate-600 hover:text-red-400">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <button onclick="deleteBook('${encodeURIComponent(fileNameSafe)}')" class="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0" title="Delete file">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 `;
                 container.appendChild(div);
 
-                // Selector Option
+                // Populate Dropdown Selector
                 const opt = document.createElement("option");
-                opt.value = book.filename;
+                opt.value = fileNameSafe;
                 opt.innerText = displayName;
                 selector.appendChild(opt);
             });
             lucide.createIcons();
         }
 
-        async function uploadBook() {
+        // --- REAL PROGRESS UPLOAD ---
+        function uploadBook() {
             const fileInput = document.getElementById("bookFile");
             const file = fileInput.files[0];
-            const prog = document.getElementById("progWrapper");
-            if (!file) return alert("Select a file first.");
+            const progWrapper = document.getElementById("progWrapper");
+            const progBar = document.getElementById("progBar");
+            const progText = document.getElementById("progText");
+            
+            if (!file) return showToast("⚠️ Select a file first.");
 
             const formData = new FormData();
             formData.append("book", file);
-            prog.classList.remove('hidden');
+            
+            // Show progress UI
+            progWrapper.classList.remove('hidden');
+            progBar.style.width = '0%';
+            progBar.classList.remove('bg-red-500', 'bg-emerald-500');
+            progBar.classList.add('bg-indigo-500');
+            progText.innerText = 'Uploading... 0%';
+            progText.classList.remove('text-red-400', 'text-emerald-400');
+            progText.classList.add('text-indigo-400');
 
-            try {
-                const res = await fetch(`${api}/upload`, { 
-                    method: "POST", 
-                    headers: { "x-user-id": currentUser.id },
-                    body: formData 
-                });
-                if (res.ok) {
-                    showToast("Document indexed!");
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", `${api}/upload`, true);
+            xhr.setRequestHeader("x-user-id", currentUser.id);
+
+            // Track Upload Progress
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percentComplete = Math.round((e.loaded / e.total) * 100);
+                    // Hold at 90% visually while the backend processes/indexes the text
+                    const visualPercent = Math.min(percentComplete, 90); 
+                    progBar.style.width = visualPercent + '%';
+                    progText.innerText = `Uploading... ${visualPercent}%`;
+                }
+            };
+
+            // Handle Response
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    progBar.style.width = '100%';
+                    progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
+                    progText.innerText = '✅ Success! Document Indexed.';
+                    progText.classList.replace('text-indigo-400', 'text-emerald-400');
+                    
+                    showToast("✅ Document ready for AI analysis");
                     loadBooks();
                     fileInput.value = "";
-                    document.getElementById('fileNameDisplay').innerText = "PDF, Image or Doc";
+                    document.getElementById('fileNameDisplay').innerText = "Select PDF, Image or Doc";
+                    
+                    // Hide progress bar after a few seconds
+                    setTimeout(() => progWrapper.classList.add('hidden'), 3500);
+                } else {
+                    handleUploadError();
                 }
-            } catch (err) { showToast("Upload failed"); }
-            finally { prog.classList.add('hidden'); }
+            };
+
+            xhr.onerror = function() { handleUploadError(); };
+            xhr.send(formData);
+
+            function handleUploadError() {
+                progBar.style.width = '100%';
+                progBar.classList.replace('bg-indigo-500', 'bg-red-500');
+                progText.innerText = '❌ Upload Failed.';
+                progText.classList.replace('text-indigo-400', 'text-red-400');
+                showToast("❌ Failed to process document.");
+                setTimeout(() => progWrapper.classList.add('hidden'), 4000);
+            }
+        }
+
+        async function deleteBook(name) {
+            if (!confirm("Are you sure you want to remove this document from your library?")) return;
+            try {
+                await fetch(`${api}/delete-book/${name}`, {
+                    method: "DELETE",
+                    headers: { "x-user-id": currentUser.id }
+                });
+                showToast("🗑️ Document deleted");
+                loadBooks();
+            } catch(e) {
+                showToast("❌ Failed to delete document");
+            }
         }
 
         // --- AI ---
         async function requestAI(type) {
             const topic = document.getElementById("topic").value;
             const resultBox = document.getElementById("result");
-            if (!topic) return alert("Enter a topic.");
+            if (!topic) {
+                document.getElementById("topic").focus();
+                return showToast("⚠️ Enter a topic to analyze.");
+            }
 
-            resultBox.innerHTML = `<div class="flex flex-col items-center justify-center h-full animate-pulse text-indigo-400">
-                <i data-lucide="cpu" class="w-12 h-12 mb-4"></i>
-                <p class="font-bold tracking-widest text-xs">AI IS REASONING OVER YOUR DATA...</p>
+            resultBox.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-indigo-400">
+                <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
+                <p class="font-bold tracking-widest text-xs animate-pulse">AI IS REASONING OVER YOUR DATA...</p>
             </div>`;
             lucide.createIcons();
 
@@ -277,39 +364,42 @@
                 });
                 const data = await res.json();
                 const raw = data.explanation || data.quiz || data.notes;
-                resultBox.innerHTML = `<div class="markdown-content">${marked.parse(raw)}</div>`;
-            } catch (err) { resultBox.innerHTML = "<p class='text-red-400'>Request Failed.</p>"; }
+                
+                if(!raw) { throw new Error("Empty response"); }
+
+                resultBox.innerHTML = `<div class="markdown-content animate-fade-in">${marked.parse(raw)}</div>`;
+            } catch (err) { 
+                resultBox.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-red-400">
+                    <i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i>
+                    <p class="font-bold">Request Failed. Please try again.</p>
+                </div>`; 
+                lucide.createIcons();
+            }
         }
 
         // --- UTILS ---
         function updateFileName() {
             const input = document.getElementById('bookFile');
-            if (input.files[0]) document.getElementById('fileNameDisplay').innerText = input.files[0].name;
+            if (input.files[0]) {
+                const name = input.files[0].name;
+                // Truncate name if it's too long
+                document.getElementById('fileNameDisplay').innerText = name.length > 25 ? name.substring(0, 22) + '...' : name;
+            }
         }
-
-        async function deleteBook(name) {
-
-            if (!confirm("Delete this document?")) return;
-
-            await fetch(`${api}/delete-book/${name}`, {
-                method: "DELETE",
-                headers: {
-                    "x-user-id": currentUser.id
-          }
-        });
-
-        showToast("Document deleted");
-
-         loadBooks();
-    }
 
         function showToast(msg) {
             const t = document.getElementById("toast");
-            t.textContent = msg;
+            t.innerHTML = msg; 
             t.classList.replace("opacity-0", "opacity-100");
-            setTimeout(() => t.classList.replace("opacity-100", "opacity-0"), 3000);
+            t.classList.replace("-translate-y-2", "translate-y-0"); // Add slight bounce effect
+            setTimeout(() => {
+                t.classList.replace("opacity-100", "opacity-0");
+                t.classList.replace("translate-y-0", "-translate-y-2");
+            }, 3500);
         }
 
+        // Initialize
         checkUser();
     </script>
 </body>
