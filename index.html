@@ -84,6 +84,9 @@
             <div class="flex items-center gap-3">
                 <div class="bg-indigo-600 p-2 rounded-xl shadow-lg shadow-indigo-500/20"><i data-lucide="graduation-cap" class="text-white"></i></div>
                 <h1 class="text-2xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] bg-clip-text text-transparent bg-gradient-to-r from-white to-slate-400">STUDY.AI <span class="text-indigo-500 text-sm font-medium ml-1">PRO</span></h1>
+                <button onclick="logout()" class="px-4 py-2 bg-red-500 text-white rounded-lg">
+                Logout
+                </button>
             </div>
             <button onclick="loadBooks()" class="group flex items-center gap-2 px-4 py-2 rounded-full glass-card hover:bg-white/5 transition-all text-sm font-medium text-slate-300">
                 <i data-lucide="refresh-cw" class="w-4 h-4 group-hover:rotate-180 transition-transform duration-500"></i> Sync Library
@@ -167,7 +170,7 @@
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let currentUser = null;
-        
+
         document.addEventListener("DOMContentLoaded", () => {
 
     const params = new URLSearchParams(window.location.search);
@@ -393,7 +396,16 @@ getCurrentUser();
                 document.getElementById("result").innerHTML = "<p class='text-red-400 font-bold'>AI Request Failed.</p>";
             }
         }
+        async function logout() {
 
+            await supabaseClient.auth.signOut();
+
+            currentUser = null;
+
+            document.getElementById("appContainer").style.display = "none";
+            document.getElementById("loginScreen").style.display = "flex";
+
+        }
     </script>
     <div id="toast"
 class="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300">
