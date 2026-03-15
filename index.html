@@ -271,13 +271,23 @@ async function uploadBook() {
 
         // STEP 1: Request signed upload URL
         const signedRes = await fetch(`${api}/generate-upload-url`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
-            body: JSON.stringify({ filename: file.name })
-        });
-        
-        if (!signedRes.ok) throw new Error("Failed to secure upload link");
-        const { uploadUrl, fileKey } = await signedRes.json();
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "x-user-id": currentUser.id
+    },
+    body: JSON.stringify({
+        filename: file.name
+    })
+});
+
+const data = await signedRes.json();
+
+if (!signedRes.ok) {
+    throw new Error(data.error || "Failed to get upload URL");
+}
+
+const { uploadUrl, fileKey } = data;
 
         // STEP 2: Upload directly to Cloudflare R2 using XMLHttpRequest (for progress tracking)
         const xhr = new XMLHttpRequest();
