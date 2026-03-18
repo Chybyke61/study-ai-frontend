@@ -115,7 +115,11 @@
         const { error } = await supabase.auth.signInWithPassword({ email, password });
 
         if (error) {
-            btn.innerText = error.message;
+    if (error.message.includes("Email not confirmed")) {
+        btn.innerText = "Verify your email first 📩";
+    } else {
+        btn.innerText = error.message;
+    }
             setTimeout(() => {
                 btn.innerText = "SIGN IN TO ENGINE";
                 btn.disabled = false;
