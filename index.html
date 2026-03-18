@@ -311,6 +311,7 @@
                 progText.innerText = 'Starting Indexing... 10%';
                 progBar.style.width = '10%';
                 
+                eventSource = new EventSource(`${api}/progress`);
                 
                 eventSource.onmessage = (event) => {
                     try {
