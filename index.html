@@ -12,19 +12,30 @@
     <style>
         :root { --brand-primary: #6366f1; }
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Inter', sans-serif;
             background-color: #020617; 
             color: #f8fafc;
             background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
             background-attachment: fixed;
         }
-        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
         
         /* Markdown Styling */
-        .markdown-content h1, .markdown-content h2 { color: #818cf8; font-family: 'Plus Jakarta Sans'; margin-top: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 0.5rem; font-weight: 700; }
+        .markdown-content h1, .markdown-content h2 { 
+            color: #818cf8;
+            font-family: 'Plus Jakarta Sans'; 
+            margin-top: 1.5rem; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
+            padding-bottom: 0.5rem; 
+            font-weight: 700;
+        }
         .markdown-content p { margin-bottom: 1rem; line-height: 1.8; color: #cbd5e1; }
         .markdown-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; }
         .markdown-content code { background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.9em; color: #f472b6; }
@@ -48,7 +59,7 @@
                 <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
             </div>
         </div>
-    </div>
+     </div>
 
     <div id="appContainer" class="hidden min-h-screen flex flex-col">
         <nav class="border-b border-white/5 bg-slate-950/50 backdrop-blur-md px-4 sm:px-6 h-20 flex justify-between items-center sticky top-0 z-50">
@@ -67,11 +78,12 @@
         </nav>
 
         <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-4 lg:p-8 gap-6 lg:gap-8 overflow-hidden">
-            
+             
             <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-6 flex-shrink-0 lg:h-[calc(100vh-8rem)]">
+                
                 <div class="glass-card rounded-[2rem] p-6 shrink-0 shadow-lg">
                     <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                        <i data-lucide="upload-cloud" class="w-3 h-3"></i> Ingest Material
+                         <i data-lucide="upload-cloud" class="w-3 h-3"></i> Ingest Material
                     </h3>
                     <input type="file" id="bookFile" class="hidden" onchange="updateFileName()">
                     <label for="bookFile" class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-700 rounded-3xl cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group">
@@ -84,27 +96,26 @@
                     
                     <div id="progWrapper" class="hidden mt-4 bg-slate-900/50 p-3 rounded-xl border border-slate-800">
                         <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
-                            <span id="progText">Uploading... 0%</span>
+                            <span id="progText">Initializing... 0%</span>
                         </div>
                         <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                             <div id="progBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
                         </div>
                     </div>
-                </div>
+                 </div>
 
                 <div class="glass-card rounded-[2rem] p-6 flex-1 flex flex-col overflow-hidden shadow-lg min-h-[250px]">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Your Library (<span id="bookCount" class="text-indigo-400">0</span>)</h3>
                         <i data-lucide="library" class="w-4 h-4 text-slate-600"></i>
                     </div>
-                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-2">
-                        </div>
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-2"></div>
                 </div>
             </aside>
 
             <main class="flex-1 flex flex-col gap-6 overflow-hidden min-h-[500px]">
+                
                 <div class="glass-card rounded-[2rem] p-5 sm:p-6 lg:p-8 shadow-lg shrink-0">
-                    
                     <div class="relative w-full mb-5 group">
                         <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                             <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400 group-focus-within:text-indigo-300 transition-colors"></i>
@@ -143,7 +154,7 @@
                         <div class="h-full flex flex-col items-center justify-center opacity-30 text-center">
                             <div class="bg-slate-800 p-4 rounded-full mb-4">
                                 <i data-lucide="brain-circuit" class="w-10 h-10 text-indigo-400"></i>
-                            </div>
+                             </div>
                             <h4 class="text-xl font-bold font-['Plus_Jakarta_Sans'] text-white">Neural Engine Ready</h4>
                             <p class="max-w-sm mt-3 text-sm leading-relaxed">Select a document from your library, type a concept above, and let the AI generate deep explanations, notes, or quizzes.</p>
                         </div>
@@ -221,11 +232,11 @@
             }
 
             allBooks.forEach(book => {
-                const fileNameSafe = book.filename || book.name; // Fallback to handle backend variations
+                const fileNameSafe = book.filename || book.name; 
                 if (!fileNameSafe) return; 
                 
                 const displayName = fileNameSafe.split('_').slice(1).join('_') || fileNameSafe;
-                
+  
                 // Sidebar Item
                 const div = document.createElement("div");
                 div.className = "group bg-slate-900/60 border border-slate-700/50 p-3.5 rounded-2xl flex items-center justify-between transition-all hover:border-indigo-500/50 hover:bg-slate-800/80";
@@ -251,101 +262,147 @@
             lucide.createIcons();
         }
 
-        // --- REAL PROGRESS UPLOAD ---
-async function uploadBook() {
-    const fileInput = document.getElementById("bookFile");
-    const file = fileInput.files[0];
-    const progWrapper = document.getElementById("progWrapper");
-    const progBar = document.getElementById("progBar");
-    const progText = document.getElementById("progText");
-    
-    if (!file) return showToast("⚠️ Select a file first.");
+        // --- REAL PROGRESS UPLOAD REWRITE ---
+        async function uploadBook() {
+            const fileInput = document.getElementById("bookFile");
+            if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
 
-    try {
-        // Prepare Progress UI
-        progWrapper.classList.remove('hidden');
-        progBar.style.width = '5%';
-        progText.innerText = 'Requesting secure link...';
-        progBar.className = 'bg-indigo-500 h-full transition-all duration-300';
-        progText.className = 'text-[10px] font-bold text-indigo-400 mb-2 uppercase tracking-wider';
+            const file = fileInput.files[0];
+            const progWrapper = document.getElementById("progWrapper");
+            const progBar = document.getElementById("progBar");
+            const progText = document.getElementById("progText");
 
-        // STEP 1: Request signed upload URL
-        const signedRes = await fetch(`${api}/generate-upload-url`, {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json",
-        "x-user-id": currentUser.id
-    },
-    body: JSON.stringify({
-        filename: file.name
-    })
-});
+            try {
+                // Reset Progress UI
+                progWrapper.classList.remove('hidden');
+                progBar.style.width = '0%';
+                progText.innerText = 'Requesting secure link... 0%';
+                progBar.className = 'bg-indigo-500 h-full transition-all duration-300';
+                progText.className = 'text-[10px] font-bold text-indigo-400 mb-2 uppercase tracking-wider';
 
-const data = await signedRes.json();
-
-if (!signedRes.ok) {
-    throw new Error(data.error || "Failed to get upload URL");
-}
-
-const { uploadUrl, fileKey } = data;
-
-        // STEP 2: Upload directly to Cloudflare R2 using XMLHttpRequest (for progress tracking)
-        const xhr = new XMLHttpRequest();
-        xhr.open("PUT", uploadUrl, true);
-        xhr.setRequestHeader("Content-Type", file.type);
-
-        xhr.upload.onprogress = function(e) {
-            if (e.lengthComputable) {
-                // Max out at 90% while we wait for backend to extract text
-                const percent = 5 + Math.round((e.loaded / e.total) * 85);
-                progBar.style.width = percent + '%';
-                progText.innerText = `Uploading to Cloud... ${percent}%`;
-            }
-        };
-
-        xhr.onload = async function() {
-            if (xhr.status >= 200 && xhr.status < 300) {
-                progText.innerText = 'Indexing Knowledge Base... 90%';
-                
-                // STEP 3: Tell backend to download it securely and index it
-                const indexRes = await fetch(`${api}/upload`, {
+                // STEP 1: Request signed upload URL
+                const signedRes = await fetch(`${api}/generate-upload-url`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "x-user-id": currentUser.id
+                    },
+                    body: JSON.stringify({ filename: file.name })
+                });
+                
+                const data = await signedRes.json();
+                if (!signedRes.ok) throw new Error(data.error || "Failed to get upload URL");
+                const { uploadUrl, fileKey } = data;
+
+                // STEP 2: Upload directly to Cloudflare R2 using fetch
+                progText.innerText = 'Uploading to Cloud... 5%';
+                progBar.style.width = '5%';
+                
+                const uploadRes = await fetch(uploadUrl, {
+                    method: "PUT",
+                    headers: { "Content-Type": file.type || "application/octet-stream" },
+                    body: file
+                });
+
+                if (!uploadRes.ok) throw new Error("Cloud upload failed");
+
+                // STEP 3: Connect to Server-Sent Events for real-time indexing progress
+                progText.innerText = 'Starting Indexing... 10%';
+                progBar.style.width = '10%';
+                
+                
+                eventSource.onmessage = (event) => {
+                    try {
+                        const evtData = JSON.parse(event.data);
+                        if (evtData.step && evtData.progress !== undefined) {
+                            // Update UI from backend emission
+                            progText.innerText = `${evtData.step} ${evtData.progress}%`;
+                            progBar.style.width = `${evtData.progress}%`;
+                            
+                            // Check for completion
+                            if (evtData.progress >= 100 || evtData.step.includes("Completed")) {
+                                eventSource.close();
+                                progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
+                                progText.innerText = '✅ Success! Indexed.';
+                                progText.classList.replace('text-indigo-400', 'text-emerald-400');
+                                showToast("✅ Document ready for AI analysis");
+                                loadBooks();
+                                fileInput.value = "";
+                                document.getElementById('fileNameDisplay').innerText = "Select PDF, Image or Doc";
+                                
+                                setTimeout(() => progWrapper.classList.add('hidden'), 3500);
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Error parsing progress data", e);
+                    }
+                };
+
+                eventSource.onerror = () => {
+                    console.error("Lost connection to progress stream.");
+                    eventSource.close();
+                };
+
+                // STEP 4: Start indexing FIRST
+                const indexPromise = fetch(`${api}/upload`, {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json", 
+                        "x-user-id": currentUser.id 
+                    },
                     body: JSON.stringify({ fileKey, filename: file.name })
                 });
 
-                    const data = await indexRes.json();
-                if (!indexRes.ok) throw new Error(data.error || "Indexing failed");
-                    progBar.style.width = '100%';
-                    progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
-                    progText.innerText = '✅ Success! Indexed.';
-                    progText.classList.replace('text-indigo-400', 'text-emerald-400');
-                    
-                    showToast("✅ Document ready for AI analysis");
-                    loadBooks();
-                    fileInput.value = "";
-                    document.getElementById('fileNameDisplay').innerText = "Select PDF, Image or Doc";
-                } else {
-                    throw new Error("Backend failed to extract text");
+                // THEN connect to progress stream
+                const eventSource = new EventSource(`${api}/progress`);
+
+                eventSource.onmessage = (event) => {
+                    try {
+                        const evtData = JSON.parse(event.data);
+
+                         if (evtData.step && evtData.progress !== undefined) {
+                            progText.innerText = `${evtData.step} ${evtData.progress}%`;
+                            progBar.style.width = `${evtData.progress}%`;
+
+                            if (evtData.progress >= 100) {
+                                eventSource.close();
+
+                                progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
+                                progText.innerText = '✅ Success! Indexed.';
+                                progText.classList.replace('text-indigo-400', 'text-emerald-400');
+
+                                showToast("✅ Document ready");
+                                loadBooks();
+
+                                setTimeout(() => {
+                                    progWrapper.classList.add('hidden');
+                                }, 3000);
+                            }
+                        }
+                    } catch (e) {
+                        console.error("Progress parse error", e);
+                    }
+                };
+
+                // wait for backend to finish
+                const indexRes = await indexPromise;
+
+                const indexData = await indexRes.json();
+                if (!indexRes.ok) {
+                    eventSource.close();
+                    throw new Error(indexData.error || "Indexing failed");
                 }
-            
-            // Hide progress bar shortly after finish
-            setTimeout(() => progWrapper.classList.add('hidden'), 3500);
-        };
 
-        xhr.onerror = () => { throw new Error("Network connection lost"); };
-        xhr.send(file); // Send actual file binary
-
-    } catch (err) {
-        console.error(err);
-        progBar.style.width = '100%';
-        progBar.classList.replace('bg-indigo-500', 'bg-red-500');
-        progText.innerText = '❌ Upload Failed.';
-        progText.classList.replace('text-indigo-400', 'text-red-400');
-        showToast("❌ Failed to process document.");
-        setTimeout(() => progWrapper.classList.add('hidden'), 4000);
-    }
-}
+            } catch (err) {
+                console.error(err);
+                progBar.style.width = '100%';
+                progBar.classList.replace('bg-indigo-500', 'bg-red-500');
+                progText.innerText = '❌ Upload Failed.';
+                progText.classList.replace('text-indigo-400', 'text-red-400');
+                showToast(`❌ ${err.message || "Failed to process document."}`);
+                setTimeout(() => progWrapper.classList.add('hidden'), 4000);
+            }
+        }
 
         async function deleteBook(name) {
             if (!confirm("Are you sure you want to remove this document from your library?")) return;
@@ -388,6 +445,7 @@ const { uploadUrl, fileKey } = data;
                         sessionId 
                     })
                 });
+                
                 const data = await res.json();
                 const raw = data.explanation || data.quiz || data.notes;
                 
@@ -409,7 +467,6 @@ const { uploadUrl, fileKey } = data;
             const input = document.getElementById('bookFile');
             if (input.files[0]) {
                 const name = input.files[0].name;
-                // Truncate name if it's too long
                 document.getElementById('fileNameDisplay').innerText = name.length > 25 ? name.substring(0, 22) + '...' : name;
             }
         }
@@ -418,7 +475,7 @@ const { uploadUrl, fileKey } = data;
             const t = document.getElementById("toast");
             t.innerHTML = msg; 
             t.classList.replace("opacity-0", "opacity-100");
-            t.classList.replace("-translate-y-2", "translate-y-0"); // Add slight bounce effect
+            t.classList.replace("-translate-y-2", "translate-y-0"); 
             setTimeout(() => {
                 t.classList.replace("opacity-100", "opacity-0");
                 t.classList.replace("translate-y-0", "-translate-y-2");
