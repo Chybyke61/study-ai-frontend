@@ -7,56 +7,35 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Plus Jakarta Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        navy: {
-                            900: '#020617',
-                            800: '#0f172a',
-                            700: '#1e293b',
-                        },
-                        brand: {
-                            400: '#818cf8',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
+        :root { --brand-indigo: #6366f1; }
+        
         body { 
+            font-family: 'Inter', sans-serif;
             background-color: #020617; 
             color: #f1f5f9;
+            /* Deep Sapphire Glow Background */
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
                 radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%);
             background-attachment: fixed;
         }
 
-        /* High-End Glassmorphism */
+        /* Command Center Glassmorphism */
         .glass-card {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
         }
 
         .glass-inset {
@@ -66,358 +45,320 @@
         }
 
         /* Glowing Action Buttons */
-        .btn-indigo { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; }
+        .btn-indigo { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; }
         .btn-indigo:hover { background: #6366f1; color: white; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
 
-        .btn-emerald { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+        .btn-emerald { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
         .btn-emerald:hover { background: #10b981; color: white; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
 
-        .btn-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+        .btn-amber { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
         .btn-amber:hover { background: #f59e0b; color: white; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
 
-        /* Smooth UI Elements */
-        .icon-glow-indigo { filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.8)); }
-        .icon-glow-emerald { filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.8)); }
-        .icon-glow-amber { filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.8)); }
-
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        /* Icon Glows */
+        .icon-glow-indigo { filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.6)); }
         
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
         /* Markdown Styling */
-        .prose h1, .prose h2, .prose h3 { color: #f8fafc !important; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .prose h1, .prose h2, .prose h3 { color: #f8fafc !important; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; }
         .prose strong { color: #818cf8 !important; }
-        .prose code { background: rgba(99, 102, 241, 0.1) !important; color: #a5b4fc !important; padding: 2px 4px; border-radius: 4px; }
+        .prose code { background: rgba(99, 102, 241, 0.15) !important; color: #a5b4fc !important; padding: 2px 6px; border-radius: 6px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col font-sans selection:bg-brand-500/40">
+<body class="min-h-screen">
 
-    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl glass-card text-white text-sm font-medium transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
-        <i data-lucide="info" class="w-4 h-4 text-brand-400"></i>
-        <span id="toastMsg">Notification</span>
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="glass-card rounded-[2.5rem] p-10 w-full max-w-md">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
+                    <i data-lucide="brain-circuit" class="text-white w-8 h-8"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-display">Welcome</h2>
+                <p class="text-slate-400 text-sm">Your documents, supercharged by AI.</p>
+            </div>
+            <div class="space-y-4">
+                <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
+                <p class="text-center text-xs text-slate-500 mt-4">New here? <span onclick="goToSignup()" class="text-indigo-400 cursor-pointer hover:underline">Create Account</span></p>
+            </div>
+        </div>
     </div>
 
-    <nav class="sticky top-0 z-40 bg-navy-900/60 backdrop-blur-xl border-b border-white/5">
-        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 bg-gradient-to-br from-brand-600 to-indigo-800 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20">
-                    <i data-lucide="brain-circuit" class="w-5 h-5 text-white"></i>
+    <div id="appContainer" class="hidden min-h-screen flex flex-col">
+        <nav class="sticky top-0 z-50 bg-navy-950/60 backdrop-blur-xl border-b border-white/5">
+            <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white uppercase font-['Plus_Jakarta_Sans']">Study<span class="text-indigo-400">.AI</span></span>
                 </div>
-                <span class="font-display font-bold text-xl tracking-tight text-white">
-                    Study<span class="text-brand-400">.AI</span>
-                </span>
-            </div>
-            
-            <div class="flex items-center gap-6">
-                <div class="hidden md:flex flex-col items-end">
-                    <span id="userEmail" class="text-xs font-medium text-slate-400">authenticating...</span>
-                    <span class="text-[9px] text-brand-400 uppercase tracking-widest font-bold flex items-center gap-1.5 mt-0.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
-                        Premium Access
-                    </span>
+                <div class="flex items-center gap-4">
+                    <button onclick="loadBooks()" class="p-2.5 rounded-xl glass-card text-slate-400 hover:text-white transition-all"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                    <button onclick="logout()" class="px-5 py-2.5 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white text-[10px] font-bold rounded-xl transition-all uppercase tracking-widest">Logout</button>
                 </div>
-                <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-white transition-colors" title="Logout">
-                    <i data-lucide="log-out" class="w-5 h-5"></i>
-                </button>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <main class="flex-grow max-w-7xl mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <aside class="lg:col-span-4 flex flex-col">
-            <section class="glass-card rounded-3xl p-6 flex-grow flex flex-col border border-white/10">
-                <div class="flex items-center justify-between mb-8">
-                    <h3 class="flex items-center gap-2.5 text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
-                        <i data-lucide="database" class="w-4 h-4 text-brand-400 icon-glow-indigo"></i> Knowledge Base
+        <main class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-6 lg:p-10 gap-8 overflow-hidden">
+            
+            <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-8 shrink-0">
+                <section class="glass-card rounded-[2.5rem] p-7 shadow-lg">
+                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                         <i data-lucide="database" class="w-4 h-4 icon-glow-indigo"></i> Knowledge Vault
                     </h3>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="relative group">
-                        <input type="file" id="bookFile" onchange="updateFileName()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.docx">
-                        <div class="glass-inset rounded-2xl p-6 text-center group-hover:border-brand-500/40 transition-all duration-300">
-                            <div class="w-11 h-11 rounded-full bg-navy-800 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                                <i data-lucide="upload-cloud" class="w-5 h-5 text-slate-400 group-hover:text-brand-400"></i>
-                            </div>
-                            <p id="fileNameDisplay" class="text-sm font-medium text-slate-300 truncate px-2">Drop PDF or DOCX</p>
-                            <p class="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tighter">Max 25MB</p>
-                        </div>
-                    </div>
                     
-                    <button id="uploadBtn" onclick="handleUpload()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-brand-500/20 active:scale-[0.98] flex items-center justify-center gap-2">
-                        <i data-lucide="zap" class="w-4 h-4"></i>
-                        Sync to Engine
+                    <div class="relative group">
+                        <input type="file" id="bookFile" class="hidden" onchange="updateFileName()">
+                        <label for="bookFile" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-800 rounded-[2rem] cursor-pointer hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all group">
+                            <i data-lucide="upload-cloud" class="w-7 h-7 text-slate-600 group-hover:text-indigo-400 mb-2 transition-colors"></i>
+                            <span id="fileNameDisplay" class="text-xs text-slate-500 px-4 text-center font-medium">Drop Study Material</span>
+                        </label>
+                    </div>
+
+                    <button onclick="uploadBook()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="cpu" class="w-4 h-4"></i> Sync to Engine
                     </button>
-
-                    <div id="progressContainer" class="hidden glass-inset p-4 rounded-xl">
-                        <div class="flex justify-between text-[10px] font-bold mb-2 text-slate-400 uppercase">
-                            <span id="progressText" class="animate-pulse">Analyzing...</span>
-                            <span id="progressPercent" class="text-brand-400">0%</span>
+                    
+                    <div id="progWrapper" class="hidden mt-6 glass-inset p-4 rounded-2xl">
+                        <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase">
+                            <span id="progText">Processing...</span>
                         </div>
-                        <div class="h-1.5 w-full bg-navy-900 rounded-full overflow-hidden">
-                            <div id="progressBar" class="h-full bg-brand-500 transition-all duration-300" style="width: 0%"></div>
+                        <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
+                            <div id="progBar" class="h-full bg-indigo-500 transition-all duration-300" style="width: 0%"></div>
                         </div>
                     </div>
-                </div>
+                 </section>
 
-                <div class="mt-10 pt-6 border-t border-white/5 flex-grow">
-                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-5">Indexed Documents</h4>
-                    <div id="bookList" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
-                        <p class="text-xs text-slate-500 italic text-center py-6">Your vault is currently empty.</p>
+                <section class="glass-card rounded-[2.5rem] p-7 flex-1 flex flex-col overflow-hidden shadow-lg min-h-[300px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Indexed Files (<span id="bookCount" class="text-indigo-400">0</span>)</h3>
                     </div>
-                </div>
-            </section>
-        </aside>
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2"></div>
+                </section>
+            </aside>
 
-        <div class="lg:col-span-8 flex flex-col gap-6">
-            
-            <header class="glass-card rounded-3xl p-6 lg:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Context</label>
-                        <div class="relative">
-                            <select id="bookSelect" class="w-full glass-inset rounded-xl px-4 py-3 text-sm text-slate-200 focus:ring-2 focus:ring-brand-500/50 outline-none appearance-none cursor-pointer">
+            <main class="flex-1 flex flex-col gap-8 min-h-[600px]">
+                
+                <header class="glass-card rounded-[2.5rem] p-8 shadow-lg">
+                    <div class="relative w-full mb-6">
+                        <div class="glass-inset rounded-2xl flex items-center px-6">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400"></i>
+                            <input id="topic" type="text" placeholder="What concept should the AI analyze today?" class="w-full bg-transparent border-none py-5 px-4 text-white placeholder-slate-600 focus:ring-0 text-base">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col xl:flex-row gap-4">
+                        <div class="flex gap-4 flex-1">
+                            <select id="level" class="glass-inset rounded-2xl px-6 py-4 text-xs font-bold text-slate-300 appearance-none cursor-pointer flex-1 focus:ring-1 focus:ring-indigo-500/30">
+                                <option value="University">Advanced (Uni)</option>
+                                <option value="Secondary">Standard (High School)</option>
+                                <option value="Primary">Simple (Basics)</option>
+                            </select>
+                            <select id="bookSelector" class="glass-inset rounded-2xl px-6 py-4 text-xs font-bold text-slate-300 appearance-none cursor-pointer flex-1 focus:ring-1 focus:ring-indigo-500/30 truncate">
                                 <option value="all">Global Database</option>
                             </select>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                        </div>
+                        
+                        <div class="flex gap-3">
+                            <button onclick="requestAI('explain')" class="flex-1 xl:flex-none btn-indigo py-4 px-6 rounded-2xl transition-all font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="book-open" class="w-4 h-4"></i> Explain
+                            </button>
+                            <button onclick="requestAI('quiz')" class="flex-1 xl:flex-none btn-emerald py-4 px-6 rounded-2xl transition-all font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="help-circle" class="w-4 h-4"></i> Practice Quiz
+                            </button>
+                            <button onclick="requestAI('notes')" class="flex-1 xl:flex-none btn-amber py-4 px-6 rounded-2xl transition-all font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
+                                <i data-lucide="file-text" class="w-4 h-4"></i> Generate Notes
+                            </button>
                         </div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Detail Level</label>
-                        <div class="relative">
-                            <select id="levelSelect" class="w-full glass-inset rounded-xl px-4 py-3 text-sm text-slate-200 focus:ring-2 focus:ring-brand-500/50 outline-none appearance-none cursor-pointer">
-                                <option value="University">Advanced / University</option>
-                                <option value="Secondary School">Standard / Secondary</option>
-                                <option value="Primary School">Simple / Beginner</option>
-                            </select>
-                            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                </header>
+
+                <section class="glass-card rounded-[2.5rem] flex-1 flex flex-col shadow-2xl relative overflow-hidden">
+                    <div id="result" class="flex-1 p-8 lg:p-12 overflow-y-auto custom-scrollbar prose prose-invert max-w-none">
+                        <div class="h-full flex flex-col items-center justify-center opacity-40 text-center py-20">
+                            <div class="w-20 h-20 bg-slate-900 rounded-[2rem] flex items-center justify-center mb-6 border border-white/5">
+                                <i data-lucide="cpu" class="w-10 h-10 text-slate-700"></i>
+                             </div>
+                            <h4 class="text-xl font-bold text-white font-display">Neural Engine Idle</h4>
+                            <p class="max-w-xs mt-3 text-sm leading-relaxed text-slate-500">Select a mode above to begin synthesizing your study materials.</p>
                         </div>
                     </div>
-                </div>
+                </section>
+            </main>
+        </main>
+    </div>
 
-                <div class="glass-inset rounded-2xl mb-4">
-                    <textarea id="topicInput" rows="3" placeholder="Paste a question, enter a concept, or ask for a summary..." 
-                        class="w-full bg-transparent border-0 px-5 py-4 text-base text-slate-100 placeholder:text-slate-600 focus:ring-0 outline-none resize-none"></textarea>
-                </div>
-                
-                <div class="flex flex-wrap gap-3">
-                    <button onclick="runEngine('explain')" class="flex-1 btn-indigo rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
-                        <i data-lucide="sparkles" class="w-4 h-4 icon-glow-indigo"></i> Deep Explain
-                    </button>
-                    <button onclick="runEngine('notes')" class="flex-1 btn-emerald rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
-                        <i data-lucide="file-text" class="w-4 h-4 icon-glow-emerald"></i> Generate Notes
-                    </button>
-                    <button onclick="runEngine('quiz')" class="flex-1 btn-amber rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
-                        <i data-lucide="help-circle" class="w-4 h-4 icon-glow-amber"></i> Practice Quiz
-                    </button>
-                </div>
-            </header>
-
-            <section id="displayArea" class="glass-card rounded-3xl flex-grow relative overflow-hidden flex flex-col min-h-[450px]">
-                <div id="emptyState" class="flex flex-col items-center justify-center h-full p-8 text-center text-slate-500">
-                    <div class="w-20 h-20 rounded-3xl glass-inset flex items-center justify-center mb-6">
-                        <i data-lucide="cpu" class="w-10 h-10 text-slate-700"></i>
-                    </div>
-                    <h3 class="font-display font-semibold text-slate-300 mb-1">Neural Engine Idle</h3>
-                    <p class="text-sm max-w-xs opacity-60">Ready to synthesize your documents. Select a mode above to begin.</p>
-                </div>
-                
-                <div id="contentWrapper" class="hidden p-8 md:p-10 overflow-y-auto h-full w-full">
-                    <div id="markdownContent" class="prose prose-invert prose-indigo max-w-none animate-in fade-in slide-in-from-bottom-4 duration-700"></div>
-                </div>
-            </section>
-        </div>
-    </main>
+    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass-card text-white px-8 py-4 rounded-2xl shadow-2xl opacity-0 transition-all duration-500 z-[100] font-bold text-xs pointer-events-none border border-indigo-500/20"></div>
 
     <script>
-        const API_BASE = "https://study-ai-tq7i.onrender.com";
-        const supabase = window.supabase.createClient(
-            "https://hffbjtbahfwudigywzzx.supabase.co",
-            "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
-        );
+        const api = "https://study-ai-tq7i.onrender.com";
+        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
+        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let currentUser = null;
+        let allBooks = [];
 
         lucide.createIcons();
 
+        // --- AUTH LOGIC (Your functional code) ---
         async function checkUser() {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                window.location.href = "login.html"; 
-            } else {
-                currentUser = user;
-                document.getElementById("userEmail").innerText = user.email;
+            const { data } = await supabaseClient.auth.getUser();
+            if (data?.user) {
+                currentUser = data.user;
+                document.getElementById("loginScreen").classList.add("hidden");
+                document.getElementById("appContainer").classList.remove("hidden");
                 loadBooks();
             }
         }
 
-        async function handleLogout() {
-            await supabase.auth.signOut();
-            window.location.href = "login.html";
+        async function login() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) return showToast(`⚠️ ${error.message}`);
+            checkUser();
         }
 
+        async function logout() {
+            await supabaseClient.auth.signOut();
+            location.reload();
+        }
+
+        // --- LIBRARY LOGIC ---
         async function loadBooks() {
             try {
-                const res = await fetch(`${API_BASE}/books`, {
-                    headers: { "x-user-id": currentUser.id }
-                });
-                const books = await res.json();
-                
-                const select = document.getElementById("bookSelect");
-                const list = document.getElementById("bookList");
-                
-                select.innerHTML = '<option value="all">Global Database</option>';
-                list.innerHTML = "";
-
-                if (!books || books.length === 0) {
-                    list.innerHTML = '<p class="text-xs text-slate-600 italic text-center py-6">Vault empty.</p>';
-                    return;
-                }
-
-                books.forEach(book => {
-                    const opt = document.createElement("option");
-                    opt.value = book.filename;
-                    opt.innerText = book.filename;
-                    select.appendChild(opt);
-
-                    list.innerHTML += `
-                        <div class="flex items-center justify-between p-3.5 glass-inset rounded-xl group hover:border-brand-500/30 transition-all cursor-default">
-                            <div class="flex items-center gap-3 overflow-hidden">
-                                <i data-lucide="file-text" class="w-4 h-4 text-slate-500 group-hover:text-brand-400"></i>
-                                <span class="text-xs font-medium text-slate-300 truncate" title="${book.filename}">${book.filename}</span>
-                            </div>
-                            <div class="h-1.5 w-1.5 rounded-full bg-brand-500 shadow-[0_0_5px_#6366f1] opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                        </div>`;
-                });
-                lucide.createIcons();
-            } catch (e) {
-                showToast("Vault connection offline.");
-            }
+                const res = await fetch(`${api}/books`, { headers: { "x-user-id": currentUser.id } });
+                allBooks = await res.json();
+                renderBooks();
+            } catch (err) { console.error(err); }
         }
 
-        async function handleUpload() {
-            const fileInput = document.getElementById("bookFile");
-            if (!fileInput.files[0]) return showToast("No file selected.");
+        function renderBooks() {
+            const container = document.getElementById("books");
+            const selector = document.getElementById("bookSelector");
+            container.innerHTML = "";
+            selector.innerHTML = '<option value="all">Global Database</option>';
+            document.getElementById("bookCount").innerText = allBooks.length;
 
+            allBooks.forEach(book => {
+                const name = book.filename || book.name;
+                const displayName = name.split('_').slice(1).join('_') || name;
+                
+                const div = document.createElement("div");
+                div.className = "group glass-inset p-4 rounded-2xl flex items-center justify-between transition-all hover:border-indigo-500/30";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400"></i>
+                        <span class="text-xs truncate text-slate-300 font-medium">${displayName}</span>
+                    </div>
+                    <button onclick="deleteBook('${encodeURIComponent(name)}')" class="p-1.5 text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                `;
+                container.appendChild(div);
+
+                const opt = document.createElement("option");
+                opt.value = name; opt.innerText = displayName;
+                selector.appendChild(opt);
+            });
+            lucide.createIcons();
+        }
+
+        // --- UPLOAD & SSE PROGRESS (The core of your server interaction) ---
+        async function uploadBook() {
+            const fileInput = document.getElementById("bookFile");
+            if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
             const file = fileInput.files[0];
-            const uploadBtn = document.getElementById("uploadBtn");
-            const progressContainer = document.getElementById("progressContainer");
-            const progressBar = document.getElementById("progressBar");
+            const progWrapper = document.getElementById("progWrapper");
+            const progBar = document.getElementById("progBar");
+            const progText = document.getElementById("progText");
+            let eventSource = null;
 
             try {
-                uploadBtn.disabled = true;
-                uploadBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Initializing...';
-                lucide.createIcons();
-                progressContainer.classList.remove("hidden");
+                progWrapper.classList.remove('hidden');
+                progBar.style.width = '5%';
+                progText.innerText = 'Requesting link...';
 
-                const urlRes = await fetch(`${API_BASE}/generate-upload-url`, {
+                const signedRes = await fetch(`${api}/generate-upload-url`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
                     body: JSON.stringify({ filename: file.name })
                 });
-                const { uploadUrl, fileKey } = await urlRes.json();
+                const { uploadUrl, fileKey } = await signedRes.json();
 
-                await fetch(uploadUrl, {
-                    method: "PUT",
-                    body: file,
-                    headers: { "Content-Type": file.type }
-                });
+                await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
 
-                const eventSource = new EventSource(`${API_BASE}/progress?userId=${currentUser.id}`);
+                eventSource = new EventSource(`${api}/progress`);
                 eventSource.onmessage = (event) => {
                     const data = JSON.parse(event.data);
-                    progressBar.style.width = `${data.progress}%`;
-                    document.getElementById("progressPercent").innerText = `${data.progress}%`;
-                    document.getElementById("progressText").innerText = data.step;
-                    
-                    if (data.progress === 100) {
+                    progText.innerText = `${data.step} ${data.progress}%`;
+                    progBar.style.width = `${data.progress}%`;
+                    if (data.progress >= 100) {
                         eventSource.close();
-                        setTimeout(() => {
-                            progressContainer.classList.add("hidden");
-                            uploadBtn.disabled = false;
-                            uploadBtn.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i> Sync to Engine';
-                            lucide.createIcons();
-                            loadBooks();
-                            showToast("Document indexed.");
-                        }, 1000);
+                        showToast("✅ Document Indexed");
+                        loadBooks();
+                        setTimeout(() => progWrapper.classList.add('hidden'), 3000);
                     }
                 };
 
-                await fetch(`${API_BASE}/upload`, {
+                await fetch(`${api}/upload`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
                     body: JSON.stringify({ fileKey, filename: file.name })
                 });
 
-            } catch (e) {
-                showToast("Sync failed.");
-                uploadBtn.disabled = false;
-                progressContainer.classList.add("hidden");
+            } catch (err) {
+                if (eventSource) eventSource.close();
+                showToast("❌ Upload Failed");
+                progWrapper.classList.add('hidden');
             }
         }
 
-        async function runEngine(type) {
-            const topic = document.getElementById("topicInput").value;
-            const book = document.getElementById("bookSelect").value;
-            const level = document.getElementById("levelSelect").value;
-            const emptyState = document.getElementById("emptyState");
-            const contentWrapper = document.getElementById("contentWrapper");
+        // --- AI REQUESTS ---
+        async function requestAI(type) {
+            const topic = document.getElementById("topic").value;
+            const resultBox = document.getElementById("result");
+            if (!topic) return showToast("⚠️ Enter a topic.");
 
-            if (!topic || topic.trim().length < 3) return showToast("Input too short.");
-
-            emptyState.classList.remove("hidden");
-            contentWrapper.classList.add("hidden");
-            
-            emptyState.innerHTML = `
-                <div class="flex flex-col items-center">
-                    <div class="relative w-16 h-16 mb-6">
-                        <div class="absolute inset-0 border-2 border-brand-500/20 rounded-full"></div>
-                        <div class="absolute inset-0 border-2 border-brand-500 rounded-full border-t-transparent animate-spin"></div>
-                        <i data-lucide="zap" class="absolute inset-0 m-auto w-5 h-5 text-brand-400 animate-pulse"></i>
-                    </div>
-                    <h3 class="font-display font-semibold text-white mb-1 uppercase tracking-widest text-xs">Engine Processing</h3>
-                    <p class="text-xs text-slate-500">Generating intelligence...</p>
-                </div>
-            `;
+            resultBox.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full py-20">
+                    <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin text-indigo-500"></i>
+                    <p class="text-[10px] font-bold tracking-[0.3em] text-indigo-400 animate-pulse">SYNTHESIZING KNOWLEDGE</p>
+                </div>`;
             lucide.createIcons();
 
             try {
-                const endpoint = type === 'explain' ? '/deep-explain' : `/${type}`;
-                const res = await fetch(`${API_BASE}${endpoint}`, {
+                const endpoint = type === 'explain' ? 'deep-explain' : type;
+                const res = await fetch(`${api}/${endpoint}`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
-                    body: JSON.stringify({ topic, book, level })
+                    body: JSON.stringify({ 
+                        topic, 
+                        level: document.getElementById("level").value, 
+                        book: document.getElementById("bookSelector").value 
+                    })
                 });
-
                 const data = await res.json();
-                const content = data.explanation || data.notes || data.quiz || "No response.";
-
-                emptyState.classList.add("hidden");
-                contentWrapper.classList.remove("hidden");
-                document.getElementById("markdownContent").innerHTML = marked.parse(content);
-
-            } catch (e) {
-                emptyState.innerHTML = `<p class="text-red-400 text-sm">Engine timeout.</p>`;
+                const raw = data.explanation || data.quiz || data.notes;
+                resultBox.innerHTML = `<div class="animate-in fade-in slide-in-from-bottom-4 duration-700">${marked.parse(raw)}</div>`;
+            } catch (err) {
+                resultBox.innerHTML = `<p class="text-red-400">Connection error.</p>`;
             }
         }
 
+        // --- UTILS ---
         function updateFileName() {
             const input = document.getElementById('bookFile');
-            const display = document.getElementById('fileNameDisplay');
-            if (input.files[0]) {
-                display.innerText = input.files[0].name;
-                display.classList.add("text-brand-400");
-            }
+            if (input.files[0]) document.getElementById('fileNameDisplay').innerText = input.files[0].name;
         }
 
         function showToast(msg) {
             const t = document.getElementById("toast");
-            document.getElementById("toastMsg").innerText = msg;
-            t.classList.remove("opacity-0", "-translate-y-4", "pointer-events-none");
-            t.classList.add("opacity-100", "translate-y-0");
-            setTimeout(() => {
-                t.classList.add("opacity-0", "-translate-y-4", "pointer-events-none");
-                t.classList.remove("opacity-100", "translate-y-0");
-            }, 3000);
+            t.innerText = msg;
+            t.classList.replace("opacity-0", "opacity-100");
+            setTimeout(() => t.classList.replace("opacity-100", "opacity-0"), 3000);
         }
 
         checkUser();
