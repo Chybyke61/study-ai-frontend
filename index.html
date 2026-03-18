@@ -363,87 +363,46 @@ const { uploadUrl, fileKey } = data;
 
         // --- AI ---
         async function requestAI(type) {
-    const topic = document.getElementById("topic").value;
-    const resultBox = document.getElementById("result");
+            const topic = document.getElementById("topic").value;
+            const resultBox = document.getElementById("result");
+            if (!topic) {
+                document.getElementById("topic").focus();
+                return showToast("⚠️ Enter a topic to analyze.");
+            }
 
-    if (!topic) {
-        document.getElementById("topic").focus();
-        return showToast("⚠️ Enter a topic to analyze.");
-    }
+            resultBox.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-indigo-400">
+                <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
+                <p class="font-bold tracking-widest text-xs animate-pulse">AI IS REASONING OVER YOUR DATA...</p>
+            </div>`;
+            lucide.createIcons();
 
-    // 🔄 Loading UI
-    resultBox.innerHTML = `
-        <div class="flex flex-col items-center justify-center h-full text-indigo-400">
-            <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
-            <p class="font-bold tracking-widest text-xs animate-pulse">
-                AI IS REASONING OVER YOUR DATA...
-            </p>
-        </div>
-    `;
-    lucide.createIcons();
+            try {
+                const endpoint = type === 'explain' ? 'deep-explain' : type;
+                const res = await fetch(`${api}/${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                    body: JSON.stringify({ 
+                        topic, 
+                        level: document.getElementById("level").value, 
+                        book: document.getElementById("bookSelector").value, 
+                        sessionId 
+                    })
+                });
+                const data = await res.json();
+                const raw = data.explanation || data.quiz || data.notes;
+                
+                if(!raw) { throw new Error("Empty response"); }
 
-    try {
-        const endpoint = type === 'explain' ? 'deep-explain' : type;
-
-        const res = await fetch(`${api}/${endpoint}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-user-id": currentUser.id
-            },
-            body: JSON.stringify({
-                topic,
-                level: document.getElementById("level").value,
-                book: document.getElementById("bookSelector").value,
-                sessionId
-            })
-        });
-
-        // ⚡️ STREAMING STARTS HERE
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-
-        let result = "";
-
-        // Clear loading UI before streaming
-        resultBox.innerHTML = "";
-
-        while (true) {
-            const { done, value } = await reader.read();
-            if (done) break;
-
-            const chunk = decoder.decode(value);
-
-            chunk.split("\n").forEach(line => {
-                if (line.startsWith("data: ")) {
-                    const text = line.replace("data: ", "");
-
-                    if (text === "[DONE]") return;
-
-                    result += text;
-
-                    // 🔥 LIVE MARKDOWN RENDER
-                    resultBox.innerHTML = `
-                        <div class="markdown-content animate-fade-in">
-                            ${marked.parse(result)}
-                        </div>
-                    `;
-                }
-            });
+                resultBox.innerHTML = `<div class="markdown-content animate-fade-in">${marked.parse(raw)}</div>`;
+            } catch (err) { 
+                resultBox.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-red-400">
+                    <i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i>
+                    <p class="font-bold">Request Failed. Please try again.</p>
+                </div>`; 
+                lucide.createIcons();
+            }
         }
-
-    } catch (err) {
-        console.error(err);
-
-        resultBox.innerHTML = `
-            <div class="flex flex-col items-center justify-center h-full text-red-400">
-                <i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i>
-                <p class="font-bold">Request Failed. Please try again.</p>
-            </div>
-        `;
-        lucide.createIcons();
-    }
-}
 
         // --- UTILS ---
         function updateFileName() {
