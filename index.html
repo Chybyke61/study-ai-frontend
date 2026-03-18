@@ -271,6 +271,7 @@
             const progWrapper = document.getElementById("progWrapper");
             const progBar = document.getElementById("progBar");
             const progText = document.getElementById("progText");
+            let eventSource = null;
 
             try {
                 // Reset Progress UI
@@ -354,7 +355,7 @@
                 });
 
                 // THEN connect to progress stream
-                const eventSource = new EventSource(`${api}/progress`);
+                eventSource = new EventSource(`${api}/progress`);
 
                 eventSource.onmessage = (event) => {
                     try {
@@ -396,6 +397,7 @@
                 }
 
             } catch (err) {
+                if (eventSource) eventSource.close();
                 console.error(err);
                 progBar.style.width = '100%';
                 progBar.classList.replace('bg-indigo-500', 'bg-red-500');
