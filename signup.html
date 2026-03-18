@@ -2,131 +2,111 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Create Account - Study.AI</title>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Study.AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            background-image: radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), transparent), radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.1), transparent);
+        }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.5); }
+        .neural-btn { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
+    </style>
 </head>
-
-<body class="min-h-screen flex items-center justify-center bg-slate-950 p-4 font-sans text-slate-100">
-
-    <div class="bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 rounded-3xl p-8 sm:p-10 w-full max-w-md shadow-2xl">
-
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2">Join Study.AI</h2>
-            <p class="text-slate-400 text-sm">Create your account to get started.</p>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="text-center mb-10">
+            <h1 class="font-['Plus_Jakarta_Sans'] text-3xl font-extrabold text-white tracking-tight">Create Identity</h1>
+            <p class="text-slate-400 mt-2 text-sm">Start your AI-powered learning journey</p>
         </div>
 
-        <div class="space-y-5">
-            <div>
-                <label for="email" class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Email</label>
-                <input 
-                    id="email"
-                    type="email"
-                    placeholder="you@example.com"
-                    class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
-                >
-            </div>
+        <div class="glass p-8 rounded-3xl shadow-2xl">
+            <form id="signupForm" class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1 mb-2">Email Address</label>
+                    <input type="email" id="email" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1 mb-2">Create Password</label>
+                    <input type="password" id="password" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="Min. 6 characters">
+                </div>
+                <button type="submit" id="submitBtn" class="w-full py-4 neural-btn rounded-xl font-bold text-sm text-white hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                    INITIALIZE ACCOUNT
+                </button>
+            </form>
 
-            <div>
-                <label for="password" class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Password</label>
-                <input 
-                    id="password"
-                    type="password"
-                    placeholder="Create a password"
-                    class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
-                >
-            </div>
-
-            <div>
-                <label for="confirmPassword" class="block text-sm font-medium text-slate-300 mb-1.5 ml-1">Confirm Password</label>
-                <input 
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="Repeat your password"
-                    class="w-full px-4 py-3 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all duration-200"
-                >
+            <div class="mt-8 text-center border-t border-slate-800/50 pt-6">
+                <p class="text-xs text-slate-500">Already using Study.AI? 
+                    <a href="login.html" class="text-emerald-400 font-bold hover:underline ml-1">Sign In</a>
+                </p>
             </div>
         </div>
-
-        <div class="mt-8 space-y-4">
-            <button 
-                onclick="signUp()" 
-                class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 px-4 rounded-xl shadow-lg shadow-indigo-600/20 transition-all duration-200 active:scale-[0.98]"
-            >
-                Create Account
-            </button>
-
-            <button 
-                onclick="window.location.href='index.html'" 
-                class="w-full bg-transparent border border-slate-600 hover:bg-slate-700/50 text-slate-300 font-medium py-3 px-4 rounded-xl transition-all duration-200 active:scale-[0.98]"
-            >
-                Back to Login
-            </button>
-        </div>
-
     </div>
 
     <script>
-        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co"
-        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
+lucide.createIcons();
 
-        const supabaseClient = supabase.createClient(
-            supabaseUrl,
-            supabaseKey
-        )
+const supabase = window.supabase.createClient(
+  "https://hffbjtbahfwudigywzzx.supabase.co",
+  "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
+);
 
-    function showToast(message){
+// ✅ AUTO LOGIN CHECK
+async function checkUser() {
+    const { data: { user } } = await supabase.auth.getUser();
 
-        const toast = document.getElementById("toast")
+    if (user) {
+        window.location.href = "index.html";
+    }
+}
 
-        toast.textContent = message
-        toast.classList.remove("opacity-0")
-        toast.classList.add("opacity-100")
+checkUser();
+
+// ✅ SIGNUP HANDLER
+document.getElementById('signupForm').onsubmit = async (e) => {
+    e.preventDefault();
+
+    const btn = document.getElementById('submitBtn');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="animate-pulse">INITIALIZING...</span>`;
+
+    try {
+        const { error } = await supabase.auth.signUp({ email, password });
+
+        if (error) {
+            btn.innerText = error.message;
+
+            setTimeout(() => {
+                btn.innerText = "INITIALIZE ACCOUNT";
+                btn.disabled = false;
+            }, 2000);
+
+            return;
+        }
+
+        btn.innerText = "SUCCESS ✅";
 
         setTimeout(() => {
-        toast.classList.remove("opacity-100")
-        toast.classList.add("opacity-0")
-        }, 3000)
+            window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+        }, 1000);
 
+    } catch (err) {
+        btn.innerText = "Network error";
+
+        setTimeout(() => {
+            btn.innerText = "INITIALIZE ACCOUNT";
+            btn.disabled = false;
+        }, 2000);
     }
-
-        async function signUp(){
-            const email = document.getElementById("email").value
-            const password = document.getElementById("password").value
-            const confirm = document.getElementById("confirmPassword").value
-
-            if(!email || !password || !confirm){
-                alert("Please fill all fields")
-                return
-            }
-
-            if(password !== confirm){
-                alert("Passwords do not match")
-                return
-            }
-
-            const { error } = await supabaseClient.auth.signUp({
-                email: email,
-                password: password
-            })
-
-            if(error){
-                alert(error.message)
-                return
-            }
-
-            await supabaseClient.auth.signOut() // Sign out immediately to prevent auto-login
-
-            showToast("Account created successfully. Please login.")
-            setTimeout(() => {
-                window.location.href = "index.html?email=" + encodeURIComponent(email)
-            }, 2000)
-        }
+};
     </script>
-
-    <div id="toast"
-class="fixed top-6 right-6 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg opacity-0 transition-opacity duration-300">
-</div>
-
 </body>
 </html>
