@@ -23,21 +23,15 @@
                         display: ['Plus Jakarta Sans', 'sans-serif'],
                     },
                     colors: {
+                        navy: {
+                            900: '#020617',
+                            800: '#0f172a',
+                            700: '#1e293b',
+                        },
                         brand: {
                             400: '#818cf8',
                             500: '#6366f1',
                             600: '#4f46e5',
-                        }
-                    },
-                    animation: {
-                        'blob': 'blob 10s infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
                         }
                     }
                 }
@@ -46,239 +40,196 @@
     </script>
 
     <style>
-        /* Base Theme */
         body { 
-            background-color: #050505; 
-            color: #e2e8f0;
-            overflow-x: hidden;
+            background-color: #020617; 
+            color: #f1f5f9;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%);
+            background-attachment: fixed;
         }
 
-        /* True Glassmorphism */
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        /* High-End Glassmorphism */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
         }
 
-        .glass-input {
-            background: rgba(0, 0, 0, 0.2);
+        .glass-inset {
+            background: rgba(2, 6, 23, 0.4);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-        .glass-input:focus-within {
-            background: rgba(0, 0, 0, 0.4);
-            border-color: rgba(99, 102, 241, 0.4);
-            box-shadow: 0 0 20px rgba(99, 102, 241, 0.1);
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .glass-button {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            transition: all 0.2s ease;
-        }
-        .glass-button:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: rgba(255, 255, 255, 0.15);
-        }
+        /* Glowing Action Buttons */
+        .btn-indigo { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; }
+        .btn-indigo:hover { background: #6366f1; color: white; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
 
-        /* Ambient Glow Backgrounds */
-        .ambient-bg {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: -1;
-            overflow: hidden;
-            pointer-events: none;
-        }
-        .orb-1 {
-            position: absolute;
-            top: -10%; left: -10%;
-            width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(80px);
-        }
-        .orb-2 {
-            position: absolute;
-            bottom: -20%; right: -10%;
-            width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%);
-            border-radius: 50%;
-            filter: blur(100px);
-        }
+        .btn-emerald { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
+        .btn-emerald:hover { background: #10b981; color: white; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
 
-        /* Subtle Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        .btn-amber { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
+        .btn-amber:hover { background: #f59e0b; color: white; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
 
-        /* Typography Refinements for AI Output */
-        .prose { color: #cbd5e1 !important; }
+        /* Smooth UI Elements */
+        .icon-glow-indigo { filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.8)); }
+        .icon-glow-emerald { filter: drop-shadow(0 0 3px rgba(16, 185, 129, 0.8)); }
+        .icon-glow-amber { filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.8)); }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        
+        /* Markdown Styling */
         .prose h1, .prose h2, .prose h3 { color: #f8fafc !important; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .prose strong { color: #f8fafc !important; }
-        .prose pre { background: rgba(0,0,0,0.3) !important; border: 1px solid rgba(255,255,255,0.05); }
+        .prose strong { color: #818cf8 !important; }
+        .prose code { background: rgba(99, 102, 241, 0.1) !important; color: #a5b4fc !important; padding: 2px 4px; border-radius: 4px; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col selection:bg-brand-500/30 font-sans">
+<body class="min-h-screen flex flex-col font-sans selection:bg-brand-500/40">
 
-    <div class="ambient-bg">
-        <div class="orb-1 animate-blob"></div>
-        <div class="orb-2 animate-blob" style="animation-delay: 2s;"></div>
-    </div>
-
-    <div id="toast" class="fixed top-8 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl glass-panel text-white text-sm font-medium transition-all duration-400 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
-        <div class="w-6 h-6 rounded-full bg-brand-500/20 flex items-center justify-center">
-            <i data-lucide="bell" class="w-3.5 h-3.5 text-brand-400"></i>
-        </div>
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-6 py-3 rounded-xl glass-card text-white text-sm font-medium transition-all duration-500 opacity-0 -translate-y-4 pointer-events-none flex items-center gap-3">
+        <i data-lucide="info" class="w-4 h-4 text-brand-400"></i>
         <span id="toastMsg">Notification</span>
     </div>
 
-    <div class="pt-6 px-6 max-w-7xl mx-auto w-full sticky top-0 z-40">
-        <nav class="glass-panel rounded-2xl h-16 flex items-center justify-between px-6">
+    <nav class="sticky top-0 z-40 bg-navy-900/60 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center shadow-lg shadow-brand-500/25">
-                    <i data-lucide="brain-circuit" class="w-4 h-4 text-white"></i>
+                <div class="w-9 h-9 bg-gradient-to-br from-brand-600 to-indigo-800 rounded-xl flex items-center justify-center shadow-lg shadow-brand-500/20">
+                    <i data-lucide="brain-circuit" class="w-5 h-5 text-white"></i>
                 </div>
-                <span class="font-display font-bold text-lg tracking-tight text-white">
+                <span class="font-display font-bold text-xl tracking-tight text-white">
                     Study<span class="text-brand-400">.AI</span>
                 </span>
             </div>
             
-            <div class="flex items-center gap-5">
-                <div class="hidden sm:flex flex-col items-end">
-                    <span id="userEmail" class="text-[11px] font-medium text-slate-400">authenticating...</span>
-                    <div class="flex items-center gap-1.5 mt-0.5">
-                        <span class="relative flex h-2 w-2">
-                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                        </span>
-                        <span class="text-[9px] text-emerald-400 uppercase tracking-wider font-bold">System Online</span>
-                    </div>
+            <div class="flex items-center gap-6">
+                <div class="hidden md:flex flex-col items-end">
+                    <span id="userEmail" class="text-xs font-medium text-slate-400">authenticating...</span>
+                    <span class="text-[9px] text-brand-400 uppercase tracking-widest font-bold flex items-center gap-1.5 mt-0.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></span>
+                        Premium Access
+                    </span>
                 </div>
-                <div class="h-6 w-px bg-white/10 hidden sm:block"></div>
-                <button onclick="handleLogout()" class="text-slate-400 hover:text-white transition-colors" title="Logout">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                <button onclick="handleLogout()" class="p-2 text-slate-400 hover:text-white transition-colors" title="Logout">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
-        </nav>
-    </div>
+        </div>
+    </nav>
 
     <main class="flex-grow max-w-7xl mx-auto px-6 py-8 w-full grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <aside class="lg:col-span-4 flex flex-col gap-6">
-            <section class="glass-panel rounded-3xl p-6 flex flex-col h-full">
+        <aside class="lg:col-span-4 flex flex-col">
+            <section class="glass-card rounded-3xl p-6 flex-grow flex flex-col border border-white/10">
                 <div class="flex items-center justify-between mb-8">
-                    <h3 class="font-display font-semibold text-sm text-white flex items-center gap-2">
-                        <i data-lucide="hard-drive" class="w-4 h-4 text-brand-400"></i> Knowledge Vault
+                    <h3 class="flex items-center gap-2.5 text-xs font-bold text-slate-400 uppercase tracking-[0.2em]">
+                        <i data-lucide="database" class="w-4 h-4 text-brand-400 icon-glow-indigo"></i> Knowledge Base
                     </h3>
                 </div>
                 
                 <div class="space-y-4">
                     <div class="relative group">
                         <input type="file" id="bookFile" onchange="updateFileName()" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept=".pdf,.docx">
-                        <div class="glass-button rounded-2xl p-8 text-center border-dashed group-hover:border-brand-500/50 transition-all duration-300">
-                            <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:bg-brand-500/10 transition-all duration-300">
-                                <i data-lucide="cloud-upload" class="w-5 h-5 text-slate-400 group-hover:text-brand-400"></i>
+                        <div class="glass-inset rounded-2xl p-6 text-center group-hover:border-brand-500/40 transition-all duration-300">
+                            <div class="w-11 h-11 rounded-full bg-navy-800 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                                <i data-lucide="upload-cloud" class="w-5 h-5 text-slate-400 group-hover:text-brand-400"></i>
                             </div>
-                            <p id="fileNameDisplay" class="text-sm font-medium text-slate-300 truncate px-2">Drag & Drop Documents</p>
-                            <p class="text-[10px] text-slate-500 mt-2 uppercase font-medium tracking-wider">PDF, DOCX • Max 25MB</p>
+                            <p id="fileNameDisplay" class="text-sm font-medium text-slate-300 truncate px-2">Drop PDF or DOCX</p>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase font-bold tracking-tighter">Max 25MB</p>
                         </div>
                     </div>
                     
-                    <button id="uploadBtn" onclick="handleUpload()" class="w-full py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl font-medium text-sm transition-all duration-200 active:scale-[0.98] flex items-center justify-center gap-2">
-                        <i data-lucide="zap" class="w-4 h-4 text-brand-400"></i>
-                        <span>Sync to Neural Engine</span>
+                    <button id="uploadBtn" onclick="handleUpload()" class="w-full py-3.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-semibold text-sm transition-all shadow-lg shadow-brand-500/20 active:scale-[0.98] flex items-center justify-center gap-2">
+                        <i data-lucide="zap" class="w-4 h-4"></i>
+                        Sync to Engine
                     </button>
 
-                    <div id="progressContainer" class="hidden p-4 rounded-2xl bg-black/20 border border-brand-500/20">
-                        <div class="flex justify-between text-[11px] font-medium mb-2 uppercase tracking-wider text-slate-400">
-                            <span id="progressText" class="animate-pulse text-brand-400">Processing Data...</span>
-                            <span id="progressPercent">0%</span>
+                    <div id="progressContainer" class="hidden glass-inset p-4 rounded-xl">
+                        <div class="flex justify-between text-[10px] font-bold mb-2 text-slate-400 uppercase">
+                            <span id="progressText" class="animate-pulse">Analyzing...</span>
+                            <span id="progressPercent" class="text-brand-400">0%</span>
                         </div>
-                        <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
-                            <div id="progressBar" class="h-full bg-brand-500 shadow-[0_0_10px_#6366f1] transition-all duration-300 ease-out" style="width: 0%"></div>
+                        <div class="h-1.5 w-full bg-navy-900 rounded-full overflow-hidden">
+                            <div id="progressBar" class="h-full bg-brand-500 transition-all duration-300" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-8 pt-6 border-t border-white/5 flex-grow">
-                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-4">Indexed Files</h4>
-                    <div id="bookList" class="space-y-2 max-h-[250px] overflow-y-auto pr-2">
-                        <div class="flex flex-col items-center justify-center py-6 text-slate-600">
-                            <i data-lucide="ghost" class="w-6 h-6 mb-2 opacity-50"></i>
-                            <p class="text-[11px] uppercase tracking-wider font-medium">Vault is empty</p>
-                        </div>
+                <div class="mt-10 pt-6 border-t border-white/5 flex-grow">
+                    <h4 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-5">Indexed Documents</h4>
+                    <div id="bookList" class="space-y-3 max-h-[300px] overflow-y-auto pr-2">
+                        <p class="text-xs text-slate-500 italic text-center py-6">Your vault is currently empty.</p>
                     </div>
                 </div>
             </section>
         </aside>
 
-        <div class="lg:col-span-8 flex flex-col min-h-[600px] gap-6">
+        <div class="lg:col-span-8 flex flex-col gap-6">
             
-            <header class="glass-panel rounded-3xl p-6 lg:p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <header class="glass-card rounded-3xl p-6 lg:p-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Context Target</label>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Context</label>
                         <div class="relative">
-                            <select id="bookSelect" class="w-full glass-input rounded-xl px-4 py-3 text-sm text-slate-200 outline-none appearance-none cursor-pointer">
-                                <option value="all">Global Database Search</option>
+                            <select id="bookSelect" class="w-full glass-inset rounded-xl px-4 py-3 text-sm text-slate-200 focus:ring-2 focus:ring-brand-500/50 outline-none appearance-none cursor-pointer">
+                                <option value="all">Global Database</option>
                             </select>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         </div>
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Cognitive Level</label>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Detail Level</label>
                         <div class="relative">
-                            <select id="levelSelect" class="w-full glass-input rounded-xl px-4 py-3 text-sm text-slate-200 outline-none appearance-none cursor-pointer">
-                                <option value="University">Undergraduate / Advanced</option>
-                                <option value="Secondary School">High School / Intermediate</option>
-                                <option value="Primary School">Beginner / Fundamental</option>
+                            <select id="levelSelect" class="w-full glass-inset rounded-xl px-4 py-3 text-sm text-slate-200 focus:ring-2 focus:ring-brand-500/50 outline-none appearance-none cursor-pointer">
+                                <option value="University">Advanced / University</option>
+                                <option value="Secondary School">Standard / Secondary</option>
+                                <option value="Primary School">Simple / Beginner</option>
                             </select>
                             <i data-lucide="chevron-down" class="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                         </div>
                     </div>
                 </div>
 
-                <div class="glass-input rounded-2xl p-1 mb-4">
-                    <textarea id="topicInput" rows="3" placeholder="Define a concept, paste a complex question, or request a summary..." 
-                        class="w-full bg-transparent border-0 px-5 py-4 text-sm text-white placeholder:text-slate-500 focus:ring-0 outline-none resize-none"></textarea>
+                <div class="glass-inset rounded-2xl mb-4">
+                    <textarea id="topicInput" rows="3" placeholder="Paste a question, enter a concept, or ask for a summary..." 
+                        class="w-full bg-transparent border-0 px-5 py-4 text-base text-slate-100 placeholder:text-slate-600 focus:ring-0 outline-none resize-none"></textarea>
                 </div>
                 
                 <div class="flex flex-wrap gap-3">
-                    <button onclick="runEngine('explain')" class="flex-1 glass-button rounded-xl px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-300 hover:text-white flex items-center justify-center gap-2">
-                        <i data-lucide="sparkles" class="w-4 h-4 text-brand-400"></i> Deep Explain
+                    <button onclick="runEngine('explain')" class="flex-1 btn-indigo rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="sparkles" class="w-4 h-4 icon-glow-indigo"></i> Deep Explain
                     </button>
-                    <button onclick="runEngine('notes')" class="flex-1 glass-button rounded-xl px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-300 hover:text-white flex items-center justify-center gap-2">
-                        <i data-lucide="feather" class="w-4 h-4 text-emerald-400"></i> Smart Notes
+                    <button onclick="runEngine('notes')" class="flex-1 btn-emerald rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="file-text" class="w-4 h-4 icon-glow-emerald"></i> Generate Notes
                     </button>
-                    <button onclick="runEngine('quiz')" class="flex-1 glass-button rounded-xl px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-300 hover:text-white flex items-center justify-center gap-2">
-                        <i data-lucide="brain" class="w-4 h-4 text-amber-400"></i> Generate Quiz
+                    <button onclick="runEngine('quiz')" class="flex-1 btn-amber rounded-xl px-4 py-3 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all">
+                        <i data-lucide="help-circle" class="w-4 h-4 icon-glow-amber"></i> Practice Quiz
                     </button>
                 </div>
             </header>
 
-            <section id="displayArea" class="glass-panel rounded-3xl flex-grow relative overflow-hidden flex flex-col">
-                <div id="emptyState" class="flex flex-col items-center justify-center h-full min-h-[400px] text-slate-500 p-8 text-center">
-                    <div class="relative w-20 h-20 mb-6 flex items-center justify-center">
-                        <div class="absolute inset-0 border border-white/10 rounded-full animate-[spin_10s_linear_infinite]"></div>
-                        <div class="absolute inset-2 border border-brand-500/20 rounded-full animate-[spin_7s_linear_infinite_reverse]"></div>
-                        <i data-lucide="cpu" class="w-8 h-8 text-slate-600"></i>
+            <section id="displayArea" class="glass-card rounded-3xl flex-grow relative overflow-hidden flex flex-col min-h-[450px]">
+                <div id="emptyState" class="flex flex-col items-center justify-center h-full p-8 text-center text-slate-500">
+                    <div class="w-20 h-20 rounded-3xl glass-inset flex items-center justify-center mb-6">
+                        <i data-lucide="cpu" class="w-10 h-10 text-slate-700"></i>
                     </div>
-                    <h3 class="font-display font-semibold text-slate-300 mb-2">Engine Standby</h3>
-                    <p class="text-sm max-w-sm text-slate-500">Configure parameters and input a prompt to initiate neural processing.</p>
+                    <h3 class="font-display font-semibold text-slate-300 mb-1">Neural Engine Idle</h3>
+                    <p class="text-sm max-w-xs opacity-60">Ready to synthesize your documents. Select a mode above to begin.</p>
                 </div>
                 
                 <div id="contentWrapper" class="hidden p-8 md:p-10 overflow-y-auto h-full w-full">
-                    <div id="markdownContent" class="prose prose-invert prose-indigo max-w-none animate-in fade-in slide-in-from-bottom-4 duration-700 font-sans text-sm leading-relaxed"></div>
+                    <div id="markdownContent" class="prose prose-invert prose-indigo max-w-none animate-in fade-in slide-in-from-bottom-4 duration-700"></div>
                 </div>
             </section>
         </div>
     </main>
 
     <script>
-        // --- CONFIG & SETUP ---
         const API_BASE = "https://study-ai-tq7i.onrender.com";
         const supabase = window.supabase.createClient(
             "https://hffbjtbahfwudigywzzx.supabase.co",
@@ -288,7 +239,6 @@
 
         lucide.createIcons();
 
-        // --- AUTH ---
         async function checkUser() {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) {
@@ -305,7 +255,6 @@
             window.location.href = "login.html";
         }
 
-        // --- LIBRARY LOGIC ---
         async function loadBooks() {
             try {
                 const res = await fetch(`${API_BASE}/books`, {
@@ -316,16 +265,11 @@
                 const select = document.getElementById("bookSelect");
                 const list = document.getElementById("bookList");
                 
-                select.innerHTML = '<option value="all" class="bg-slate-900">Global Database Search</option>';
+                select.innerHTML = '<option value="all">Global Database</option>';
                 list.innerHTML = "";
 
                 if (!books || books.length === 0) {
-                    list.innerHTML = `
-                        <div class="flex flex-col items-center justify-center py-6 text-slate-600">
-                            <i data-lucide="ghost" class="w-6 h-6 mb-2 opacity-50"></i>
-                            <p class="text-[11px] uppercase tracking-wider font-medium">Vault is empty</p>
-                        </div>`;
-                    lucide.createIcons();
+                    list.innerHTML = '<p class="text-xs text-slate-600 italic text-center py-6">Vault empty.</p>';
                     return;
                 }
 
@@ -333,91 +277,71 @@
                     const opt = document.createElement("option");
                     opt.value = book.filename;
                     opt.innerText = book.filename;
-                    opt.className = "bg-slate-900"; // Prevents white background on select dropdown
                     select.appendChild(opt);
 
                     list.innerHTML += `
-                        <div class="flex items-center justify-between p-3.5 glass-button rounded-xl group cursor-default">
+                        <div class="flex items-center justify-between p-3.5 glass-inset rounded-xl group hover:border-brand-500/30 transition-all cursor-default">
                             <div class="flex items-center gap-3 overflow-hidden">
-                                <i data-lucide="file-text" class="w-4 h-4 text-slate-400 group-hover:text-brand-400 transition-colors"></i>
+                                <i data-lucide="file-text" class="w-4 h-4 text-slate-500 group-hover:text-brand-400"></i>
                                 <span class="text-xs font-medium text-slate-300 truncate" title="${book.filename}">${book.filename}</span>
                             </div>
-                            <div class="w-2 h-2 rounded-full bg-emerald-500/50 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                            <div class="h-1.5 w-1.5 rounded-full bg-brand-500 shadow-[0_0_5px_#6366f1] opacity-0 group-hover:opacity-100 transition-opacity"></div>
                         </div>`;
                 });
                 lucide.createIcons();
             } catch (e) {
-                showToast("Connection to library lost.");
+                showToast("Vault connection offline.");
             }
         }
 
-        // --- UPLOAD PROCESS ---
         async function handleUpload() {
             const fileInput = document.getElementById("bookFile");
-            if (!fileInput.files[0]) return showToast("Please select a document first.");
+            if (!fileInput.files[0]) return showToast("No file selected.");
 
             const file = fileInput.files[0];
-            if (!file.name.endsWith(".pdf") && !file.name.endsWith(".docx")) {
-                return showToast("Only PDF and DOCX formats allowed.");
-            }
             const uploadBtn = document.getElementById("uploadBtn");
             const progressContainer = document.getElementById("progressContainer");
             const progressBar = document.getElementById("progressBar");
-            const progressText = document.getElementById("progressText");
-            const progressPercent = document.getElementById("progressPercent");
 
             try {
                 uploadBtn.disabled = true;
-                uploadBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin text-brand-400"></i> <span>Initializing Sync...</span>';
+                uploadBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Initializing...';
                 lucide.createIcons();
                 progressContainer.classList.remove("hidden");
 
-                // 1. Get Signed URL
-                progressText.innerText = "Securing link...";
                 const urlRes = await fetch(`${API_BASE}/generate-upload-url`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
                     body: JSON.stringify({ filename: file.name })
                 });
                 const { uploadUrl, fileKey } = await urlRes.json();
-                if (!uploadUrl) throw new Error("Upload URL failed");
 
-                // 2. Upload to R2
-                progressText.innerText = "Transmitting data...";
                 await fetch(uploadUrl, {
                     method: "PUT",
                     body: file,
                     headers: { "Content-Type": file.type }
                 });
 
-                // 3. Connect SSE Progress
                 const eventSource = new EventSource(`${API_BASE}/progress?userId=${currentUser.id}`);
                 eventSource.onmessage = (event) => {
                     const data = JSON.parse(event.data);
                     progressBar.style.width = `${data.progress}%`;
-                    progressPercent.innerText = `${data.progress}%`;
-                    progressText.innerText = data.step;
+                    document.getElementById("progressPercent").innerText = `${data.progress}%`;
+                    document.getElementById("progressText").innerText = data.step;
                     
                     if (data.progress === 100) {
                         eventSource.close();
                         setTimeout(() => {
                             progressContainer.classList.add("hidden");
                             uploadBtn.disabled = false;
-                            uploadBtn.innerHTML = '<i data-lucide="zap" class="w-4 h-4 text-brand-400"></i><span>Sync to Neural Engine</span>';
+                            uploadBtn.innerHTML = '<i data-lucide="zap" class="w-4 h-4"></i> Sync to Engine';
                             lucide.createIcons();
-                            
-                            // Reset file input UI
-                            fileInput.value = '';
-                            document.getElementById('fileNameDisplay').innerText = 'Drag & Drop Documents';
-                            document.getElementById('fileNameDisplay').classList.remove('text-brand-400');
-                            
                             loadBooks();
-                            showToast("Document indexed successfully.");
+                            showToast("Document indexed.");
                         }, 1000);
                     }
                 };
 
-                // 4. Trigger Indexing
                 await fetch(`${API_BASE}/upload`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
@@ -425,40 +349,33 @@
                 });
 
             } catch (e) {
-                showToast("Upload Error. Please try again.");
+                showToast("Sync failed.");
                 uploadBtn.disabled = false;
-                uploadBtn.innerHTML = '<i data-lucide="zap" class="w-4 h-4 text-brand-400"></i><span>Sync to Neural Engine</span>';
-                lucide.createIcons();
                 progressContainer.classList.add("hidden");
             }
         }
 
-        // --- AI ENGINE ---
         async function runEngine(type) {
             const topic = document.getElementById("topicInput").value;
             const book = document.getElementById("bookSelect").value;
             const level = document.getElementById("levelSelect").value;
-            
             const emptyState = document.getElementById("emptyState");
             const contentWrapper = document.getElementById("contentWrapper");
-            const markdownContent = document.getElementById("markdownContent");
 
-            if (!topic || topic.trim().length < 3) return showToast("Please define a topic or query.");
+            if (!topic || topic.trim().length < 3) return showToast("Input too short.");
 
-            // Show Loading State
             emptyState.classList.remove("hidden");
             contentWrapper.classList.add("hidden");
             
             emptyState.innerHTML = `
-                <div class="flex flex-col items-center justify-center">
-                    <div class="relative w-20 h-20 mb-6 flex items-center justify-center">
+                <div class="flex flex-col items-center">
+                    <div class="relative w-16 h-16 mb-6">
                         <div class="absolute inset-0 border-2 border-brand-500/20 rounded-full"></div>
                         <div class="absolute inset-0 border-2 border-brand-500 rounded-full border-t-transparent animate-spin"></div>
-                        <div class="absolute inset-3 border-2 border-emerald-500/30 rounded-full animate-[spin_3s_linear_infinite_reverse]"></div>
-                        <i data-lucide="brain-circuit" class="w-6 h-6 text-brand-400 animate-pulse"></i>
+                        <i data-lucide="zap" class="absolute inset-0 m-auto w-5 h-5 text-brand-400 animate-pulse"></i>
                     </div>
-                    <h3 class="font-display font-semibold text-white mb-2 tracking-widest uppercase text-sm">Processing Query</h3>
-                    <p class="text-xs text-slate-400">Synthesizing data from knowledge base...</p>
+                    <h3 class="font-display font-semibold text-white mb-1 uppercase tracking-widest text-xs">Engine Processing</h3>
+                    <p class="text-xs text-slate-500">Generating intelligence...</p>
                 </div>
             `;
             lucide.createIcons();
@@ -471,43 +388,23 @@
                     body: JSON.stringify({ topic, book, level })
                 });
 
-                if (!res.ok) throw new Error("API failed");
-
                 const data = await res.json();
-                const content = data.explanation || data.notes || data.quiz || "⚠️ No output generated.";
+                const content = data.explanation || data.notes || data.quiz || "No response.";
 
-                // Switch UI
                 emptyState.classList.add("hidden");
                 contentWrapper.classList.remove("hidden");
-                
-                // Parse and inject Markdown
-                markdownContent.innerHTML = marked.parse(content);
-
-                // Smooth scroll to top of content
-                document.getElementById('contentWrapper').scrollTo({ top: 0, behavior: 'smooth' });
+                document.getElementById("markdownContent").innerHTML = marked.parse(content);
 
             } catch (e) {
-                emptyState.classList.remove("hidden");
-                contentWrapper.classList.add("hidden");
-                emptyState.innerHTML = `
-                    <div class="text-center text-red-400">
-                        <div class="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
-                            <i data-lucide="alert-triangle" class="w-8 h-8 opacity-80"></i>
-                        </div>
-                        <p class="font-display font-semibold text-sm uppercase tracking-wider">Engine Timeout</p>
-                        <p class="text-xs opacity-70 mt-2">Connection interrupted. Please try again.</p>
-                    </div>`;
-                lucide.createIcons();
+                emptyState.innerHTML = `<p class="text-red-400 text-sm">Engine timeout.</p>`;
             }
         }
 
-        // --- UTILS ---
         function updateFileName() {
             const input = document.getElementById('bookFile');
             const display = document.getElementById('fileNameDisplay');
             if (input.files[0]) {
-                const name = input.files[0].name;
-                display.innerText = name.length > 30 ? name.substring(0, 27) + '...' : name;
+                display.innerText = input.files[0].name;
                 display.classList.add("text-brand-400");
             }
         }
@@ -515,17 +412,14 @@
         function showToast(msg) {
             const t = document.getElementById("toast");
             document.getElementById("toastMsg").innerText = msg;
-            
             t.classList.remove("opacity-0", "-translate-y-4", "pointer-events-none");
             t.classList.add("opacity-100", "translate-y-0");
-            
             setTimeout(() => {
                 t.classList.add("opacity-0", "-translate-y-4", "pointer-events-none");
                 t.classList.remove("opacity-100", "translate-y-0");
-            }, 3500);
+            }, 3000);
         }
 
-        // Boot
         checkUser();
     </script>
 </body>
