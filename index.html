@@ -492,6 +492,18 @@
                 t.classList.replace("translate-y-0", "-translate-y-2");
             }, 3500);
         }
+
+        function prefillEmailFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email");
+
+    if (email) {
+        document.getElementById("email").value = email;
+
+        // optional: clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+        }
         function goToSignup() {
     window.location.href = "signup.html";
         }
