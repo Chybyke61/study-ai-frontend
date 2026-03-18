@@ -95,7 +95,7 @@ document.getElementById('signupForm').onsubmit = async (e) => {
         btn.innerText = "SUCCESS ✅";
 
         setTimeout(() => {
-            window.location.href = `login.html?email=${encodeURIComponent(email)}`;
+            window.location.href = `${window.location.origin}/login.html?email=${encodeURIComponent(email)}&verify=1`;
         }, 1000);
 
     } catch (err) {
