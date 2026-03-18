@@ -389,7 +389,9 @@
 
                 const indexData = await indexRes.json();
                 if (!indexRes.ok) {
-                    eventSource.close();
+                    if (eventSource) {
+                        eventSource.close();
+                    }
                     throw new Error(indexData.error || "Indexing failed");
                 }
 
