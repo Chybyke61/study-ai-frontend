@@ -59,6 +59,21 @@
       "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
     );
 
+        async function handleEmailRedirect() {
+    const { data } = await supabase.auth.getSession();
+
+    if (data?.session) {
+        // user just verified email
+        const btn = document.getElementById("submitBtn");
+
+        btn.innerText = "Email verified ✅";
+
+        setTimeout(() => {
+            btn.innerText = "SIGN IN TO ENGINE";
+        }, 3000);
+    }
+        }
+
     // ✅ PREFILL EMAIL
     function prefillEmail() {
         const params = new URLSearchParams(window.location.search);
@@ -80,8 +95,10 @@
     }
 
     // ✅ RUN THEM
+    handleEmailRedirect();
     prefillEmail();
     checkUser();
+    showVerifyMessage();
 
     // ✅ LOGIN HANDLER
     document.getElementById('loginForm').onsubmit = async (e) => {
