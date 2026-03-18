@@ -204,6 +204,25 @@
 
         lucide.createIcons();
 
+        async function fetchWithRetry(url, options, retries = 3) {
+           try {
+             const res = await fetch(url, options);
+
+             if (res.status === 429 && retries > 0) {
+                 await new Promise(r => setTimeout(r, 2000));
+                 return fetchWithRetry(url, options, retries - 1);
+             }
+
+            return res;
+        } catch (err) {
+            if (retries > 0) {
+               await new Promise(r => setTimeout(r, 2000));
+               return fetchWithRetry(url, options, retries - 1);
+           }
+           throw err;
+       }
+   }
+
         // --- AUTH LOGIC (Your functional code) ---
         async function checkUser() {
             const { data } = await supabaseClient.auth.getUser();
@@ -231,7 +250,14 @@
         // --- LIBRARY LOGIC ---
         async function loadBooks() {
             try {
-                const res = await fetch(`${api}/books`, { headers: { "x-user-id": currentUser.id } });
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                const res = await fetch(`${api}/books`, {
+                    headers: {
+                       "Content-Type": "application/json",
+                       "Authorization": `Bearer ${session.access_token}`
+                   }
+             });
                 allBooks = await res.json();
                 renderBooks();
             } catch (err) { console.error(err); }
@@ -271,6 +297,13 @@
             const fileInput = document.getElementById("bookFile");
             if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
             const file = fileInput.files[0];
+            if (!file.name.endsWith(".pdf") && !file.name.endsWith(".docx")) {
+                  return showToast("Only PDF and DOCX allowed.");
+            }
+
+            if (file.size > 25 * 1024 * 1024) {
+                 return showToast("File too large (max 25MB)");
+            }
             const progWrapper = document.getElementById("progWrapper");
             const progBar = document.getElementById("progBar");
             const progText = document.getElementById("progText");
@@ -283,14 +316,20 @@
 
                 const signedRes = await fetch(`${api}/generate-upload-url`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                    const { data: { session } } = await supabaseClient.auth.getSession();
+
+                    headers: {
+                         "Content-Type": "application/json",
+                         "Authorization": `Bearer ${session.access_token}`
+                   },
+                
                     body: JSON.stringify({ filename: file.name })
                 });
                 const { uploadUrl, fileKey } = await signedRes.json();
 
                 await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
 
-                eventSource = new EventSource(`${api}/progress`);
+                eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
                 eventSource.onmessage = (event) => {
                     const data = JSON.parse(event.data);
                     progText.innerText = `${data.step} ${data.progress}%`;
@@ -305,7 +344,10 @@
 
                 await fetch(`${api}/upload`, {
                     method: "POST",
-                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${session.access_token}`
+                    },
                     body: JSON.stringify({ fileKey, filename: file.name })
                 });
 
@@ -331,17 +373,27 @@
 
             try {
                 const endpoint = type === 'explain' ? 'deep-explain' : type;
-                const res = await fetch(`${api}/${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                
+                const { data: { session } } = await supabaseClient.auth.getSession();
+
+                const res = await fetchWithRetry(`${api}/${endpoint}`, {
+                     method: "POST",
+                     headers: {
+                         "Content-Type": "application/json",
+                         "Authorization": `Bearer ${session.access_token}`
+                    },
                     body: JSON.stringify({ 
                         topic, 
                         level: document.getElementById("level").value, 
                         book: document.getElementById("bookSelector").value 
-                    })
-                });
-                const data = await res.json();
-                const raw = data.explanation || data.quiz || data.notes;
+                  })
+               });
+                if (!res.ok) throw new Error("API failed");
+
+               const data = await res.json();
+
+               const raw = (data.explanation || data.quiz || data.notes || "").trim()
+                   || "⚠️ No relevant content found.";
                 resultBox.innerHTML = `<div class="animate-in fade-in slide-in-from-bottom-4 duration-700">${marked.parse(raw)}</div>`;
             } catch (err) {
                 resultBox.innerHTML = `<p class="text-red-400">Connection error.</p>`;
