@@ -100,7 +100,13 @@
             btn.disabled = true;
             btn.innerText = "INITIALIZING...";
 
-            const { error } = await supabaseClient.auth.signUp({ email, password });
+            const { error } = await supabaseClient.auth.signUp({
+               email,
+               password,
+               options: {
+                  emailRedirectTo: window.location.origin
+               }
+           });
 
             if (error) {
                 showToast(`❌ ${error.message}`, true);
@@ -112,7 +118,7 @@
             // Immediately sign out to force manual login for verification
             await supabaseClient.auth.signOut();
 
-            showToast("✅ Account created! Check your email.");
+            showToast("📩 Check your email to verify your account");
             
             setTimeout(() => {
                 window.location.href = "index.html?verify=1&email=" + encodeURIComponent(email);
