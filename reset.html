@@ -115,9 +115,23 @@ async function initSessionFromUrl() {
 
         // run it immediately
         (async () => {
-            await initSessionFromUrl();
-            sessionReady = true;
-         })();
+    try {
+        await initSessionFromUrl();
+
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (!session) {
+            showToast("❌ Invalid or expired reset link", true);
+            return;
+        }
+
+        sessionReady = true;
+
+    } catch (err) {
+        console.error("Session error:", err);
+        showToast("❌ Failed to initialize reset session", true);
+    }
+})();
 
         function showToast(message, isError = false) {
             const toast = document.getElementById("toast");
@@ -132,6 +146,7 @@ async function initSessionFromUrl() {
 
         document.getElementById('resetForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+      console.log("Submit clicked");
 
     if (!sessionReady) {
     showToast("⏳ Please wait a moment...");
