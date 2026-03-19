@@ -1,480 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study.AI | Premium Learning Copilot</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
-    
-    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<title>Study.AI</title>
 
-    <style>
-        :root { --brand-indigo: #6366f1; }
-        
-        body { 
-            font-family: 'Inter', sans-serif;
-            background-color: #020617; 
-            color: #f1f5f9;
-            /* Deep Sapphire Glow Background */
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%);
-            background-attachment: fixed;
-        }
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-        /* Command Center Glassmorphism */
-        .glass-card {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-        }
-
-        .glass-inset {
-            background: rgba(2, 6, 23, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Glowing Action Buttons */
-        .btn-indigo { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; }
-        .btn-indigo:hover { background: #6366f1; color: white; box-shadow: 0 0 20px rgba(99, 102, 241, 0.4); }
-
-        .btn-emerald { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); color: #6ee7b7; }
-        .btn-emerald:hover { background: #10b981; color: white; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
-
-        .btn-amber { background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.4); color: #fcd34d; }
-        .btn-amber:hover { background: #f59e0b; color: white; box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
-
-        /* Icon Glows */
-        .icon-glow-indigo { filter: drop-shadow(0 0 3px rgba(99, 102, 241, 0.6)); }
-        
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-
-        /* Markdown Styling */
-        .prose h1, .prose h2, .prose h3 { color: #f8fafc !important; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; }
-        .prose strong { color: #818cf8 !important; }
-        .prose code { background: rgba(99, 102, 241, 0.15) !important; color: #a5b4fc !important; padding: 2px 6px; border-radius: 6px; }
-    </style>
+<style>
+body{background:#020617;color:white;font-family:Inter;}
+.glass{background:rgba(15,23,42,.6);backdrop-filter:blur(20px);}
+</style>
 </head>
-<body class="min-h-screen">
 
-    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
-        <div class="glass-card rounded-[2.5rem] p-10 w-full max-w-md">
-            <div class="text-center mb-10">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-500 to-indigo-700 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
-                    <i data-lucide="brain-circuit" class="text-white w-8 h-8"></i>
-                </div>
-                <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-display">Welcome</h2>
-                <p class="text-slate-400 text-sm">Your documents, supercharged by AI.</p>
-            </div>
-            <div class="space-y-4">
-                <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                <button type="button" onclick="login()" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
-                <p class="text-center text-xs text-slate-500 mt-4">New here? <span onclick="goToSignup()" class="text-indigo-400 cursor-pointer hover:underline">Create Account</span></p>
-            </div>
-        </div>
-    </div>
+<body class="p-6">
 
-    <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <nav class="sticky top-0 z-50 bg-navy-950/60 backdrop-blur-xl border-b border-white/5">
-            <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <span class="font-bold text-xl tracking-tight text-white uppercase font-['Plus_Jakarta_Sans']">Study<span class="text-indigo-400">.AI</span></span>
-                </div>
-                <div class="flex items-center gap-4">
-                    <button onclick="loadBooks()" class="p-2.5 rounded-xl glass-card text-slate-400 hover:text-white transition-all"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
-                    <button onclick="logout()" class="px-5 py-2.5 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white text-[10px] font-bold rounded-xl transition-all uppercase tracking-widest">Logout</button>
-                </div>
-            </div>
-        </nav>
+<div class="flex justify-between mb-6">
+<h1 class="text-xl font-bold">Study.AI</h1>
+<button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-xl">Logout</button>
+</div>
 
-        <main class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-6 lg:p-10 gap-8 overflow-hidden">
-            
-            <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-8 shrink-0">
-                <section class="glass-card rounded-[2.5rem] p-7 shadow-lg">
-                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
-                         <i data-lucide="database" class="w-4 h-4 icon-glow-indigo"></i> Knowledge Vault
-                    </h3>
-                    
-                    <div class="relative group">
-                        <input type="file" id="bookFile" class="hidden" onchange="updateFileName()">
-                        <label for="bookFile" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-800 rounded-[2rem] cursor-pointer hover:border-indigo-500/40 hover:bg-indigo-500/5 transition-all group">
-                            <i data-lucide="upload-cloud" class="w-7 h-7 text-slate-600 group-hover:text-indigo-400 mb-2 transition-colors"></i>
-                            <span id="fileNameDisplay" class="text-xs text-slate-500 px-4 text-center font-medium">Drop Study Material</span>
-                        </label>
-                    </div>
+<div class="grid lg:grid-cols-3 gap-6">
 
-                    <button onclick="uploadBook()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
-                        <i data-lucide="cpu" class="w-4 h-4"></i> Sync to Engine
-                    </button>
-                    
-                    <div id="progWrapper" class="hidden mt-6 glass-inset p-4 rounded-2xl">
-                        <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase">
-                            <span id="progText">Processing...</span>
-                        </div>
-                        <div class="h-1.5 w-full bg-slate-900 rounded-full overflow-hidden">
-                            <div id="progBar" class="h-full bg-indigo-500 transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                    </div>
-                 </section>
+<!-- LEFT -->
+<div class="glass p-6 rounded-2xl">
+<input type="file" id="file" class="mb-4">
 
-                <section class="glass-card rounded-[2.5rem] p-7 flex-1 flex flex-col overflow-hidden shadow-lg min-h-[300px]">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Indexed Files (<span id="bookCount" class="text-indigo-400">0</span>)</h3>
-                    </div>
-                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2"></div>
-                </section>
-            </aside>
+<button onclick="upload()" class="w-full bg-indigo-600 p-3 rounded-xl">Upload</button>
 
-            <main class="flex-1 flex flex-col gap-8 min-h-[600px]">
-                
-                <header class="glass-card rounded-[2.5rem] p-8 shadow-lg">
-                    <div class="relative w-full mb-6">
-                        <div class="glass-inset rounded-2xl flex items-center px-6">
-                            <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400"></i>
-                            <input id="topic" type="text" placeholder="What concept should the AI analyze today?" class="w-full bg-transparent border-none py-5 px-4 text-white placeholder-slate-600 focus:ring-0 text-base">
-                        </div>
-                    </div>
+<div id="progress" class="hidden mt-4">
+<div class="h-2 bg-slate-800 rounded">
+<div id="bar" class="bg-indigo-500 h-2 w-0"></div>
+</div>
+<p id="text" class="text-xs mt-2"></p>
+</div>
+</div>
 
-                    <div class="flex flex-col xl:flex-row gap-4">
-                        <div class="flex gap-4 flex-1">
-                            <select id="level" class="glass-inset rounded-2xl px-6 py-4 text-xs font-bold text-slate-300 appearance-none cursor-pointer flex-1 focus:ring-1 focus:ring-indigo-500/30">
-                                <option value="University">Advanced (Uni)</option>
-                                <option value="Secondary">Standard (High School)</option>
-                                <option value="Primary">Simple (Basics)</option>
-                            </select>
-                            <select id="bookSelector" class="glass-inset rounded-2xl px-6 py-4 text-xs font-bold text-slate-300 appearance-none cursor-pointer flex-1 focus:ring-1 focus:ring-indigo-500/30 truncate">
-                                <option value="all">Global Database</option>
-                            </select>
-                        </div>
-                        
-                        <div class="flex gap-3">
-                            <button onclick="requestAI('explain')" class="flex-1 xl:flex-none btn-indigo py-4 px-6 rounded-2xl transition-all font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
-                                <i data-lucide="book-open" class="w-4 h-4"></i> Explain
-                            </button>
-                            <button onclick="requestAI('quiz')" class="flex-1 xl:flex-none btn-emerald py-4 px-6 rounded-2xl transition-all font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
-                                <i data-lucide="help-circle" class="w-4 h-4"></i> Practice Quiz
-                            </button>
-                            <button onclick="requestAI('notes')" class="flex-1 xl:flex-none btn-amber py-4 px-6 rounded-2xl transition-all font-bold text-[10px] uppercase tracking-widest flex items-center justify-center gap-2">
-                                <i data-lucide="file-text" class="w-4 h-4"></i> Generate Notes
-                            </button>
-                        </div>
-                    </div>
-                </header>
+<!-- RIGHT -->
+<div class="lg:col-span-2 glass p-6 rounded-2xl">
 
-                <section class="glass-card rounded-[2.5rem] flex-1 flex flex-col shadow-2xl relative overflow-hidden">
-                    <div id="result" class="flex-1 p-8 lg:p-12 overflow-y-auto custom-scrollbar prose prose-invert max-w-none">
-                        <div class="h-full flex flex-col items-center justify-center opacity-40 text-center py-20">
-                            <div class="w-20 h-20 bg-slate-900 rounded-[2rem] flex items-center justify-center mb-6 border border-white/5">
-                                <i data-lucide="cpu" class="w-10 h-10 text-slate-700"></i>
-                             </div>
-                            <h4 class="text-xl font-bold text-white font-display">Neural Engine Idle</h4>
-                            <p class="max-w-xs mt-3 text-sm leading-relaxed text-slate-500">Select a mode above to begin synthesizing your study materials.</p>
-                        </div>
-                    </div>
-                </section>
-            </main>
-        </main>
-    </div>
+<input id="topic" class="w-full p-3 bg-slate-900 rounded-xl mb-4" placeholder="Ask anything...">
 
-    <div id="toast" class="fixed bottom-10 left-1/2 -translate-x-1/2 glass-card text-white px-8 py-4 rounded-2xl shadow-2xl opacity-0 transition-all duration-500 z-[100] font-bold text-xs pointer-events-none border border-indigo-500/20"></div>
+<div class="flex gap-3 mb-4">
+<button onclick="ask('explain')" class="bg-indigo-500 px-4 py-2 rounded">Explain</button>
+<button onclick="ask('quiz')" class="bg-emerald-500 px-4 py-2 rounded">Quiz</button>
+<button onclick="ask('notes')" class="bg-amber-500 px-4 py-2 rounded">Notes</button>
+</div>
 
-    <script>
-        const api = "https://study-ai-tq7i.onrender.com";
-        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
-        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+<div id="output" class="prose prose-invert"></div>
 
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-        let currentUser = null;
-        let authInitialized = false;
-        let allBooks = [];
+</div>
 
-        lucide.createIcons();
+</div>
 
-        async function fetchWithRetry(url, options, retries = 3) {
-           try {
-             const res = await fetch(url, options);
+<script>
+const api="https://study-ai-tq7i.onrender.com";
 
-             if (res.status === 429 && retries > 0) {
-                 await new Promise(r => setTimeout(r, 2000));
-                 return fetchWithRetry(url, options, retries - 1);
-             }
+const supabase=window.supabase.createClient(
+"https://hffbjtbahfwudigywzzx.supabase.co",
+"sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
+);
 
-            return res;
-        } catch (err) {
-            if (retries > 0) {
-               await new Promise(r => setTimeout(r, 2000));
-               return fetchWithRetry(url, options, retries - 1);
-           }
-           throw err;
-       }
-   }
+// protect page
+(async()=>{
+const {data:{session}}=await supabase.auth.getSession();
+if(!session) location.href="login.html";
+})();
 
-        // --- AUTH LOGIC (Your functional code) ---
+async function logout(){
+await supabase.auth.signOut();
+location.href="login.html";
+}
 
-        async function checkUser() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
+// upload
+async function upload(){
+const file=document.getElementById("file").files[0];
+if(!file) return alert("Select file");
 
-    if (session) {
-        currentUser = session.user;
+const {data:{session}}=await supabase.auth.getSession();
 
-        document.getElementById("loginScreen").classList.add("hidden");
-        document.getElementById("appContainer").classList.remove("hidden");
+progress.classList.remove("hidden");
 
-        loadBooks();
-    }
-        }
-
-        supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (!authInitialized) {
-        authInitialized = true;
-
-        if (session) {
-            currentUser = session.user;
-
-            document.getElementById("loginScreen").classList.add("hidden");
-            document.getElementById("appContainer").classList.remove("hidden");
-
-            loadBooks();
-        } else {
-            document.getElementById("loginScreen").classList.remove("hidden");
-            document.getElementById("appContainer").classList.add("hidden");
-        }
-    }
+const res=await fetch(`${api}/generate-upload-url`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${session.access_token}`
+},
+body:JSON.stringify({filename:file.name})
 });
-        window.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
 
-    if (params.get("email")) {
-        document.getElementById("email").value = params.get("email");
-    }
+const {uploadUrl,fileKey}=await res.json();
 
-    if (params.get("verify")) {
-        showToast("📩 Check your email to verify your account");
-    }
+await fetch(uploadUrl,{method:"PUT",body:file});
+
+const es=new EventSource(`${api}/progress?userId=${session.user.id}`);
+
+es.onmessage=e=>{
+const d=JSON.parse(e.data);
+bar.style.width=d.progress+"%";
+text.innerText=d.step+" "+d.progress+"%";
+if(d.progress>=100) es.close();
+};
+
+await fetch(`${api}/upload`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${session.access_token}`
+},
+body:JSON.stringify({fileKey,filename:file.name})
 });
-        
-        async function login() {
+}
 
-    const btn = document.getElementById("loginBtn");
-    btn.innerText = "Signing in...";
-    btn.disabled = true;
+// AI
+async function ask(type){
+const topic=document.getElementById("topic").value;
+if(!topic) return alert("Enter topic");
 
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+output.innerHTML="Thinking...";
 
-    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+const {data:{session}}=await supabase.auth.getSession();
 
-    if (error) {
-        showToast(`⚠️ ${error.message}`);
-        btn.innerText = "Sign In";
-        btn.disabled = false;
-        return;
-    }
+const endpoint=type==="explain"?"deep-explain":type;
 
-    btn.innerText = "Success ✅";
-  }
-        
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            checkUser();
-        }
+const res=await fetch(`${api}/${endpoint}`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":`Bearer ${session.access_token}`
+},
+body:JSON.stringify({topic})
+});
 
-        function goToSignup() {
-         window.location.href = "signup.html";
-        }
+const data=await res.json();
 
-        async function deleteBook(filename) {
-    showToast("Delete feature coming soon");
-        }
+const text=(data.explanation||data.quiz||data.notes||"No response");
 
-        // --- LIBRARY LOGIC ---
-        async function loadBooks() {
-            try {
-                const { data: { session } } = await supabaseClient.auth.getSession();
-                if (!session) return;
+output.innerHTML=marked.parse(text);
+}
+</script>
 
-                const res = await fetch(`${api}/books`, {
-                    headers: {
-                       "Content-Type": "application/json",
-                       "Authorization": `Bearer ${session.access_token}`
-                   }
-             });
-                allBooks = await res.json();
-                renderBooks();
-            } catch (err) { console.error(err); }
-        }
-
-        function renderBooks() {
-            const container = document.getElementById("books");
-            const selector = document.getElementById("bookSelector");
-            container.innerHTML = "";
-            selector.innerHTML = '<option value="all">Global Database</option>';
-            document.getElementById("bookCount").innerText = allBooks.length;
-
-            allBooks.forEach(book => {
-                const name = book.filename || book.name;
-                const displayName = name.split('_').slice(1).join('_') || name;
-                
-                const div = document.createElement("div");
-                div.className = "group glass-inset p-4 rounded-2xl flex items-center justify-between transition-all hover:border-indigo-500/30";
-                div.innerHTML = `
-                    <div class="flex items-center gap-3 overflow-hidden">
-                        <i data-lucide="file-text" class="w-4 h-4 text-slate-500 group-hover:text-indigo-400"></i>
-                        <span class="text-xs truncate text-slate-300 font-medium">${displayName}</span>
-                    </div>
-                    <button onclick="deleteBook('${encodeURIComponent(name)}')" class="p-1.5 text-slate-600 hover:text-red-400"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                `;
-                container.appendChild(div);
-
-                const opt = document.createElement("option");
-                opt.value = name; opt.innerText = displayName;
-                selector.appendChild(opt);
-            });
-            lucide.createIcons();
-        }
-
-        // --- UPLOAD & SSE PROGRESS (The core of your server interaction) ---
-        
-        async function uploadBook() {
-    const fileInput = document.getElementById("bookFile");
-    if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
-
-    const file = fileInput.files[0];
-
-    const { data: { session } } = await supabaseClient.auth.getSession();
-
-    const progWrapper = document.getElementById("progWrapper");
-    const progBar = document.getElementById("progBar");
-    const progText = document.getElementById("progText");
-
-    let eventSource = null;
-
-    try {
-        progWrapper.classList.remove('hidden');
-
-        // ✅ 1. Get signed URL
-        const signedRes = await fetch(`${api}/generate-upload-url`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({ filename: file.name })
-        });
-
-        const { uploadUrl, fileKey } = await signedRes.json();
-
-        // ✅ 2. Upload file
-        await fetch(uploadUrl, {
-            method: "PUT",
-            body: file,
-            headers: { "Content-Type": file.type }
-        });
-
-        // ✅ 3. Progress tracking
-        eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
-
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            progText.innerText = `${data.step} ${data.progress}%`;
-            progBar.style.width = `${data.progress}%`;
-
-            if (data.progress >= 100) {
-                eventSource.close();
-                showToast("✅ Document Indexed");
-                loadBooks();
-                setTimeout(() => progWrapper.classList.add('hidden'), 2000);
-            }
-        };
-
-        // ✅ 4. Trigger backend indexing
-        await fetch(`${api}/upload`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${session.access_token}`
-            },
-            body: JSON.stringify({ fileKey, filename: file.name })
-        });
-
-    } catch (err) {
-        if (eventSource) eventSource.close();
-        showToast("❌ Upload Failed");
-        progWrapper.classList.add('hidden');
-    }
-        }
-        
-        // --- AI REQUESTS ---
-        async function requestAI(type) {
-            const topic = document.getElementById("topic").value;
-            const resultBox = document.getElementById("result");
-            if (!topic) return showToast("⚠️ Enter a topic.");
-
-            resultBox.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full py-20">
-                    <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin text-indigo-500"></i>
-                    <p class="text-[10px] font-bold tracking-[0.3em] text-indigo-400 animate-pulse">SYNTHESIZING KNOWLEDGE</p>
-                </div>`;
-            lucide.createIcons();
-
-            try {
-                const endpoint = type === 'explain' ? 'deep-explain' : type;
-                
-                const { data: { session } } = await supabaseClient.auth.getSession();
-
-                const res = await fetchWithRetry(`${api}/${endpoint}`, {
-                     method: "POST",
-                     headers: {
-                         "Content-Type": "application/json",
-                         "Authorization": `Bearer ${session.access_token}`
-                    },
-                    body: JSON.stringify({ 
-                        topic, 
-                        level: document.getElementById("level").value, 
-                        book: document.getElementById("bookSelector").value 
-                  })
-               });
-                if (!res.ok) throw new Error("API failed");
-
-               const data = await res.json();
-
-               const raw = (data.explanation || data.quiz || data.notes || "").trim()
-                   || "⚠️ No relevant content found.";
-                resultBox.innerHTML = `<div class="animate-in fade-in slide-in-from-bottom-4 duration-700">${marked.parse(raw)}</div>`;
-            } catch (err) {
-                resultBox.innerHTML = `<p class="text-red-400">Connection error.</p>`;
-            }
-        }
-
-        // --- UTILS ---
-        function updateFileName() {
-            const input = document.getElementById('bookFile');
-            if (input.files[0]) document.getElementById('fileNameDisplay').innerText = input.files[0].name;
-        }
-
-        function showToast(msg) {
-            const t = document.getElementById("toast");
-            t.innerText = msg;
-            t.classList.replace("opacity-0", "opacity-100");
-            setTimeout(() => t.classList.replace("opacity-100", "opacity-0"), 3000);
-        }
-
-        checkUser();
-    </script>
 </body>
 </html>
