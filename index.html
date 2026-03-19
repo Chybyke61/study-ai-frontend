@@ -608,6 +608,9 @@ async function handleEmailRedirect() {
     await handleEmailRedirect();
 
     const params = new URLSearchParams(window.location.search);
+        if (params.get("reset") === "success") {
+    showToast("✅ Password reset successful, please login");
+    }
 
     // ✅ SHOW MESSAGE FIRST
     if (params.get("verified")) {
