@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password | Study.AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+        .btn-emerald { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            transition: all 0.3s ease;
+        }
+        .btn-emerald:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 20px -10px #10b981; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl animate-in fade-in zoom-in duration-500">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl mb-6 shadow-xl">
+                <i data-lucide="shield-check" class="text-emerald-400 w-8 h-8"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-['Plus_Jakarta_Sans']">Secure Engine</h2>
+            <p class="text-slate-400 text-sm font-medium">Create a new password for your account</p>
+        </div>
+
+        <form id="resetForm" class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">New Password</label>
+                <input id="newPassword" type="password" required placeholder="Min. 6 characters" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all">
+            </div>
+
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Confirm Password</label>
+                <input id="confirmPassword" type="password" required placeholder="Repeat password" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all">
+            </div>
+
+            <button type="submit" id="submitBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-4 active:scale-95">
+                UPDATE PASSWORD
+            </button>
+        </form>
+
+        <div class="mt-8 pt-6 border-t border-slate-800/50 text-center text-sm">
+            <a href="login.html" class="text-slate-500 hover:text-emerald-400 font-bold transition-colors flex items-center justify-center gap-2">
+                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Sign In
+            </a>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 z-[100] font-bold text-sm pointer-events-none border border-slate-600"></div>
+
+    <script>
+        lucide.createIcons();
+
+      // 🔐 Fix: Load session from reset email link
+async function initSessionFromUrl() {
+    const hash = window.location.hash;
+
+    if (hash && hash.includes("access_token")) {
+        const params = new URLSearchParams(hash.substring(1));
+
+        const access_token = params.get("access_token");
+        const refresh_token = params.get("refresh_token");
+
+        const { error } = await supabase.auth.setSession({
+            access_token,
+            refresh_token
+        });
+
+        if (error) {
+            showToast("❌ Invalid or expired reset link", true);
+        }
+
+        // Clean URL (remove tokens)
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
+}
+
+// run it immediately
+initSessionFromUrl();
+
+        const supabase = window.supabase.createClient(
+            "https://hffbjtbahfwudigywzzx.supabase.co",
+            "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
+        );
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.borderColor = isError ? "#ef4444" : "#10b981";
+            toast.classList.replace("opacity-0", "opacity-100");
+            
+            setTimeout(() => {
+                toast.classList.replace("opacity-100", "opacity-0");
+            }, 3000);
+        }
+
+        document.getElementById('resetForm').addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevents page reload on mobile keyboard submit
+            
+            const btn = document.getElementById('submitBtn');
+            const newPassword = document.getElementById("newPassword").value;
+            const confirm = document.getElementById("confirmPassword").value;
+
+            if (newPassword.length < 6) {
+                return showToast("⚠️ Password must be at least 6 characters", true);
+            }
+
+            if (newPassword !== confirm) {
+                return showToast("❌ Passwords do not match", true);
+            }
+
+            btn.disabled = true;
+            btn.innerText = "UPDATING...";
+
+            const { error } = await supabase.auth.updateUser({
+                password: newPassword
+            });
+
+            if (error) {
+                showToast(`❌ ${error.message}`, true);
+                btn.disabled = false;
+                btn.innerText = "UPDATE PASSWORD";
+                return;
+            }
+
+            showToast("✅ Password updated successfully");
+
+           // 🔒 Force logout so user logs in again
+           await supabase.auth.signOut();
+
+           setTimeout(() => {
+              window.location.href = "index.html";
+           }, 2000);
+        });
+    </script>
+</body>
+</html>
+
