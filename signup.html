@@ -68,52 +68,51 @@ async function checkUser() {
 checkUser();
 
 // ✅ SIGNUP HANDLER
-
-    async function signup() {
+  
+async function signup() {
     const btn = document.getElementById('submitBtn');
 
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-    // simple validation
+    // 🔥 VALIDATION
+    if (!email || !password) {
+        showToast("Enter email and password");
+        return;
+    }
+
     if (password.length < 6) {
         showToast("Password must be at least 6 characters");
         return;
     }
 
     btn.disabled = true;
-    btn.innerText = "INITIALIZING...";
+    btn.innerText = "Creating account...";
 
     try {
-        const { error } = await supabase.auth.signUp({
-            email,
-            password
-        });
+        const { error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
             showToast(error.message);
-
             btn.disabled = false;
             btn.innerText = "INITIALIZE ACCOUNT";
             return;
         }
 
-        btn.innerText = "SUCCESS ✅";
+        btn.innerText = "Check your email 📩";
 
         setTimeout(() => {
-            window.location.href =
-                `login.html?email=${encodeURIComponent(email)}&verify=1`;
-        }, 1000);
+            window.location.href = `login.html?email=${encodeURIComponent(email)}&verify=1`;
+        }, 1500);
 
-    } catch (err) {
-        btn.innerText = "Network error";
-
-        setTimeout(() => {
-            btn.disabled = false;
-            btn.innerText = "INITIALIZE ACCOUNT";
-        }, 2000);
+    } catch {
+        showToast("Network error");
+        btn.disabled = false;
+        btn.innerText = "INITIALIZE ACCOUNT";
     }
- };
+};
+
+        
 function showToast(msg) {
     const div = document.createElement("div");
     div.innerText = msg;
