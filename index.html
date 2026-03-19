@@ -72,6 +72,13 @@
         <i data-lucide="eye"></i>
     </button>
                 </div>
+                <p 
+    onclick="forgotPassword()" 
+    class="text-right text-xs text-indigo-400 cursor-pointer hover:underline"
+>
+    Forgot Password?
+                </p>
+                
                 <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
                 <div class="flex items-center my-6">
                   <div class="flex-1 border-t border-slate-800"></div>
@@ -575,6 +582,26 @@ async function handleEmailRedirect() {
 
     lucide.createIcons();
         }
+
+    async function forgotPassword() {
+    const email = document.getElementById("email").value;
+
+    if (!email) {
+        showToast("⚠️ Enter your email first");
+        return;
+    }
+
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/reset.html"
+    });
+
+    if (error) {
+        showToast("❌ " + error.message);
+        return;
+    }
+
+    showToast("📩 Reset link sent to your email");
+    }
 
         // Initialize
         (async () => {
