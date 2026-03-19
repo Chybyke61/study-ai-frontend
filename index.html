@@ -204,6 +204,18 @@
 
         lucide.createIcons();
 
+        const params = new URLSearchParams(window.location.search);
+
+// Autofill email from signup
+if (params.get("email")) {
+    document.getElementById("email").value = params.get("email");
+}
+
+// Show verification message
+if (params.get("verify")) {
+    showToast("📩 Check your email to verify your account");
+}
+
         async function fetchWithRetry(url, options, retries = 3) {
            try {
              const res = await fetch(url, options);
@@ -240,6 +252,20 @@
         document.getElementById("appContainer").classList.add("hidden");
     }
         }
+
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session) {
+        currentUser = session.user;
+
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appContainer").classList.remove("hidden");
+
+        loadBooks();
+    } else {
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("appContainer").classList.add("hidden");
+    }
+});
         
         async function login() {
     const btn = document.getElementById("loginBtn");
