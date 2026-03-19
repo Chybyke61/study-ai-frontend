@@ -49,49 +49,47 @@
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Password</label>
-                <div class="relative">
     <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Password</label>
 
-    <input 
-        id="password" 
-        type="password" 
-        placeholder="Min. 6 characters"
-        class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12"
-    >
+    <div class="relative">
+        <input 
+            id="password" 
+            type="password" 
+            placeholder="Min. 6 characters"
+            class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12"
+        >
 
-    <!-- 👁 Eye -->
-    <button 
-        type="button" 
-        onclick="togglePassword('password', this)"
-        class="absolute right-4 top-[38px] text-slate-400 hover:text-white"
-    >
-        <i data-lucide="eye"></i>
-    </button>
-                </div>
+        <!-- 👁 Eye -->
+        <button 
+            type="button" 
+            onclick="togglePassword('password', this)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+        >
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Confirm Password</label>
-                <div class="relative">
     <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Confirm Password</label>
 
-    <input 
-        id="confirmPassword" 
-        type="password" 
-        placeholder="Repeat password"
-        class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12"
-    >
+    <div class="relative">
+        <input 
+            id="confirmPassword" 
+            type="password" 
+            placeholder="Repeat password"
+            class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12"
+        >
 
-    <!-- 👁 Eye -->
-    <button 
-        type="button" 
-        onclick="togglePassword('confirmPassword', this)"
-        class="absolute right-4 top-[38px] text-slate-400 hover:text-white"
-    >
-        <i data-lucide="eye"></i>
-    </button>
-                </div>
+        <!-- 👁 Eye -->
+        <button 
+            type="button" 
+            onclick="togglePassword('confirmPassword', this)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+        >
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
             </div>
 
             <button onclick="signUp()" id="signupBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95">INITIALIZE ACCOUNT</button>
