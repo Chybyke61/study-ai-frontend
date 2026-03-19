@@ -77,12 +77,12 @@
                 <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-display">Welcome</h2>
                 <p class="text-slate-400 text-sm">Your documents, supercharged by AI.</p>
             </div>
-            <form onsubmit="login(event)" class="space-y-4">
+            <div class="space-y-4">
                 <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                 <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                <button type="submit" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
+                <button type="button" onclick="login()" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
                 <p class="text-center text-xs text-slate-500 mt-4">New here? <span onclick="goToSignup()" class="text-indigo-400 cursor-pointer hover:underline">Create Account</span></p>
-            </form>
+            </div>
         </div>
     </div>
 
@@ -268,8 +268,7 @@
     }
 });
         
-        async function login(e) {
-    e.preventDefault(); // 🚨 THIS STOPS PAGE REFRESH
+        async function login() {
 
     const btn = document.getElementById("loginBtn");
     btn.innerText = "Signing in...";
