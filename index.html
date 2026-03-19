@@ -200,6 +200,7 @@
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         let currentUser = null;
+        let authInitialized = false;
         let allBooks = [];
 
         lucide.createIcons();
@@ -255,23 +256,24 @@ if (params.get("verify")) {
         document.getElementById("appContainer").classList.remove("hidden");
 
         loadBooks();
-    } else {
-        document.getElementById("loginScreen").classList.remove("hidden");
-        document.getElementById("appContainer").classList.add("hidden");
     }
         }
 
         supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (session) {
-        currentUser = session.user;
+    if (!authInitialized) {
+        authInitialized = true;
 
-        document.getElementById("loginScreen").classList.add("hidden");
-        document.getElementById("appContainer").classList.remove("hidden");
+        if (session) {
+            currentUser = session.user;
 
-        loadBooks();
-    } else {
-        document.getElementById("loginScreen").classList.remove("hidden");
-        document.getElementById("appContainer").classList.add("hidden");
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("appContainer").classList.remove("hidden");
+
+            loadBooks();
+        } else {
+            document.getElementById("loginScreen").classList.remove("hidden");
+            document.getElementById("appContainer").classList.add("hidden");
+        }
     }
 });
         
