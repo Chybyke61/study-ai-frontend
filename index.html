@@ -190,6 +190,19 @@
 
         lucide.createIcons();
 
+        // 🚫 Prevent auto-login after email verification
+async function handleEmailRedirect() {
+    const hash = window.location.hash;
+
+    if (hash && hash.includes("access_token")) {
+        // Supabase auto login happened
+        await supabaseClient.auth.signOut();
+
+        // Clean redirect (no token in URL)
+        window.location.href = "index.html?verified=1";
+    }
+}
+
         // --- AUTH ---
         async function checkUser() {
     const { data } = await supabaseClient.auth.getUser();
@@ -528,7 +541,15 @@
         }
 
         // Initialize
-        checkUser();
+        (async () => {
+    await handleEmailRedirect();
+    await checkUser();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("verified")) {
+        showToast("✅ Email verified! Please login");
+    }
+})();
     </script>
 </body>
 </html>
