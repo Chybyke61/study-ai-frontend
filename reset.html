@@ -112,7 +112,9 @@ async function initSessionFromUrl() {
         );
 
         // run it immediately
-        initSessionFromUrl();
+        (async () => {
+         await initSessionFromUrl();
+         })();
 
         function showToast(message, isError = false) {
             const toast = document.getElementById("toast");
@@ -126,44 +128,53 @@ async function initSessionFromUrl() {
         }
 
         document.getElementById('resetForm').addEventListener('submit', async (e) => {
-            e.preventDefault(); // Prevents page reload on mobile keyboard submit
-            
-            const btn = document.getElementById('submitBtn');
-            const newPassword = document.getElementById("newPassword").value;
-            const confirm = document.getElementById("confirmPassword").value;
+    e.preventDefault();
 
-            if (newPassword.length < 6) {
-                return showToast("⚠️ Password must be at least 6 characters", true);
-            }
+    const btn = document.getElementById('submitBtn');
+    const newPassword = document.getElementById("newPassword").value;
+    const confirm = document.getElementById("confirmPassword").value;
 
-            if (newPassword !== confirm) {
-                return showToast("❌ Passwords do not match", true);
-            }
+    if (newPassword.length < 6) {
+        return showToast("⚠️ Password must be at least 6 characters", true);
+    }
 
-            btn.disabled = true;
-            btn.innerText = "UPDATING...";
+    if (newPassword !== confirm) {
+        return showToast("❌ Passwords do not match", true);
+    }
 
-            const { error } = await supabase.auth.updateUser({
-                password: newPassword
-            });
+    btn.disabled = true;
+    btn.innerText = "UPDATING...";
 
-            if (error) {
-                showToast(`❌ ${error.message}`, true);
-                btn.disabled = false;
-                btn.innerText = "UPDATE PASSWORD";
-                return;
-            }
+    // ✅ IMPORTANT: Check session exists
+    const { data: { session } } = await supabase.auth.getSession();
 
-            showToast("✅ Password updated successfully");
+    if (!session) {
+        showToast("❌ Reset session expired. Please request again.", true);
+        btn.disabled = false;
+        btn.innerText = "UPDATE PASSWORD";
+        return;
+    }
 
-           // 🔒 Force logout so user logs in again
-           await supabase.auth.signOut();
+    const { error } = await supabase.auth.updateUser({
+        password: newPassword
+    });
 
-           setTimeout(() => {
-              window.location.href = "index.html";
-           }, 2000);
-        });
-    </script>
+    if (error) {
+        showToast(`❌ ${error.message}`, true);
+        btn.disabled = false;
+        btn.innerText = "UPDATE PASSWORD";
+        return;
+    }
+
+    showToast("✅ Password updated successfully");
+
+    await supabase.auth.signOut();
+
+    setTimeout(() => {
+        window.location.href = "index.html";
+    }, 2000);
+});
+ </script>
 </body>
 </html>
 
