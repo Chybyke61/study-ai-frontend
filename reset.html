@@ -72,6 +72,8 @@
     <script>
         lucide.createIcons();
 
+       let sessionReady = false;
+
       // 🔐 Fix: Load session from reset email link
         
 async function initSessionFromUrl() {
@@ -113,7 +115,8 @@ async function initSessionFromUrl() {
 
         // run it immediately
         (async () => {
-         await initSessionFromUrl();
+            await initSessionFromUrl();
+            sessionReady = true;
          })();
 
         function showToast(message, isError = false) {
@@ -129,6 +132,11 @@ async function initSessionFromUrl() {
 
         document.getElementById('resetForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (!sessionReady) {
+    showToast("⏳ Please wait a moment...");
+    return;
+    }
 
     const btn = document.getElementById('submitBtn');
     const newPassword = document.getElementById("newPassword").value;
@@ -166,12 +174,12 @@ async function initSessionFromUrl() {
         return;
     }
 
-    showToast("✅ Password updated successfully");
+    showToast("✅ Password updated successful, please login");
 
     await supabase.auth.signOut();
 
     setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "index.html?reset=success";
     }, 2000);
 });
  </script>
