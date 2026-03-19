@@ -58,12 +58,12 @@ const supabase = window.supabase.createClient(
 
 // ✅ AUTO LOGIN CHECK
 async function checkUser() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
 
-    if (user) {
+    if (session) {
         window.location.href = "index.html";
-    }
-}
+     }
+} 
 
 checkUser();
 
@@ -76,13 +76,20 @@ document.getElementById('signupForm').onsubmit = async (e) => {
     const password = document.getElementById('password').value;
 
     btn.disabled = true;
+    if (password.length < 6) {
+    showToast("Password must be at least 6 characters");
+    btn.disabled = false;
+    btn.innerText = "INITIALIZE ACCOUNT";
+    return;
+    }
+
     btn.innerHTML = `<span class="animate-pulse">INITIALIZING...</span>`;
 
     try {
         const { error } = await supabase.auth.signUp({ email, password });
 
         if (error) {
-            btn.innerText = error.message;
+            showToast(`⚠️ ${error.message}`);
 
             setTimeout(() => {
                 btn.innerText = "INITIALIZE ACCOUNT";
@@ -107,6 +114,17 @@ document.getElementById('signupForm').onsubmit = async (e) => {
         }, 2000);
     }
 };
+
+function showToast(msg) {
+    const div = document.createElement("div");
+    div.innerText = msg;
+    div.className = "fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-xl text-sm shadow-lg";
+    
+    document.body.appendChild(div);
+
+    setTimeout(() => div.remove(), 3000);
+}
+
     </script>
 </body>
 </html>
