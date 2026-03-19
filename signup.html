@@ -1,57 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Signup | Study.AI</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<style>
-body{background:#020617;color:white;font-family:Inter;}
-.glass{background:rgba(15,23,42,.6);backdrop-filter:blur(20px);}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Study.AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #020617;
+            background-image: radial-gradient(circle at top left, rgba(16, 185, 129, 0.1), transparent), radial-gradient(circle at bottom right, rgba(99, 102, 241, 0.1), transparent);
+        }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(51, 65, 85, 0.5); }
+        .neural-btn { background: linear-gradient(135deg, #10b981 0%, #3b82f6 100%); }
+    </style>
 </head>
+<body class="min-h-screen flex items-center justify-center p-6">
+    <div class="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div class="text-center mb-10">
+            <h1 class="font-['Plus_Jakarta_Sans'] text-3xl font-extrabold text-white tracking-tight">Create Identity</h1>
+            <p class="text-slate-400 mt-2 text-sm">Start your AI-powered learning journey</p>
+        </div>
 
-<body class="flex items-center justify-center min-h-screen">
+        <div class="glass p-8 rounded-3xl shadow-2xl">
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1 mb-2">Email Address</label>
+                    <input type="email" id="email" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="name@example.com">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1 mb-2">Create Password</label>
+                    <input type="password" id="password" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="Min. 6 characters">
+                </div>
+                <button type="button" onclick="signup()" id="submitBtn" class="w-full py-4 neural-btn rounded-xl font-bold text-sm text-white hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                    INITIALIZE ACCOUNT
+                </button>
+            </div>
+            <div class="mt-8 text-center border-t border-slate-800/50 pt-6">
+                <p class="text-xs text-slate-500">Already using Study.AI? 
+                    <a href="login.html" class="text-emerald-400 font-bold hover:underline ml-1">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
 
-<div class="glass p-10 rounded-3xl w-full max-w-md">
-<h2 class="text-2xl font-bold mb-6 text-center">Create Account</h2>
+    <script>
+    lucide.createIcons();
+    const supabase = window.supabase.createClient(
+      "https://hffbjtbahfwudigywzzx.supabase.co",
+      "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
+    );
 
-<input id="email" placeholder="Email" class="w-full p-3 mb-4 bg-slate-900 rounded-xl">
-<input id="password" type="password" placeholder="Password" class="w-full p-3 mb-6 bg-slate-900 rounded-xl">
+    async function signup() {
+        const btn = document.getElementById('submitBtn');
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-<button onclick="signup()" id="btn" class="w-full bg-emerald-600 p-3 rounded-xl">Create Account</button>
+        if (password.length < 6) return alert("Password must be 6+ characters");
 
-<p class="text-center mt-4 text-sm">
-<a href="login.html">Login</a>
-</p>
-</div>
+        btn.disabled = true;
+        btn.innerText = "INITIALIZING...";
 
-<script>
-const supabase=window.supabase.createClient(
-"https://hffbjtbahfwudigywzzx.supabase.co",
-"sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
-);
+        const { error } = await supabase.auth.signUp({ email, password });
 
-async function signup(){
-const btn=document.getElementById("btn");
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value.trim();
+        if (error) {
+            alert(error.message);
+            btn.disabled = false;
+            btn.innerText = "INITIALIZE ACCOUNT";
+            return;
+        }
 
-if(!email||password.length<6) return alert("Invalid input");
-
-btn.innerText="Creating...";
-
-const {error}=await supabase.auth.signUp({email,password});
-
-if(error){
-alert(error.message);
-btn.innerText="Create Account";
-return;
-}
-
-alert("Check your email 📩");
-location.href="login.html";
-}
-</script>
-
+        btn.innerText = "SUCCESS ✅";
+        setTimeout(() => {
+            window.location.href = `login.html?email=${encodeURIComponent(email)}&verify=1`;
+        }, 1500);
+    }
+    </script>
 </body>
 </html>
