@@ -1,146 +1,157 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Study.AI</title>
-
-<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="https://unpkg.com/lucide@latest"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
-<style>
-body{background:#020617;color:white;font-family:Inter;}
-.glass{background:rgba(15,23,42,.6);backdrop-filter:blur(20px);}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study.AI | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f1f5f9; background-image: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.12) 0%, transparent 40%), radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 1) 0%, rgba(2, 6, 23, 1) 100%); background-attachment: fixed; }
+        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .glass-inset { background: rgba(2, 6, 23, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .btn-indigo { background: rgba(99, 102, 241, 0.1); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; }
+        .btn-indigo:hover { background: #6366f1; color: white; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    </style>
 </head>
+<body class="min-h-screen">
+    <div id="appContainer" class="min-h-screen flex flex-col">
+        <nav class="sticky top-0 z-50 bg-navy-950/60 backdrop-blur-xl border-b border-white/5">
+            <div class="max-w-[1600px] mx-auto px-6 h-20 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-indigo-600 to-indigo-800 rounded-xl flex items-center justify-center">
+                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-white uppercase">Study<span class="text-indigo-400">.AI</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="loadBooks()" class="p-2.5 rounded-xl glass-card text-slate-400 hover:text-white transition-all"><i data-lucide="refresh-cw" class="w-5 h-5"></i></button>
+                    <button onclick="logout()" class="px-5 py-2.5 bg-red-500/10 hover:bg-red-600 text-red-500 hover:text-white text-[10px] font-bold rounded-xl transition-all uppercase tracking-widest">Logout</button>
+                </div>
+            </div>
+        </nav>
 
-<body class="p-6">
+        <main class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-6 lg:p-10 gap-8">
+            <aside class="w-full lg:w-80 flex flex-col gap-8">
+                <section class="glass-card rounded-[2.5rem] p-7">
+                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-widest mb-6">Knowledge Vault</h3>
+                    <input type="file" id="bookFile" class="hidden" onchange="updateFileName()">
+                    <label for="bookFile" id="fileNameDisplay" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-800 rounded-[2rem] cursor-pointer text-xs text-slate-500">Drop Study Material</label>
+                    <button onclick="uploadBook()" class="w-full mt-5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl transition-all">Sync to Engine</button>
+                    <div id="progWrapper" class="hidden mt-6 glass-inset p-4 rounded-2xl">
+                        <div id="progText" class="text-[10px] font-bold text-slate-400 mb-2">Processing...</div>
+                        <div class="h-1 w-full bg-slate-900 rounded-full overflow-hidden"><div id="progBar" class="h-full bg-indigo-500" style="width: 0%"></div></div>
+                    </div>
+                </section>
+                <section class="glass-card rounded-[2.5rem] p-7 flex-1 overflow-hidden min-h-[300px]">
+                    <h3 class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-6">Indexed Files (<span id="bookCount">0</span>)</h3>
+                    <div id="books" class="space-y-3 overflow-y-auto custom-scrollbar h-full"></div>
+                </section>
+            </aside>
 
-<div class="flex justify-between mb-6">
-<h1 class="text-xl font-bold">Study.AI</h1>
-<button onclick="logout()" class="bg-red-500 px-4 py-2 rounded-xl">Logout</button>
-</div>
+            <main class="flex-1 flex flex-col gap-8">
+                <header class="glass-card rounded-[2.5rem] p-8">
+                    <div class="glass-inset rounded-2xl flex items-center px-6 mb-6">
+                        <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400"></i>
+                        <input id="topic" type="text" placeholder="Analyze what concept today?" class="w-full bg-transparent border-none py-5 px-4 text-white focus:ring-0">
+                    </div>
+                    <div class="flex flex-col xl:flex-row gap-4">
+                        <select id="level" class="glass-inset rounded-2xl px-6 py-4 text-xs font-bold text-slate-300 flex-1"><option value="University">Advanced</option><option value="Secondary">Standard</option></select>
+                        <select id="bookSelector" class="glass-inset rounded-2xl px-6 py-4 text-xs font-bold text-slate-300 flex-1"><option value="all">Global Database</option></select>
+                        <div class="flex gap-2">
+                            <button onclick="requestAI('explain')" class="btn-indigo px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest">Explain</button>
+                            <button onclick="requestAI('quiz')" class="btn-indigo px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest">Quiz</button>
+                            <button onclick="requestAI('notes')" class="btn-indigo px-6 py-4 rounded-2xl text-[10px] font-bold uppercase tracking-widest">Notes</button>
+                        </div>
+                    </div>
+                </header>
+                <section id="result" class="glass-card rounded-[2.5rem] flex-1 p-8 overflow-y-auto custom-scrollbar prose prose-invert max-w-none">
+                    <div class="opacity-20 text-center py-20">Neural Engine Idle</div>
+                </section>
+            </main>
+        </main>
+    </div>
 
-<div class="grid lg:grid-cols-3 gap-6">
+    <script>
+    const api = "https://study-ai-tq7i.onrender.com";
+    const supabase = window.supabase.createClient("https://hffbjtbahfwudigywzzx.supabase.co", "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5");
+    lucide.createIcons();
 
-<!-- LEFT -->
-<div class="glass p-6 rounded-2xl">
-<input type="file" id="file" class="mb-4">
+    async function protect() {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) window.location.href = "login.html";
+        else loadBooks();
+    }
 
-<button onclick="upload()" class="w-full bg-indigo-600 p-3 rounded-xl">Upload</button>
+    async function logout() { await supabase.auth.signOut(); window.location.href = "login.html"; }
 
-<div id="progress" class="hidden mt-4">
-<div class="h-2 bg-slate-800 rounded">
-<div id="bar" class="bg-indigo-500 h-2 w-0"></div>
-</div>
-<p id="text" class="text-xs mt-2"></p>
-</div>
-</div>
+    async function loadBooks() {
+        const { data: { session } } = await supabase.auth.getSession();
+        const res = await fetch(`${api}/books`, { headers: { "x-user-id": session.user.id } });
+        const books = await res.json();
+        const container = document.getElementById("books");
+        const selector = document.getElementById("bookSelector");
+        container.innerHTML = ""; selector.innerHTML = '<option value="all">Global Database</option>';
+        document.getElementById("bookCount").innerText = books.length;
+        books.forEach(b => {
+            container.innerHTML += `<div class="glass-inset p-3 rounded-xl text-xs">${b.filename}</div>`;
+            selector.innerHTML += `<option value="${b.filename}">${b.filename}</option>`;
+        });
+    }
 
-<!-- RIGHT -->
-<div class="lg:col-span-2 glass p-6 rounded-2xl">
+    async function uploadBook() {
+        const file = document.getElementById("bookFile").files[0];
+        if (!file) return;
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const res = await fetch(`${api}/generate-upload-url`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-user-id": session.user.id },
+            body: JSON.stringify({ filename: file.name })
+        });
+        const { uploadUrl, fileKey } = await res.json();
 
-<input id="topic" class="w-full p-3 bg-slate-900 rounded-xl mb-4" placeholder="Ask anything...">
+        await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
 
-<div class="flex gap-3 mb-4">
-<button onclick="ask('explain')" class="bg-indigo-500 px-4 py-2 rounded">Explain</button>
-<button onclick="ask('quiz')" class="bg-emerald-500 px-4 py-2 rounded">Quiz</button>
-<button onclick="ask('notes')" class="bg-amber-500 px-4 py-2 rounded">Notes</button>
-</div>
+        const ev = new EventSource(`${api}/progress?userId=${session.user.id}`);
+        ev.onmessage = (e) => {
+            const d = JSON.parse(e.data);
+            document.getElementById("progWrapper").classList.remove("hidden");
+            document.getElementById("progBar").style.width = d.progress + "%";
+            if (d.progress >= 100) { ev.close(); loadBooks(); setTimeout(() => document.getElementById("progWrapper").classList.add("hidden"), 2000); }
+        };
 
-<div id="output" class="prose prose-invert"></div>
+        await fetch(`${api}/upload`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-user-id": session.user.id },
+            body: JSON.stringify({ fileKey, filename: file.name })
+        });
+    }
 
-</div>
+    async function requestAI(type) {
+        const topic = document.getElementById("topic").value;
+        const resBox = document.getElementById("result");
+        if (!topic) return;
+        resBox.innerHTML = "Synthesizing...";
+        const { data: { session } } = await supabase.auth.getSession();
+        const endpoint = type === 'explain' ? 'deep-explain' : type;
 
-</div>
+        const res = await fetch(`${api}/${endpoint}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-user-id": session.user.id },
+            body: JSON.stringify({ topic, level: document.getElementById("level").value, book: document.getElementById("bookSelector").value })
+        });
+        const data = await res.json();
+        resBox.innerHTML = marked.parse(data.explanation || data.quiz || data.notes || "No content found.");
+    }
 
-<script>
-const api="https://study-ai-tq7i.onrender.com";
-
-const supabase=window.supabase.createClient(
-"https://hffbjtbahfwudigywzzx.supabase.co",
-"sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
-);
-
-// protect page
-(async()=>{
-const {data:{session}}=await supabase.auth.getSession();
-if(!session) location.href="login.html";
-})();
-
-async function logout(){
-await supabase.auth.signOut();
-location.href="login.html";
-}
-
-// upload
-async function upload(){
-const file=document.getElementById("file").files[0];
-if(!file) return alert("Select file");
-
-const {data:{session}}=await supabase.auth.getSession();
-
-progress.classList.remove("hidden");
-
-const res=await fetch(`${api}/generate-upload-url`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":`Bearer ${session.access_token}`
-},
-body:JSON.stringify({filename:file.name})
-});
-
-const {uploadUrl,fileKey}=await res.json();
-
-await fetch(uploadUrl,{method:"PUT",body:file});
-
-const es=new EventSource(`${api}/progress?userId=${session.user.id}`);
-
-es.onmessage=e=>{
-const d=JSON.parse(e.data);
-bar.style.width=d.progress+"%";
-text.innerText=d.step+" "+d.progress+"%";
-if(d.progress>=100) es.close();
-};
-
-await fetch(`${api}/upload`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":`Bearer ${session.access_token}`
-},
-body:JSON.stringify({fileKey,filename:file.name})
-});
-}
-
-// AI
-async function ask(type){
-const topic=document.getElementById("topic").value;
-if(!topic) return alert("Enter topic");
-
-output.innerHTML="Thinking...";
-
-const {data:{session}}=await supabase.auth.getSession();
-
-const endpoint=type==="explain"?"deep-explain":type;
-
-const res=await fetch(`${api}/${endpoint}`,{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":`Bearer ${session.access_token}`
-},
-body:JSON.stringify({topic})
-});
-
-const data=await res.json();
-
-const text=(data.explanation||data.quiz||data.notes||"No response");
-
-output.innerHTML=marked.parse(text);
-}
-</script>
-
+    function updateFileName() { document.getElementById('fileNameDisplay').innerText = document.getElementById('bookFile').files[0].name; }
+    protect();
+    </script>
 </body>
 </html>
