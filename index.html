@@ -392,7 +392,7 @@ async function handleEmailRedirect() {
                 progText.innerText = 'Starting Indexing... 10%';
                 progBar.style.width = '10%';
                 
-                eventSource = new EventSource(`${api}/progress`);
+                /*eventSource = new EventSource(`${api}/progress`);
                 
                 eventSource.onmessage = (event) => {
                     try {
@@ -424,7 +424,7 @@ async function handleEmailRedirect() {
                 eventSource.onerror = () => {
                     console.error("Lost connection to progress stream.");
                     eventSource.close();
-                };
+                };*/
 
                 // STEP 4: Start indexing FIRST
                 const indexPromise = fetch(`${api}/upload`, {
@@ -437,35 +437,45 @@ async function handleEmailRedirect() {
                 });
 
                 // THEN connect to progress stream
-                eventSource = new EventSource(`${api}/progress`);
+                function connectSSE() {
+    eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
 
-                eventSource.onmessage = (event) => {
-                    try {
-                        const evtData = JSON.parse(event.data);
+    eventSource.onmessage = (event) => {
+        const evtData = JSON.parse(event.data);
 
-                         if (evtData.step && evtData.progress !== undefined) {
-                            progText.innerText = `${evtData.step} ${evtData.progress}%`;
-                            progBar.style.width = `${evtData.progress}%`;
+        if (evtData.step && evtData.progress !== undefined) {
+            progText.innerText = `${evtData.step} ${evtData.progress}%`;
+            progBar.style.width = `${evtData.progress}%`;
 
-                            if (evtData.progress >= 100) {
-                                eventSource.close();
+            if (evtData.progress >= 100) {
+                eventSource.close();
 
-                                progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
-                                progText.innerText = '✅ Success! Indexed.';
-                                progText.classList.replace('text-indigo-400', 'text-emerald-400');
+                progBar.classList.replace('bg-indigo-500', 'bg-emerald-500');
+                progText.innerText = '✅ Success! Indexed.';
+                progText.classList.replace('text-indigo-400', 'text-emerald-400');
 
-                                showToast("✅ Document ready");
-                                loadBooks();
+                showToast("✅ Document ready");
+                loadBooks();
 
-                                setTimeout(() => {
-                                    progWrapper.classList.add('hidden');
-                                }, 3000);
-                            }
-                        }
-                    } catch (e) {
-                        console.error("Progress parse error", e);
-                    }
-                };
+                setTimeout(() => {
+                    progWrapper.classList.add('hidden');
+                }, 3000);
+            }
+        }
+    };
+
+    eventSource.onerror = () => {
+        console.log("Reconnecting SSE...");
+        eventSource.close();
+
+        setTimeout(() => {
+            connectSSE(); // 🔥 important
+        }, 2000);
+    };
+}
+
+// Start it
+connectSSE();
 
                 // wait for backend to finish
                 const indexRes = await indexPromise;
