@@ -199,7 +199,7 @@ async function handleEmailRedirect() {
         await supabaseClient.auth.signOut();
 
         // Clean redirect (no token in URL)
-        window.location.href = "index.html?verified=1";
+        window.location.replace("index.html?verified=1");
     }
 }
 
@@ -244,10 +244,8 @@ async function handleEmailRedirect() {
 
     // ✅ NEW: Check if email is verified
     if (!data.user.email_confirmed_at) {
-        await supabaseClient.auth.signOut();
-
-        showToast("📩 Please verify your email before accessing the app");
-        return;
+    showToast("📩 Please verify your email first");
+    return;
     }
 
     showToast("✅ Authenticated Successfully");
@@ -543,12 +541,16 @@ async function handleEmailRedirect() {
         // Initialize
         (async () => {
     await handleEmailRedirect();
-    await checkUser();
 
     const params = new URLSearchParams(window.location.search);
+
+    // ✅ SHOW MESSAGE FIRST
     if (params.get("verified")) {
         showToast("✅ Email verified! Please login");
     }
+
+    // THEN run auth check
+    await checkUser();
 })();
     </script>
 </body>
