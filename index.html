@@ -80,7 +80,7 @@
             <div class="space-y-4">
                 <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                 <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl glass-inset text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
+                <button onclick="login()" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
                 <p class="text-center text-xs text-slate-500 mt-4">New here? <span onclick="goToSignup()" class="text-indigo-400 cursor-pointer hover:underline">Create Account</span></p>
             </div>
         </div>
@@ -224,33 +224,61 @@
    }
 
         // --- AUTH LOGIC (Your functional code) ---
-        async function checkUser() {
-            const { data } = await supabaseClient.auth.getUser();
-            if (data?.user) {
-                currentUser = data.user;
-                document.getElementById("loginScreen").classList.add("hidden");
-                document.getElementById("appContainer").classList.remove("hidden");
-                loadBooks();
-            }
-        }
 
+        async function checkUser() {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (session) {
+        currentUser = session.user;
+
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appContainer").classList.remove("hidden");
+
+        loadBooks();
+    } else {
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("appContainer").classList.add("hidden");
+    }
+        }
+        
         async function login() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) return showToast(`⚠️ ${error.message}`);
-            checkUser();
+    const btn = document.getElementById("loginBtn");
+    btn.innerText = "Signing in...";
+    btn.disabled = true;
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        showToast(`⚠️ ${error.message}`);
+        btn.innerText = "Sign In";
+        btn.disabled = false;
+        return;
+    }
+
+    checkUser();
         }
 
         async function logout() {
             await supabaseClient.auth.signOut();
-            location.reload();
+            checkUser();
+        }
+
+        function goToSignup() {
+         window.location.href = "signup.html";
+        }
+
+        async function deleteBook(filename) {
+    showToast("Delete feature coming soon");
         }
 
         // --- LIBRARY LOGIC ---
         async function loadBooks() {
             try {
                 const { data: { session } } = await supabaseClient.auth.getSession();
+                if (!session) return;
 
                 const res = await fetch(`${api}/books`, {
                     headers: {
@@ -293,71 +321,76 @@
         }
 
         // --- UPLOAD & SSE PROGRESS (The core of your server interaction) ---
+        
         async function uploadBook() {
-            const fileInput = document.getElementById("bookFile");
-            if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
-            const file = fileInput.files[0];
-            if (!file.name.endsWith(".pdf") && !file.name.endsWith(".docx")) {
-                  return showToast("Only PDF and DOCX allowed.");
+    const fileInput = document.getElementById("bookFile");
+    if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
+
+    const file = fileInput.files[0];
+
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    const progWrapper = document.getElementById("progWrapper");
+    const progBar = document.getElementById("progBar");
+    const progText = document.getElementById("progText");
+
+    let eventSource = null;
+
+    try {
+        progWrapper.classList.remove('hidden');
+
+        // ✅ 1. Get signed URL
+        const signedRes = await fetch(`${api}/generate-upload-url`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({ filename: file.name })
+        });
+
+        const { uploadUrl, fileKey } = await signedRes.json();
+
+        // ✅ 2. Upload file
+        await fetch(uploadUrl, {
+            method: "PUT",
+            body: file,
+            headers: { "Content-Type": file.type }
+        });
+
+        // ✅ 3. Progress tracking
+        eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            progText.innerText = `${data.step} ${data.progress}%`;
+            progBar.style.width = `${data.progress}%`;
+
+            if (data.progress >= 100) {
+                eventSource.close();
+                showToast("✅ Document Indexed");
+                loadBooks();
+                setTimeout(() => progWrapper.classList.add('hidden'), 2000);
             }
+        };
 
-            if (file.size > 25 * 1024 * 1024) {
-                 return showToast("File too large (max 25MB)");
-            }
-            const progWrapper = document.getElementById("progWrapper");
-            const progBar = document.getElementById("progBar");
-            const progText = document.getElementById("progText");
-            let eventSource = null;
+        // ✅ 4. Trigger backend indexing
+        await fetch(`${api}/upload`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.access_token}`
+            },
+            body: JSON.stringify({ fileKey, filename: file.name })
+        });
 
-            try {
-                progWrapper.classList.remove('hidden');
-                progBar.style.width = '5%';
-                progText.innerText = 'Requesting link...';
-
-                const signedRes = await fetch(`${api}/generate-upload-url`, {
-                    method: "POST",
-                    const { data: { session } } = await supabaseClient.auth.getSession();
-
-                    headers: {
-                         "Content-Type": "application/json",
-                         "Authorization": `Bearer ${session.access_token}`
-                   },
-                
-                    body: JSON.stringify({ filename: file.name })
-                });
-                const { uploadUrl, fileKey } = await signedRes.json();
-
-                await fetch(uploadUrl, { method: "PUT", body: file, headers: { "Content-Type": file.type } });
-
-                eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
-                eventSource.onmessage = (event) => {
-                    const data = JSON.parse(event.data);
-                    progText.innerText = `${data.step} ${data.progress}%`;
-                    progBar.style.width = `${data.progress}%`;
-                    if (data.progress >= 100) {
-                        eventSource.close();
-                        showToast("✅ Document Indexed");
-                        loadBooks();
-                        setTimeout(() => progWrapper.classList.add('hidden'), 3000);
-                    }
-                };
-
-                await fetch(`${api}/upload`, {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Authorization": `Bearer ${session.access_token}`
-                    },
-                    body: JSON.stringify({ fileKey, filename: file.name })
-                });
-
-            } catch (err) {
-                if (eventSource) eventSource.close();
-                showToast("❌ Upload Failed");
-                progWrapper.classList.add('hidden');
-            }
+    } catch (err) {
+        if (eventSource) eventSource.close();
+        showToast("❌ Upload Failed");
+        progWrapper.classList.add('hidden');
+    }
         }
-
+        
         // --- AI REQUESTS ---
         async function requestAI(type) {
             const topic = document.getElementById("topic").value;
