@@ -192,26 +192,55 @@
 
         // --- AUTH ---
         async function checkUser() {
-            const { data } = await supabaseClient.auth.getUser();
-            if (data?.user) {
-                currentUser = data.user;
-                document.getElementById("loginScreen").classList.add("hidden");
-                document.getElementById("appContainer").classList.remove("hidden");
-                loadBooks();
-            } else {
-                document.getElementById("loginScreen").classList.remove("hidden");
-                document.getElementById("appContainer").classList.add("hidden");
-            }
+    const { data } = await supabaseClient.auth.getUser();
+
+    if (data?.user) {
+
+        // ✅ NEW: block unverified users
+        if (!data.user.email_confirmed_at) {
+            await supabaseClient.auth.signOut();
+
+            showToast("📩 Verify your email first");
+            document.getElementById("loginScreen").classList.remove("hidden");
+            document.getElementById("appContainer").classList.add("hidden");
+            return;
         }
 
-        async function login() {
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-            const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (error) return showToast(`⚠️ ${error.message}`);
-            showToast("✅ Authenticated Successfully");
-            checkUser();
+        currentUser = data.user;
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appContainer").classList.remove("hidden");
+        loadBooks();
+
+    } else {
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("appContainer").classList.add("hidden");
+    }
         }
+
+
+        async function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        showToast(`⚠️ ${error.message}`);
+        return;
+    }
+
+    // ✅ NEW: Check if email is verified
+    if (!data.user.email_confirmed_at) {
+        await supabaseClient.auth.signOut();
+
+        showToast("📩 Please verify your email before accessing the app");
+        return;
+    }
+
+    showToast("✅ Authenticated Successfully");
+    checkUser(); // continue normal flow
+        }
+        
 
         async function logout() {
             await supabaseClient.auth.signOut();
