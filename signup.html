@@ -26,7 +26,7 @@
         </div>
 
         <div class="glass p-8 rounded-3xl shadow-2xl">
-            <form id="signupForm" class="space-y-5">
+            <div class="space-y-5">
                 <div>
                     <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1 mb-2">Email Address</label>
                     <input type="email" id="email" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="name@example.com">
@@ -35,10 +35,10 @@
                     <label class="block text-[10px] font-bold text-slate-500 uppercase ml-1 mb-2">Create Password</label>
                     <input type="password" id="password" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all" placeholder="Min. 6 characters">
                 </div>
-                <button type="submit" id="submitBtn" class="w-full py-4 neural-btn rounded-xl font-bold text-sm text-white hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
+                <button type="button" onclick="signup()" id="submitBtn" class="w-full py-4 neural-btn rounded-xl font-bold text-sm text-white hover:scale-[1.02] active:scale-95 transition-all shadow-lg shadow-emerald-500/20">
                     INITIALIZE ACCOUNT
                 </button>
-            </form>
+            </div>
 
             <div class="mt-8 text-center border-t border-slate-800/50 pt-6">
                 <p class="text-xs text-slate-500">Already using Study.AI? 
@@ -68,51 +68,52 @@ async function checkUser() {
 checkUser();
 
 // ✅ SIGNUP HANDLER
-document.getElementById('signupForm').onsubmit = async (e) => {
-    e.preventDefault();
 
+    async function signup() {
     const btn = document.getElementById('submitBtn');
+
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
+    // simple validation
     if (password.length < 6) {
-    showToast("Password must be at least 6 characters");
-    return;
+        showToast("Password must be at least 6 characters");
+        return;
     }
-    
+
     btn.disabled = true;
-    btn.innerHTML = `<span class="animate-pulse">INITIALIZING...</span>`;
+    btn.innerText = "INITIALIZING...";
 
     try {
-        const { error } = await supabase.auth.signUp({ email, password });
+        const { error } = await supabase.auth.signUp({
+            email,
+            password
+        });
 
         if (error) {
-            showToast(`⚠️ ${error.message}`);
+            showToast(error.message);
 
-            setTimeout(() => {
-                btn.innerText = "INITIALIZE ACCOUNT";
-                btn.disabled = false;
-            }, 2000);
-
+            btn.disabled = false;
+            btn.innerText = "INITIALIZE ACCOUNT";
             return;
         }
 
         btn.innerText = "SUCCESS ✅";
 
         setTimeout(() => {
-            window.location.href = `${window.location.origin}/login.html?email=${encodeURIComponent(email)}&verify=1`;
+            window.location.href =
+                `login.html?email=${encodeURIComponent(email)}&verify=1`;
         }, 1000);
 
     } catch (err) {
         btn.innerText = "Network error";
 
         setTimeout(() => {
-            btn.innerText = "INITIALIZE ACCOUNT";
             btn.disabled = false;
+            btn.innerText = "INITIALIZE ACCOUNT";
         }, 2000);
     }
-};
-
+ };
 function showToast(msg) {
     const div = document.createElement("div");
     div.innerText = msg;
