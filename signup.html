@@ -121,7 +121,7 @@
             }, 3000);
         }
 
-        async function signUp() {
+       /* async function signUp() {
             const btn = document.getElementById("signupBtn");
             const email = document.getElementById("email").value;
             const password = document.getElementById("password").value;
@@ -172,6 +172,105 @@
             setTimeout(() => {
                 window.location.href = "index.html?verify=1&email=" + encodeURIComponent(email);
             }, 2000);
+        }*/
+
+        async function signUp() {
+    const btn = document.getElementById("signupBtn");
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirmPassword").value;
+
+    // 🔧 Reset helper
+    const resetBtn = () => {
+        btn.disabled = false;
+        btn.innerText = "INITIALIZE ACCOUNT";
+    };
+
+    // ✅ 1. Validation
+    if (!email || !password || !confirm) {
+        showToast("⚠️ Please fill all fields", true);
+        return;
+    }
+
+    if (password !== confirm) {
+        showToast("❌ Passwords do not match", true);
+        return;
+    }
+
+    if (password.length < 6) {
+        showToast("⚠️ Min. 6 characters required", true);
+        return;
+    }
+
+    // ✅ 2. Loading state
+    btn.disabled = true;
+    btn.innerText = "INITIALIZING...";
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: window.location.origin
+            }
+        });
+
+        // ✅ 3. Handle explicit errors
+        if (error) {
+            const msg = (error.message || "").toLowerCase();
+
+            if (
+                msg.includes("already") ||
+                msg.includes("exists") ||
+                msg.includes("registered") ||
+                msg.includes("duplicate")
+            ) {
+                showToast("❌ User already exists. Please login", true);
+
+                resetBtn(); // 🔥 important fix
+
+                setTimeout(() => {
+                    window.location.href = "/?email=" + encodeURIComponent(email);
+                }, 1500);
+
+            } else {
+                showToast(`❌ ${error.message}`, true);
+                resetBtn();
+            }
+
+            return;
+        }
+
+        // ✅ 4. Handle Supabase silent duplicate (VERY IMPORTANT)
+        if (
+            data?.user &&
+            Array.isArray(data.user.identities) &&
+            data.user.identities.length === 0
+        ) {
+            showToast("❌ User already exists. Please login", true);
+
+            resetBtn(); // 🔥 important fix
+
+            setTimeout(() => {
+                window.location.href = "/?email=" + encodeURIComponent(email);
+            }, 1500);
+
+            return;
+        }
+
+        // ✅ 5. Success
+        await supabaseClient.auth.signOut();
+
+        showToast("📩 Check your email to verify your account");
+
+        setTimeout(() => {
+            window.location.href = "/?verify=1&email=" + encodeURIComponent(email);
+        }, 2000);
+
+    } catch (err) {
+        showToast("❌ Network error. Try again", true);
+        resetBtn();
+    }
         }
 
         function togglePassword(id, btn) {
