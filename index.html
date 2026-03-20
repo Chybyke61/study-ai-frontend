@@ -227,12 +227,14 @@ async function handleEmailRedirect() {
 }
 
         // --- AUTH ---
-        async function checkUser() {
+    async function checkUser() {
     const { data } = await supabaseClient.auth.getUser();
+    const path = window.location.pathname;
 
+    // ✅ If user is logged in
     if (data?.user) {
 
-        // ✅ NEW: block unverified users
+        // block unverified users
         if (!data.user.email_confirmed_at) {
             await supabaseClient.auth.signOut();
 
@@ -244,26 +246,30 @@ async function handleEmailRedirect() {
 
         currentUser = data.user;
 
-const path = window.location.pathname;
-
-// 👉 If user is on dashboard
-if (path === "/dashboard") {
-    document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("appContainer").classList.remove("hidden");
-    loadBooks();
-} else {
-    // 👉 Force redirect to dashboard
-    if (path.startsWith("/dashboard")) {
-    window.location.href = "/dashboard";
-    }
-}
+        // 👉 Allow dashboard
+        if (path.startsWith("/dashboard")) {
+            document.getElementById("loginScreen").classList.add("hidden");
+            document.getElementById("appContainer").classList.remove("hidden");
+            loadBooks();
+        } else {
+            // 👉 redirect logged-in users to dashboard
+            window.location.href = "/dashboard";
+        }
 
     } else {
+        // ❌ NOT LOGGED IN
+
+        // 👉 BLOCK dashboard access
+        if (path.startsWith("/dashboard")) {
+            window.location.href = "/";
+            return;
+        }
+
+        // 👉 show login normally
         document.getElementById("loginScreen").classList.remove("hidden");
         document.getElementById("appContainer").classList.add("hidden");
     }
-        }
-
+    }
 
         async function login() {
     const email = document.getElementById("email").value;
