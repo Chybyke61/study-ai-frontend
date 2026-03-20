@@ -516,50 +516,62 @@ connectSSE();
 
         // --- AI ---
         async function requestAI(type) {
-            const topic = document.getElementById("topic").value;
-            const resultBox = document.getElementById("result");
-            if (!topic) {
-                document.getElementById("topic").focus();
-                return showToast("⚠️ Enter a topic to analyze.");
-            }
+    const topic = document.getElementById("topic").value;
+    const resultBox = document.getElementById("result");
 
-            resultBox.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-indigo-400">
-                <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
-                <p class="font-bold tracking-widest text-xs animate-pulse">AI IS REASONING OVER YOUR DATA...</p>
+    if (!topic) {
+        document.getElementById("topic").focus();
+        return showToast("⚠️ Enter a topic to analyze.");
+    }
+
+    resultBox.innerHTML = `
+    <div class="flex flex-col items-center justify-center h-full text-indigo-400">
+        <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
+        <p class="font-bold tracking-widest text-xs animate-pulse">
+            AI IS REASONING OVER YOUR DATA...
+        </p>
+    </div>`;
+    lucide.createIcons();
+
+    try {
+        const endpoint = type === 'explain' ? 'deep-explain' : type;
+
+        const res = await fetch(`${api}/${endpoint}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-user-id": currentUser.id
+            },
+            body: JSON.stringify({
+                topic,
+                level: document.getElementById("level").value,
+                book: document.getElementById("bookSelector").value,
+                sessionId
+            })
+        });
+
+        const data = await res.json();
+        const raw = data.explanation || data.quiz || data.notes;
+
+        if (!raw) throw new Error("Empty response");
+
+        if (type === "quiz") {
+            renderQuiz(raw);
+        } else {
+            resultBox.innerHTML = `
+            <div class="markdown-content animate-fade-in">
+                ${marked.parse(raw)}
             </div>`;
-            lucide.createIcons();
+        }
 
-            try {
-                const endpoint = type === 'explain' ? 'deep-explain' : type;
-                const res = await fetch(`${api}/${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
-                    body: JSON.stringify({ 
-                        topic, 
-                        level: document.getElementById("level").value, 
-                        book: document.getElementById("bookSelector").value, 
-                        sessionId 
-                    })
-                });
-                
-                const data = await res.json();
-                const raw = data.explanation || data.quiz || data.notes;
-                
-                if(!raw) { throw new Error("Empty response"); }
-                if (type === "quiz") {
-                    renderQuiz(raw);
-                } else {
-                    resultBox.innerHTML = `<div class="markdown-content animate-fade-in">${marked.parse(raw)}</div>`;
-                }
-
-                 catch (err) { 
-                resultBox.innerHTML = `
-                <div class="flex flex-col items-center justify-center h-full text-red-400">
-                    <i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i>
-                    <p class="font-bold">Request Failed. Please try again.</p>
-                </div>`; 
-                lucide.createIcons();
-            }
+    } catch (err) {
+        resultBox.innerHTML = `
+        <div class="flex flex-col items-center justify-center h-full text-red-400">
+            <i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i>
+            <p class="font-bold">Request Failed. Please try again.</p>
+        </div>`;
+        lucide.createIcons();
+    }
         }
 
         // --- UTILS ---
