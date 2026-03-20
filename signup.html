@@ -145,7 +145,7 @@
             if (error) {
 
     // ✅ Detect existing user
-               /*if (error.message.toLowerCase().includes("already")) {
+               if (error.message.toLowerCase().includes("already")) {
 
         showToast("❌ User already exists. Please login", true);
 
@@ -162,31 +162,8 @@
     btn.disabled = false;
     btn.innerText = "INITIALIZE ACCOUNT";
     return;
-            }*/
+            }
      
-
-    if (error.message && (
-    error.message.toLowerCase().includes("already") ||
-    error.message.toLowerCase().includes("exists") ||
-    error.message.toLowerCase().includes("registered") ||
-    error.message.toLowerCase().includes("duplicate")
-)) {
-
-    showToast("❌ User already exists. Please login", true);
-
-    btn.disabled = false;
-    btn.innerText = "INITIALIZE ACCOUNT";
-
-    setTimeout(() => {
-        window.location.href = "index.html?email=" + encodeURIComponent(email);
-    }, 1500);
-
-    return;
-    }
-
-   
-
-
             // Immediately sign out to force manual login for verification
             await supabaseClient.auth.signOut();
 
