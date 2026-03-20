@@ -163,36 +163,28 @@
     btn.innerText = "INITIALIZE ACCOUNT";
     return;
             }*/
-       if (error) {
+     
 
-    const msg = error.message?.toLowerCase() || "";
+    if (error.message && (
+    error.message.toLowerCase().includes("already") ||
+    error.message.toLowerCase().includes("exists") ||
+    error.message.toLowerCase().includes("registered") ||
+    error.message.toLowerCase().includes("duplicate")
+)) {
 
-    if (
-        msg.includes("already") ||
-        msg.includes("exists") ||
-        msg.includes("registered") ||
-        msg.includes("duplicate")
-    ) {
-
-        showToast("⚠️ Account already exists. Please login", true);
-
-        btn.disabled = false;
-        btn.innerText = "INITIALIZE ACCOUNT";
-
-        setTimeout(() => {
-            window.location.href = "index.html?email=" + encodeURIComponent(email);
-        }, 1500);
-
-        return;
-    }
-
-    // Other errors
-    showToast(`❌ ${error.message}`, true);
+    showToast("❌ User already exists. Please login", true);
 
     btn.disabled = false;
     btn.innerText = "INITIALIZE ACCOUNT";
+
+    setTimeout(() => {
+        window.location.href = "index.html?email=" + encodeURIComponent(email);
+    }, 1500);
+
     return;
-       }
+    }
+
+   
 
 
             // Immediately sign out to force manual login for verification
