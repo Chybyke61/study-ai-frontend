@@ -614,7 +614,10 @@ connectSSE();
 
             // 🔥 Extract correct answers
 if (line.includes("Correct Answer")) {
-    const ans = line.split(":")[1]?.trim();
+    const ans = line
+    .split(":")[1]
+    ?.replace(/[^A-D]/g, "")
+    .trim();
     if (ans) correctAnswers.push(ans);
 }
 
