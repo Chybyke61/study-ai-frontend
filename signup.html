@@ -145,7 +145,7 @@
             if (error) {
 
     // ✅ Detect existing user
-            /*   if (error.message.toLowerCase().includes("already")) {
+               if (error.message.toLowerCase().includes("already")) {
 
         showToast("❌ User already exists. Please login", true);
 
@@ -162,38 +162,7 @@
     btn.disabled = false;
     btn.innerText = "INITIALIZE ACCOUNT";
     return;
-            }*/
-
-             if (error) {
-
-    const msg = (error.message || "").toLowerCase();
-
-    // ✅ Detect existing user (robust)
-    if (
-        msg.includes("already") ||
-        msg.includes("registered") ||
-        msg.includes("exists")
-    ) {
-        showToast("⚠️ Account already exists. Please login.", true);
-
-        // ✅ IMPORTANT: reset button BEFORE redirect
-        btn.disabled = false;
-        btn.innerText = "INITIALIZE ACCOUNT";
-
-        setTimeout(() => {
-            window.location.href = "/";
-        }, 1500);
-
-        return;
-    }
-
-    // Other errors
-    showToast("❌ " + error.message, true);
-
-    btn.disabled = false;
-    btn.innerText = "INITIALIZE ACCOUNT";
-    return;
-             }
+            }
 
 
             // Immediately sign out to force manual login for verification
