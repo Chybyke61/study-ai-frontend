@@ -599,6 +599,9 @@ connectSSE();
 
     const questions = quizText.split("## Question").slice(1);
 
+    let correctAnswers = [];
+    let rationales = [];
+
     let html = "";
 
     questions.forEach((q, i) => {
@@ -608,6 +611,18 @@ connectSSE();
         const lines = q.split("\n");
 
         lines.forEach(line => {
+
+            // 🔥 Extract correct answers
+if (line.includes("Correct Answer")) {
+    const ans = line.split(":")[1]?.trim();
+    if (ans) correctAnswers.push(ans);
+}
+
+// 🔥 Extract explanations
+if (line.includes("Academic Rationale")) {
+    const exp = line.split(":")[1]?.trim();
+    if (exp) rationales.push(exp);
+}
             if (
                 line.startsWith("A)") ||
                 line.startsWith("B)") ||
@@ -644,12 +659,45 @@ connectSSE();
 
     `;
 
+      window.correctAnswers = correctAnswers;
+window.rationales = rationales;
+
     resultBox.innerHTML = html;
       lucide.createIcons();
         }
         
        function submitQuiz() {
-    alert("Submit working ✅");
+    let score = 0;
+    const total = window.correctAnswers.length;
+
+    let resultHTML = "";
+
+    for (let i = 0; i < total; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const userAnswer = selected ? selected.value : null;
+        const correct = window.correctAnswers[i];
+
+        if (userAnswer === correct) {
+            score++;
+            resultHTML += `<p class="text-green-400">Q${i + 1}: Correct ✅</p>`;
+        } else {
+            resultHTML += `
+            <div class="text-red-400 mb-3">
+                Q${i + 1}: Wrong ❌ <br>
+                <span class="text-slate-300">Correct Answer: ${correct}</span><br>
+                <span class="text-slate-400 text-sm">${window.rationales[i] || ""}</span>
+            </div>`;
+        }
+    }
+
+    document.getElementById("result").innerHTML = `
+    <div class="p-6 bg-slate-900 rounded-2xl">
+        <h2 class="text-2xl font-bold mb-4 text-white">
+            Score: ${score}/${total}
+        </h2>
+        ${resultHTML}
+    </div>
+    `;
        }
 
         function togglePassword(id, btn) {
