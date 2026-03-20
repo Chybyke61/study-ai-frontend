@@ -306,10 +306,10 @@ const user = session?.user;
     if (user) {
 
         // 🔥 FORCE redirect if on homepage
-    if (!window.location.pathname.startsWith("/dashboard")) {
+    /* if (!window.location.pathname.startsWith("/dashboard")) {
     window.location.href = "/dashboard";
     return;
-}
+}*/
 
 
         // block unverified users
@@ -325,6 +325,32 @@ const user = session?.user;
         }
 
         currentUser = user;
+
+        const isGoogle = user.app_metadata?.provider === "google";
+
+if (isGoogle) {
+    const created = new Date(user.created_at).getTime();
+    const lastLogin = new Date(user.last_sign_in_at).getTime();
+
+    const isNewUser = Math.abs(created - lastLogin) < 5000;
+
+    if (isNewUser) {
+        showToast("🎉 Account created successfully");
+
+        document.getElementById("loadingScreen").style.display = "flex";
+        document.getElementById("loadingScreen").style.opacity = "1";
+
+        setTimeout(() => {
+            window.location.href = "/dashboard";
+        }, 1200);
+
+    } else {
+        showToast("✅ Authenticated Successfully");
+        window.location.href = "/dashboard";
+    }
+
+    return;
+}
 
         // 👉 Allow dashboard
         
