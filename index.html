@@ -244,6 +244,11 @@
         const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+        checkUser();
+    }
+});
         let currentUser = null;
         let allBooks = [];
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
@@ -252,7 +257,7 @@
         lucide.createIcons();
 
         // 🚫 Prevent auto-login after email verification
-async function handleEmailRedirect() {
+ /* async function handleEmailRedirect() {
     const hash = window.location.hash;
 
     if (hash && hash.includes("access_token")) {
@@ -262,7 +267,31 @@ async function handleEmailRedirect() {
         // Clean redirect (no token in URL)
         window.location.replace("/?verified=1");
     }
+}*/
+
+async function handleEmailRedirect() {
+    const hash = window.location.hash;
+
+    if (!hash) return;
+
+    // 🔥 Detect provider
+    const isGoogle = hash.includes("provider_token") || hash.includes("provider=google");
+
+    if (hash.includes("access_token")) {
+
+        // ✅ GOOGLE LOGIN → go straight to dashboard
+        if (isGoogle) {
+            window.location.replace("/dashboard");
+            return;
+        }
+
+        // ✅ EMAIL VERIFICATION → force login again
+        await supabaseClient.auth.signOut();
+
+        window.location.replace("/?verified=1");
+    }
 }
+
 
         // --- AUTH ---
     async function checkUser() {
@@ -969,7 +998,7 @@ if (email) {
     }
 
     // THEN run auth check
-    setTimeout(checkUser, 400);
+    setTimeout(checkUser, 800);
 })();
     </script>
 </body>
