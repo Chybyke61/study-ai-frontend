@@ -921,6 +921,11 @@ window.rationales = rationales;
     await handleEmailRedirect();
 
     const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+if (email) {
+    const input = document.getElementById("email");
+    if (input) input.value = email;
+}
         if (params.get("reset") === "success") {
     showToast("✅ Password reset successful, please login");
     }
