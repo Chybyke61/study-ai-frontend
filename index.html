@@ -921,11 +921,20 @@ window.rationales = rationales;
     await handleEmailRedirect();
 
     const params = new URLSearchParams(window.location.search);
-        const email = params.get("email");
+       /* const email = params.get("email");
 if (email) {
     const input = document.getElementById("email");
     if (input) input.value = email;
+}*/ 
+       const email = params.get("email");
+if (email) {
+    const input = document.getElementById("email");
+    const pass = document.getElementById("password");
+
+    if (input) input.value = email;
+    if (pass) pass.focus();
 }
+            
         if (params.get("reset") === "success") {
     showToast("✅ Password reset successful, please login");
     }
