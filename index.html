@@ -407,6 +407,18 @@ window.location.href = "/dashboard";
 
         // --- REAL PROGRESS UPLOAD REWRITE ---
         async function uploadBook() {
+            
+            // 🔥 ALWAYS refresh user (fixes null issue permanently)
+const { data } = await supabaseClient.auth.getUser();
+currentUser = data.user;
+
+// Debug log
+console.log("USER:", currentUser);
+
+if (!currentUser || !currentUser.id) {
+    showToast("⚠️ Please login first");
+    return;
+}
             const fileInput = document.getElementById("bookFile");
             if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
 
