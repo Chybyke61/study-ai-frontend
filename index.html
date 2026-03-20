@@ -546,9 +546,13 @@ connectSSE();
                 const raw = data.explanation || data.quiz || data.notes;
                 
                 if(!raw) { throw new Error("Empty response"); }
+                if (type === "quiz") {
+                    renderQuiz(raw);
+                } else {
+                    resultBox.innerHTML = `<div class="markdown-content animate-fade-in">${marked.parse(raw)}</div>`;
+                }
 
-                resultBox.innerHTML = `<div class="markdown-content animate-fade-in">${marked.parse(raw)}</div>`;
-            } catch (err) { 
+                 catch (err) { 
                 resultBox.innerHTML = `
                 <div class="flex flex-col items-center justify-center h-full text-red-400">
                     <i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i>
@@ -577,6 +581,64 @@ connectSSE();
                 t.classList.replace("translate-y-0", "-translate-y-2");
             }, 3500);
         }
+
+        function renderQuiz(quizText) {
+    const resultBox = document.getElementById("result");
+
+    const questions = quizText.split("## Question").slice(1);
+
+    let html = "";
+
+    questions.forEach((q, i) => {
+        html += `<div class="mb-6 p-4 rounded-xl bg-slate-900 text-white">`;
+        html += `<p class="font-bold mb-2">Question ${i + 1}</p>`;
+
+        const lines = q.split("\n");
+
+        lines.forEach(line => {
+            if (
+                line.startsWith("A)") ||
+                line.startsWith("B)") ||
+                line.startsWith("C)") ||
+                line.startsWith("D)")
+            ) {
+                const option = line.charAt(0);
+
+                html += `
+                <label class="block cursor-pointer mb-1">
+                    <input type="radio" name="q${i}" value="${option}" class="mr-2">
+                    ${line}
+                </label>
+                `;
+            } else if (
+                !line.includes("Correct Answer") &&
+                !line.includes("Academic Rationale")
+            ) {
+                html += `<p class="text-sm mb-1">${line}</p>`;
+            }
+        });
+
+        html += `</div>`;
+    });
+
+    html += `
+    <button 
+    onclick="submitQuiz()" 
+    class="w-full mt-8 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"
+>
+    <i data-lucide="check-circle" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
+    <span class="tracking-wide">Submit Assessment</span>
+</button>
+
+    `;
+
+    resultBox.innerHTML = html;
+      lucide.createIcons();
+        }
+        
+       function submitQuiz() {
+    alert("Submit working ✅");
+       }
 
         function togglePassword(id, btn) {
     const input = document.getElementById(id);
