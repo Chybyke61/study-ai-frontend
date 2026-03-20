@@ -86,7 +86,7 @@
                   <div class="flex-1 border-t border-slate-800"></div>
                </div>
 
-              <a href="signup.html" class="w-full flex items-center justify-center bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-2">
+              <a href="/signup" class="w-full flex items-center justify-center bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-2">
                   <i data-lucide="user-plus" class="w-4 h-4 text-indigo-400"></i>
                   Create New Account
                   </a>
@@ -243,9 +243,20 @@ async function handleEmailRedirect() {
         }
 
         currentUser = data.user;
-        document.getElementById("loginScreen").classList.add("hidden");
-        document.getElementById("appContainer").classList.remove("hidden");
-        loadBooks();
+
+const path = window.location.pathname;
+
+// 👉 If user is on dashboard
+if (path === "/dashboard") {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appContainer").classList.remove("hidden");
+    loadBooks();
+} else {
+    // 👉 Force redirect to dashboard
+    if (path.startsWith("/dashboard")) {
+    window.location.href = "/dashboard";
+    }
+}
 
     } else {
         document.getElementById("loginScreen").classList.remove("hidden");
@@ -272,8 +283,10 @@ async function handleEmailRedirect() {
     }
 
     showToast("✅ Authenticated Successfully");
-    checkUser(); // continue normal flow
-        }
+
+// redirect to dashboard
+window.location.href = "/dashboard";
+        } 
         
 
         async function logout() {
