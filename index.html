@@ -113,6 +113,17 @@
                   <div class="flex-1 border-t border-slate-800"></div>
                </div>
 
+                <button onclick="googleLogin()" 
+                 class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-3 group">
+    
+                <div class="bg-white p-1.5 rounded-xl group-hover:scale-110 transition-transform">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4">
+              </div>
+    
+                <span class="tracking-tight">Continue with Google</span>
+                </button>
+                
+
               <a href="/signup" class="w-full flex items-center justify-center bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-2">
                   <i data-lucide="user-plus" class="w-4 h-4 text-indigo-400"></i>
                   Create New Account
@@ -324,7 +335,7 @@ loader.style.display = "flex";
     }
 
     // ✅ NEW: Check if email is verified
-    if (!data.user.email_confirmed_at) {
+    if (!data.user.email_confirmed_at && data.user.app_metadata.provider !== "google") {
     showToast("📩 Verify your email first");
 
     // ✅ ADD THIS
@@ -336,7 +347,19 @@ loader.style.display = "flex";
 // redirect to dashboard
 window.location.href = "/dashboard";
         } 
-        
+
+        async function googleLogin() {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: window.location.origin + "/dashboard"
+        }
+    });
+
+    if (error) {
+        showToast("❌ Google login failed");
+    }
+        }
 
         async function logout() {
     await supabaseClient.auth.signOut();
