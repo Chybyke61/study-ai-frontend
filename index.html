@@ -43,7 +43,34 @@
 </head>
 <body class="min-h-screen">
 
-    <div id="loginScreen" class="min-h-screen flex items-center justify-center p-4">
+    <div id="loadingScreen" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#020617] bg-[radial-gradient(at_0%_0%,rgba(99,102,241,0.15)_0%,transparent_50%),radial-gradient(at_100%_100%,rgba(16,185,129,0.1)_0%,transparent_50%)] backdrop-blur-sm transition-opacity duration-500">
+    
+    <div class="flex flex-col items-center">
+        <div class="relative flex items-center justify-center w-24 h-24 mb-6">
+            <svg class="absolute inset-0 w-full h-full text-indigo-600/30 animate-[spin_3s_linear_infinite]" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            
+            <div class="absolute inset-2 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl shadow-[0_0_30px_rgba(79,70,229,0.3)] flex items-center justify-center backdrop-blur-md">
+                <i data-lucide="brain-circuit" class="w-8 h-8 text-indigo-400 animate-pulse"></i>
+            </div>
+        </div>
+
+        <h2 class="text-2xl font-extrabold tracking-tight text-white mb-4 font-['Plus_Jakarta_Sans']">Study.AI</h2>
+        
+        <div class="flex items-center gap-2 mb-4">
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0s;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.15s;"></div>
+            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.3s;"></div>
+        </div>
+        
+        <p class="text-[10px] font-bold text-indigo-400/80 uppercase tracking-[0.2em] animate-pulse">Initializing Workspace...</p>
+    </div>
+</div>
+
+
+    <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-4">
         <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl">
             <div class="text-center mb-10">
                 <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
@@ -222,12 +249,15 @@ async function handleEmailRedirect() {
         await supabaseClient.auth.signOut();
 
         // Clean redirect (no token in URL)
-        window.location.replace("index.html?verified=1");
+        window.location.replace("/?verified=1");
     }
 }
 
         // --- AUTH ---
     async function checkUser() {
+        const loader = document.getElementById("loadingScreen");
+loader.style.opacity = "1";
+loader.style.display = "flex";
     const { data } = await supabaseClient.auth.getUser();
     const path = window.location.pathname;
 
@@ -241,17 +271,25 @@ async function handleEmailRedirect() {
             showToast("📩 Verify your email first");
             document.getElementById("loginScreen").classList.remove("hidden");
             document.getElementById("appContainer").classList.add("hidden");
+
+            hideLoader(); // ✅ ADD THIS
             return;
         }
 
         currentUser = data.user;
 
         // 👉 Allow dashboard
+        
         if (path.startsWith("/dashboard")) {
-            document.getElementById("loginScreen").classList.add("hidden");
-            document.getElementById("appContainer").classList.remove("hidden");
-            loadBooks();
-        } else {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appContainer").classList.remove("hidden");
+    loadBooks();
+
+    // ✅ ADD THIS LINE
+    hideLoader();
+        }
+        
+         else {
             // 👉 redirect logged-in users to dashboard
             window.location.href = "/dashboard";
         }
@@ -268,6 +306,9 @@ async function handleEmailRedirect() {
         // 👉 show login normally
         document.getElementById("loginScreen").classList.remove("hidden");
         document.getElementById("appContainer").classList.add("hidden");
+
+        // ✅ ADD THIS
+         hideLoader();
     }
     }
 
@@ -284,7 +325,9 @@ async function handleEmailRedirect() {
 
     // ✅ NEW: Check if email is verified
     if (!data.user.email_confirmed_at) {
-    showToast("📩 Please verify your email first");
+    showToast("📩 Verify your email first");
+
+    // ✅ ADD THIS
     return;
     }
 
@@ -611,6 +654,17 @@ connectSSE();
                 t.classList.replace("opacity-100", "opacity-0");
                 t.classList.replace("translate-y-0", "-translate-y-2");
             }, 3500);
+        }
+
+        function hideLoader() {
+    const loader = document.getElementById("loadingScreen");
+
+    loader.style.opacity = "0";
+    loader.style.pointerEvents = "none";
+
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, 500);
         }
 
         function renderQuiz(quizText) {
