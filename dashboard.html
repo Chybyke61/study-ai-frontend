@@ -3,307 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study.AI | Workspace</title>
+    <title>Dashboard | Study.AI</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
         body { 
             font-family: 'Inter', sans-serif;
             background-color: #020617; 
             color: #f8fafc;
-            background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%), 
-                              radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.04) 0px, transparent 50%);
-            background-attachment: fixed;
+            background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%), 
+                              radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
         }
         .glass-card { 
             background: rgba(15, 23, 42, 0.6); 
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08); 
         }
-        .btn-emerald { 
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-            transition: all 0.3s ease;
+        .sidebar-item:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-right: 3px solid #10b981;
         }
-        .btn-emerald:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #10b981; }
-        .empty-state { border: 2px dashed rgba(255, 255, 255, 0.1); }
+        .active-nav {
+            background: rgba(16, 185, 129, 0.1);
+            border-right: 3px solid #10b981;
+            color: #10b981;
+        }
     </style>
 </head>
+<body class="min-h-screen flex">
 
-<body class="min-h-screen flex flex-col pb-12">
-
-    <nav class="glass-card border-x-0 border-t-0 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-emerald-600/20 border border-emerald-500/30 rounded-xl flex items-center justify-center shadow-lg">
-                    <i data-lucide="brain-circuit" class="text-emerald-400 w-5 h-5"></i>
-                </div>
-                <span class="text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] text-white">Study.AI</span>
+    <aside class="w-64 border-r border-slate-800/50 flex flex-col hidden md:flex">
+        <div class="p-6 flex items-center gap-2">
+            <div class="w-8 h-8 bg-emerald-600/20 border border-emerald-500/30 rounded-lg flex items-center justify-center">
+                <i data-lucide="brain-circuit" class="text-emerald-400 w-5 h-5"></i>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <div class="hidden sm:block text-right mr-2">
-                    <p class="text-xs font-bold text-slate-300" id="userEmailDisplay">student@example.com</p>
-                    <p class="text-[9px] text-emerald-400 uppercase font-bold tracking-widest">Free Plan</p>
+            <span class="text-lg font-bold font-['Plus_Jakarta_Sans']">Study.AI</span>
+        </div>
+
+        <nav class="flex-1 px-4 space-y-2 mt-4">
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl active-nav transition-all">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 sidebar-item transition-all">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="font-medium">My Library</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 sidebar-item transition-all">
+                <i data-lucide="message-square" class="w-5 h-5"></i>
+                <span class="font-medium">AI Tutor</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 sidebar-item transition-all">
+                <i data-lucide="layers" class="w-5 h-5"></i>
+                <span class="font-medium">Flashcards</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 sidebar-item transition-all">
+                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                <span class="font-medium">Analytics</span>
+            </a>
+        </nav>
+
+        <div class="p-4 mt-auto">
+            <div class="glass-card p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-transparent">
+                <p class="text-xs font-bold text-emerald-400 uppercase mb-2">Pro Plan</p>
+                <p class="text-xs text-slate-400 mb-3">85% of AI credits used.</p>
+                <div class="w-full bg-slate-800 h-1.5 rounded-full mb-4">
+                    <div class="bg-emerald-500 h-full rounded-full" style="width: 85%"></div>
                 </div>
-                <button onclick="logout()" class="w-9 h-9 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-red-400 transition-colors">
-                    <i data-lucide="log-out" class="w-4 h-4"></i>
+                <button class="w-full py-2 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-lg transition-colors">
+                    Upgrade
                 </button>
             </div>
         </div>
-    </nav>
+    </aside>
 
-    <main class="max-w-6xl mx-auto w-full px-4 sm:px-6 py-10 space-y-10">
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <button onclick="goUpload()" class="btn-emerald p-6 rounded-[1.5rem] text-left group shadow-lg flex flex-col justify-between min-h-[130px]">
-                <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                    <i data-lucide="upload-cloud" class="text-white w-6 h-6"></i>
-                </div>
-                <div>
-                    <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Upload Textbook</h4>
-                    <p class="text-emerald-100 text-xs">PDF, DOCX, or Text</p>
-                </div>
-            </button>
-
-            <button onclick="goChat()" class="glass-card p-6 rounded-[1.5rem] text-left group hover:border-blue-500/30 transition-all flex flex-col justify-between min-h-[130px]">
-                <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-4">
-                    <i data-lucide="message-square-text" class="text-blue-400 w-6 h-6"></i>
-                </div>
-                <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Ask Questions</h4>
-            </button>
-
-            <button onclick="generateQuiz()" class="glass-card p-6 rounded-[1.5rem] text-left group hover:border-indigo-500/30 transition-all flex flex-col justify-between min-h-[130px]">
-                <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
-                    <i data-lucide="graduation-cap" class="text-indigo-400 w-6 h-6"></i>
-                </div>
-                <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Generate Quiz</h4>
-            </button>
-        </div>
-
-        <section id="continueSection" class="hidden">
-            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <i data-lucide="play-circle" class="w-4 h-4 text-emerald-400"></i> Continue Learning
-            </h3>
-            <div class="glass-card p-6 rounded-[2rem] flex items-center justify-between">
-                <div>
-                    <h4 id="lastDocName" class="text-xl font-bold text-white font-['Plus_Jakarta_Sans'] mb-1">Textbook Name</h4>
-                    <p class="text-sm text-slate-400">Jump back into your last session</p>
-                </div>
-                <button onclick="resumeStudy()" class="bg-white/5 hover:bg-white/10 text-white px-6 py-3 rounded-xl font-bold border border-white/10 transition-all">Resume</button>
+    <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <header class="h-16 border-b border-slate-800/50 flex items-center justify-between px-8 bg-[#020617]/50 backdrop-blur-md">
+            <div class="flex items-center gap-4 bg-slate-900/50 px-4 py-2 rounded-xl border border-slate-800 w-96">
+                <i data-lucide="search" class="w-4 h-4 text-slate-500"></i>
+                <input type="text" placeholder="Search textbooks or notes..." class="bg-transparent border-none text-sm focus:outline-none text-slate-300 w-full">
             </div>
-        </section>
-
-        <section>
-            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <i data-lucide="library" class="w-4 h-4 text-emerald-400"></i> My Materials
-            </h3>
             
-            <div id="docContainer" class="space-y-3">
-                <div id="emptyState" class="empty-state p-12 rounded-[2rem] text-center space-y-4">
-                    <div class="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto text-slate-600">
-                        <i data-lucide="file-minus" class="w-8 h-8"></i>
+            <div class="flex items-center gap-4">
+                <button class="relative p-2 text-slate-400 hover:text-white transition-colors">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full border-2 border-[#020617]"></span>
+                </button>
+                <div class="h-8 w-[1px] bg-slate-800 mx-2"></div>
+                <div class="flex items-center gap-3">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-xs font-bold text-white leading-tight">Alex Rivera</p>
+                        <p class="text-[10px] text-slate-500 leading-tight">Medical Student</p>
                     </div>
-                    <div>
-                        <h4 class="text-lg font-bold text-white">No documents yet</h4>
-                        <p class="text-sm text-slate-500">Upload your first textbook to begin your intelligence index.</p>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-blue-500 p-[1px]">
+                        <div class="w-full h-full rounded-xl bg-slate-900 flex items-center justify-center overflow-hidden">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Alex" alt="avatar">
+                        </div>
                     </div>
-                    <button onclick="goUpload()" class="text-emerald-400 font-bold hover:underline">Upload Now →</button>
+                </div>
+            </div>
+        </header>
+
+        <section class="flex-1 overflow-y-auto p-8">
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-2xl font-bold font-['Plus_Jakarta_Sans'] mb-8">Welcome back, Alex!</h1>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">Documents</span>
+                            <i data-lucide="file-text" class="text-emerald-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold">24</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">AI Queries</span>
+                            <i data-lucide="sparkles" class="text-blue-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold">142</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-400 text-xs font-medium uppercase tracking-wider">Flashcards</span>
+                            <i data-lucide="copy" class="text-indigo-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold">850</p>
+                    </div>
+                    <div class="glass-card p-5 rounded-2xl border-emerald-500/20 bg-emerald-500/5">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-emerald-400 text-xs font-bold uppercase tracking-wider">Mastery Score</span>
+                            <i data-lucide="trending-up" class="text-emerald-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold text-emerald-400">92%</p>
+                    </div>
                 </div>
 
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="glass-card rounded-3xl overflow-hidden">
+                            <div class="p-6 border-b border-slate-800/50 flex justify-between items-center">
+                                <h3 class="font-bold font-['Plus_Jakarta_Sans']">Recent Materials</h3>
+                                <button class="text-emerald-400 text-xs font-bold hover:underline">Upload New</button>
+                            </div>
+                            <div class="p-0">
+                                <table class="w-full text-left">
+                                    <thead class="text-[10px] uppercase text-slate-500 bg-slate-900/30">
+                                        <tr>
+                                            <th class="px-6 py-3 font-bold">Name</th>
+                                            <th class="px-6 py-3 font-bold">Status</th>
+                                            <th class="px-6 py-3 font-bold text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800/50">
+                                        <tr class="hover:bg-white/5 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <i data-lucide="file-text" class="w-5 h-5 text-blue-400"></i>
+                                                    <div>
+                                                        <p class="text-sm font-semibold">Anatomy_Ch3.pdf</p>
+                                                        <p class="text-[10px] text-slate-500">12.4 MB • 2 days ago</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-2 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-[10px] font-bold border border-emerald-500/20">Indexed</span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <button class="text-slate-500 hover:text-white transition-colors"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>
+                                            </td>
+                                        </tr>
+                                        <tr class="hover:bg-white/5 transition-colors group">
+                                            <td class="px-6 py-4">
+                                                <div class="flex items-center gap-3">
+                                                    <i data-lucide="file-text" class="w-5 h-5 text-indigo-400"></i>
+                                                    <div>
+                                                        <p class="text-sm font-semibold">Microbiology_Lecture_09.pptx</p>
+                                                        <p class="text-[10px] text-slate-500">4.1 MB • 5 hours ago</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="px-6 py-4">
+                                                <span class="px-2 py-1 rounded-full bg-blue-500/10 text-blue-400 text-[10px] font-bold border border-blue-500/20">Processing</span>
+                                            </td>
+                                            <td class="px-6 py-4 text-right">
+                                                <button class="text-slate-500 hover:text-white transition-colors"><i data-lucide="more-horizontal" class="w-4 h-4"></i></button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="glass-card p-6 rounded-3xl">
+                            <h3 class="font-bold font-['Plus_Jakarta_Sans'] mb-6">Learning Velocity</h3>
+                            <div class="h-48 w-full flex items-end gap-3 px-2">
+                                <div class="flex-1 bg-slate-800 rounded-t-lg relative group h-[40%]">
+                                    <div class="absolute inset-0 bg-emerald-500 rounded-t-lg opacity-20 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                                <div class="flex-1 bg-slate-800 rounded-t-lg relative group h-[65%]">
+                                    <div class="absolute inset-0 bg-emerald-500 rounded-t-lg opacity-20 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                                <div class="flex-1 bg-slate-800 rounded-t-lg relative group h-[55%]">
+                                    <div class="absolute inset-0 bg-emerald-500 rounded-t-lg opacity-20 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                                <div class="flex-1 bg-slate-800 rounded-t-lg relative group h-[90%]">
+                                    <div class="absolute inset-0 bg-emerald-500 rounded-t-lg opacity-40 group-hover:opacity-100 transition-opacity border-t-2 border-emerald-400"></div>
+                                </div>
+                                <div class="flex-1 bg-slate-800 rounded-t-lg relative group h-[45%]">
+                                    <div class="absolute inset-0 bg-emerald-500 rounded-t-lg opacity-20 group-hover:opacity-100 transition-opacity"></div>
+                                </div>
+                            </div>
+                            <div class="flex justify-between mt-4 px-2 text-[10px] text-slate-500 font-bold uppercase tracking-widest">
+                                <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="glass-card rounded-3xl p-6 bg-gradient-to-b from-slate-800/40 to-transparent">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-10 h-10 bg-emerald-500/20 rounded-xl flex items-center justify-center">
+                                    <i data-lucide="message-square" class="text-emerald-400 w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-sm">Quick Ask</h3>
+                                    <p class="text-[10px] text-slate-500">Ask anything across your library</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3 mb-6">
+                                <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+                                    <p class="text-[11px] text-slate-300 italic">"What are the primary symptoms of Mitral Valve Prolapse from the Anatomy PDF?"</p>
+                                </div>
+                                <div class="bg-emerald-500/10 p-3 rounded-xl border border-emerald-500/20">
+                                    <p class="text-[11px] text-emerald-100">Click to see the answer generated from your sources...</p>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <textarea rows="3" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-xs focus:outline-none focus:border-emerald-500/50 resize-none" placeholder="Type your question..."></textarea>
+                                <button class="absolute bottom-3 right-3 p-1.5 bg-emerald-600 rounded-lg text-white hover:bg-emerald-500 transition-colors">
+                                    <i data-lucide="send" class="w-3 h-3"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-3xl p-6">
+                            <h3 class="font-bold text-sm mb-4">Upcoming Goals</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full border-2 border-emerald-500/30 flex items-center justify-center text-[10px] font-bold text-emerald-400">70%</div>
+                                    <p class="text-xs text-slate-300 font-medium">Neurobiology Quiz</p>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full border-2 border-slate-800 flex items-center justify-center text-[10px] font-bold text-slate-500">0%</div>
+                                    <p class="text-xs text-slate-300 font-medium">Summarize Pharmacology</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
+            </div>
         </section>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <section>
-                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Saved Summaries</h3>
-                <div class="glass-card p-6 rounded-[2rem] min-h-[200px] flex flex-col justify-center items-center text-slate-600">
-                    <i data-lucide="sticky-note" class="w-8 h-8 mb-2 opacity-20"></i>
-                    <p class="text-xs font-medium">Your generated notes will appear here</p>
-                </div>
-            </section>
-
-            <section>
-                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Recent Activity</h3>
-                <div id="activityLog" class="space-y-2">
-                    <p class="text-xs text-slate-500 italic p-4 text-center">No recent activity found.</p>
-                </div>
-            </section>
-        </div>
-
-        <div class="glass-card p-6 rounded-[1.5rem] flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-3">
-                <i data-lucide="database" class="w-5 h-5 text-slate-400"></i>
-                <span class="text-sm font-bold text-white">Cloud Storage</span>
-            </div>
-            <div class="w-full sm:w-1/2 h-2 bg-slate-800 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500/50 rounded-full w-[5%] shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
-            </div>
-            <span class="text-xs text-slate-500 font-bold">5 MB / 1 GB</span>
-        </div>
-
     </main>
 
     <script>
-        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
-        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
-        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-        // 🟢 1. LocalStorage Management
-        function updateContinueLearning(docName) {
-            localStorage.setItem('lastStudied', docName);
-            renderContinueSection();
-        }
-
-        function renderContinueSection() {
-            const lastDoc = localStorage.getItem('lastStudied');
-            const section = document.getElementById('continueSection');
-            if (lastDoc) {
-                section.classList.remove('hidden');
-                document.getElementById('lastDocName').innerText = lastDoc;
-            }
-        }
-
-        function logActivity(action) {
-            let activities = JSON.parse(localStorage.getItem('studyActivity') || '[]');
-            activities.unshift({ action, time: new Date().toLocaleTimeString() });
-            localStorage.setItem('studyActivity', JSON.stringify(activities.slice(0, 3)));
-            renderActivity();
-        }
-
-        function renderActivity() {
-            const container = document.getElementById('activityLog');
-            const logs = JSON.parse(localStorage.getItem('studyActivity') || '[]');
-            if (logs.length > 0) {
-                container.innerHTML = logs.map(log => `
-                    <div class="glass-card p-3 px-4 rounded-xl flex justify-between items-center text-xs">
-                        <span class="text-slate-300 font-medium">${log.action}</span>
-                        <span class="text-slate-600">${log.time}</span>
-                    </div>
-                `).join('');
-            }
-        }
-
-        // 🟢 2. Backend Fetch
-        async function loadDocuments() {
-            const { data: session } = await supabaseClient.auth.getSession();
-            if (!session.session) return window.location.href = "index.html";
-            
-            document.getElementById('userEmailDisplay').innerText = session.session.user.email;
-
-            // Simulated fetch from your /books endpoint or Supabase
-            // const { data: books, error } = await supabaseClient.from('books').select('*');
-            const res = await fetch("https://study-ai-tq7i.onrender.com/books");
-            
-let books = [];
-
-try {
-    const res = await fetch("https://study-ai-tq7i.onrender.com/books");
-    const data = await res.json();
-
-    if (data.error) {
-        console.warn("Backend error:", data.error);
-        books = [];
-    } else {
-        books = data;
-    }
-
-} catch (err) {
-    console.error("Fetch failed:", err);
-    books = [];
-} // Start with empty for the Empty State test
-
-            const container = document.getElementById('docContainer');
-            const emptyState = document.getElementById('emptyState');
-
-            // 🟢 2. Real Documents List & 🟢 4. Empty State
-if (books && books.length > 0) {
-    // Hide empty state and populate list
-    emptyState.classList.add('hidden');
-
-    const html = books.map(book => {
-        // Optional: Format date and page count if they exist in your DB
-        const dateInfo = book.created_at 
-            ? new Date(book.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) 
-            : 'Recently';
-        const pageInfo = book.page_count ? `${book.page_count} pages` : 'Document';
-        const displayName = book.filename || book.name;
-
-        return `
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-emerald-500/30 transition-all group">
-                <div class="flex items-center gap-4 mb-3 sm:mb-0">
-                    <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-colors">
-                        <i data-lucide="file-text" class="w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <p class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-xs">${displayName}</p>
-                        <p class="text-[11px] text-slate-500 font-medium uppercase tracking-tight">
-                            Indexed ${dateInfo} • ${pageInfo}
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="flex items-center gap-2 sm:w-auto w-full">
-                    <button onclick="openChat(${JSON.stringify(displayName)})" 
-                        class="flex-1 sm:flex-none text-xs font-bold bg-slate-800/40 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl transition-colors border border-slate-700/50 active:scale-95">
-                        Chat
-                    </button>
-                    <button onclick="openQuiz(${JSON.stringify(displayName)})" 
-                        class="flex-1 sm:flex-none text-xs font-bold bg-slate-800/40 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl transition-colors border border-slate-700/50 active:scale-95">
-                        Quiz
-                    </button>
-                </div>
-            </div>
-        `;
-    }).join('');
-    container.innerHTML = html;
-
-
-    // 🔥 Re-initialize icons for the newly injected HTML
-    lucide.createIcons(); 
-} else {
-    // Show empty state if no books found
-    emptyState.classList.remove('hidden');
-    container.innerHTML = ''; 
-}
-        } 
-            
-
-        function openChat(name) {
-            updateContinueLearning(name);
-            logActivity(`Chatted with ${name}`);
-            alert(`Opening Chat for: ${name}`);
-        }
-
-function openQuiz(name) {
-    updateContinueLearning(name);
-    logActivity(`Quiz on ${name}`);
-    alert(`Opening Quiz for: ${name}`);
-}
-
-
-        async function logout() {
-            await supabaseClient.auth.signOut();
-            window.location.href = "index.html";
-        }
-
-        function goUpload() {
-    window.location.href = "/app.html?tab=upload";
-}
-
-function goChat() {
-    window.location.href = "/app.html?tab=chat";
-}
-
-function generateQuiz() {
-    window.location.href = "/app.html?tab=quiz";
-}
-
-        // Init
-        loadDocuments();
-        renderContinueSection();
-        renderActivity();
         lucide.createIcons();
     </script>
 </body>
