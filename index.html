@@ -279,9 +279,9 @@
 
         if (isGoogle) {
             // ✅ CLEAN URL + go dashboard
-            window.location.replace("/dashboard?google=1");
+            window.location.replace("/dashboard);
             return;
-        }
+        } 
 
         // ✅ Email verification
         await supabaseClient.auth.signOut();
@@ -289,7 +289,7 @@
     }
         }
 
-        async function waitForSession() {
+       /*  async function waitForSession() {
     let tries = 0;
 
     while (tries < 10) {
@@ -304,8 +304,17 @@
     }
 
     return null;
-        }
+        } */
 
+        async function waitForSession() {
+    for (let i = 0; i < 10; i++) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+        if (session) return session;
+
+        await new Promise(r => setTimeout(r, 200)); // wait 200ms
+    }
+    return null;
+        }
 
         // --- AUTH ---
     async function checkUser() {
@@ -313,7 +322,7 @@
 loader.style.opacity = "1";
 loader.style.display = "flex";
     await new Promise(res => setTimeout(res, 200));
-const { data: { session } } = await supabaseClient.auth.getSession();
+    const session = await waitForSession();
 const user = session?.user;
     const path = window.location.pathname;
 
@@ -346,15 +355,15 @@ const user = session?.user;
 // ✅ GOOGLE LOGIN HANDLER
 if (isGoogle) {
 
-    const params = new URLSearchParams(window.location.search);
-    const isGoogleLogin = params.get("google");
+  /*  const params = new URLSearchParams(window.location.search);
+    const isGoogleLogin = params.get("google"); */
 
-    if (isGoogleLogin) {
+   // if (isGoogleLogin) {
         showToast("🎉 Account created successfully");
 
         // clean URL after showing message
-        window.history.replaceState({}, document.title, "/dashboard");
-    }
+      //  window.history.replaceState({}, document.title, "/dashboard");
+  //  }
 
     // ✅ SHOW DASHBOARD (NO REDIRECT LOOP)
     if (path.startsWith("/dashboard")) {
