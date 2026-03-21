@@ -374,11 +374,23 @@ if (!window.location.pathname.startsWith("/dashboard")) {
     }
 
         async function login() {
+
+            // ✅ Anti-spam (rate limit)
+const key = "loginAttempt";
+const lastAttempt = localStorage.getItem(key);
+const now = Date.now();
+
+if (lastAttempt && now - lastAttempt < 3000) {
+    showToast("⏳ Please wait a moment...");
+    return;
+}
+            
         const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
     if (!token) {
     return showToast("⚠️ Please verify you're human", true);
     }
+    localStorage.setItem(key, now);
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
 
@@ -386,12 +398,20 @@ if (!window.location.pathname.startsWith("/dashboard")) {
 
     if (error) {
         showToast(`⚠️ ${error.message}`);
+
+        if (window.turnstile) {
+    turnstile.reset();
+        }
         return;
     }
 
     // ✅ NEW: Check if email is verified
     if (!data.user.email_confirmed_at) {
     showToast("📩 Verify your email first");
+
+        if (window.turnstile) {
+    turnstile.reset();
+        }
 
     // ✅ ADD THIS
     return;
