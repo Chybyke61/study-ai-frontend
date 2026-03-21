@@ -270,6 +270,7 @@
 }*/
         async function handleEmailRedirect() {
     const hash = window.location.hash;
+    const isGoogle = hash.includes("provider_token");
 
     if (!hash || !hash.includes("access_token")) return;
 
@@ -277,7 +278,7 @@
 
     const provider = data?.session?.user?.app_metadata?.provider;
 
-    if (provider === "google") {
+    if (isGoogle) {
         window.location.replace("/dashboard");
     } else {
         await supabaseClient.auth.signOut();
