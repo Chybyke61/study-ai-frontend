@@ -276,9 +276,17 @@ function openQuiz(name) {
             window.location.href = "index.html";
         }
 
-        function goUpload() { alert("Modal: Upload textbook"); }
-        function goChat() { alert("Chat: Select a document first"); }
-        function generateQuiz() { alert("Quiz: Select a document first"); }
+        function goUpload() {
+    window.location.href = "/app.html?tab=upload";
+}
+
+function goChat() {
+    window.location.href = "/app.html?tab=chat";
+}
+
+function generateQuiz() {
+    window.location.href = "/app.html?tab=quiz";
+}
 
         // Init
         loadDocuments();
