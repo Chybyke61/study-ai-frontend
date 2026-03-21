@@ -298,6 +298,12 @@ const user = session?.user;
     // ✅ If user is logged in
     if (user) {
 
+        // 🔥 FORCE redirect if on homepage
+if (!window.location.pathname.startsWith("/dashboard")) {
+    window.location.href = "/dashboard";
+    return;
+}
+
         // block unverified users
        // if (!data.user.email_confirmed_at && data.user.app_metadata.provider !== "google") {
         if (!user.email_confirmed_at && user.app_metadata.provider !== "google") {
@@ -376,7 +382,7 @@ window.location.href = "/dashboard";
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: window.location.origin + "/dashboard"
+            redirectTo: window.location.origin
         }
     });
 
@@ -992,7 +998,7 @@ if (email) {
     }
 
     // THEN run auth check
-    setTimeout(checkUser, 400);
+    setTimeout(checkUser, 800);
 })();
     </script>
 </body>
