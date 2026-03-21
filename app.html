@@ -176,10 +176,10 @@
                     <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                          <i data-lucide="upload-cloud" class="w-3 h-3"></i> Ingest Material
                     </h3>
-                    <input type="file" id="bookFile" class="hidden" onchange="updateFileName()">
+                    <input type="file" id="bookFile" class="hidden" accept=".pdf,.doc,.docx" onchange="updateFileName()">
                     <label for="bookFile" class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-700 rounded-3xl cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group">
                         <i data-lucide="plus-circle" class="w-6 h-6 text-slate-500 group-hover:text-indigo-400 mb-2 transition-colors"></i>
-                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center font-medium">Select PDF, Image or Doc</span>
+                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center font-medium">Select PDF or DOCX only</span>
                     </label>
                     <button onclick="uploadBook()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
                         <i data-lucide="database-zap" class="w-4 h-4"></i> Index Knowledge
@@ -690,7 +690,29 @@ connectSSE();
     if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
 
     const file = fileInput.files[0];
+            
+    // 🔒 Frontend file type enforcement
+    const allowedTypes = [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "application/msword"
+    ];
 
+//if (!allowedTypes.includes(file.type)) {
+     const fileName = file.name.toLowerCase();
+
+if (
+    !allowedTypes.includes(file.type) &&
+    !fileName.endsWith(".pdf") &&
+    !fileName.endsWith(".doc") &&
+    !fileName.endsWith(".docx")
+) {
+    
+    showToast("❌ Only PDF and DOCX allowed");
+    fileInput.value = ""; // reset input
+    document.getElementById("fileNameDisplay").innerText = "Select PDF or DOCX only";
+    return;
+}
     const progWrapper = document.getElementById("progWrapper");
     const progBar = document.getElementById("progBar");
     const progText = document.getElementById("progText");
