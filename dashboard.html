@@ -9,14 +9,34 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; }
-        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .active-nav { background: rgba(16, 185, 129, 0.1); border-right: 3px solid #10b981; color: #10b981; }
-        .sidebar-item:hover { background: rgba(16, 185, 129, 0.05); }
-        #drop-zone.dragover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%), 
+                              radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+        }
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+        .active-nav {
+            background: rgba(16, 185, 129, 0.1);
+            border-right: 3px solid #10b981;
+            color: #10b981;
+        }
+        #upload-dropzone.dragover {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen flex opacity-0 transition-opacity duration-500" id="main-body">
+<body class="min-h-screen flex opacity-0 transition-opacity duration-500" id="dashboard-body">
 
     <aside class="w-64 border-r border-slate-800/50 flex flex-col hidden md:flex">
         <div class="p-6 flex items-center gap-2">
@@ -25,21 +45,37 @@
             </div>
             <span class="text-lg font-bold font-['Plus_Jakarta_Sans']">Study.AI</span>
         </div>
+
         <nav class="flex-1 px-4 space-y-2 mt-4">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl active-nav"><i data-lucide="layout-dashboard" class="w-5 h-5"></i>Dashboard</a>
-            <a href="#" onclick="signOut()" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 sidebar-item mt-20"><i data-lucide="log-out" class="w-5 h-5"></i>Sign Out</a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl active-nav">
+                <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                <span class="font-medium">Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-white/5 transition-all">
+                <i data-lucide="book-open" class="w-5 h-5"></i>
+                <span class="font-medium">Library</span>
+            </a>
+            <button onclick="handleSignOut()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-red-400 hover:bg-red-400/5 transition-all mt-auto mb-4">
+                <i data-lucide="log-out" class="w-5 h-5"></i>
+                <span class="font-medium">Sign Out</span>
+            </button>
         </nav>
     </aside>
 
     <main class="flex-1 flex flex-col h-screen overflow-hidden">
+        
         <header class="h-16 border-b border-slate-800/50 flex items-center justify-between px-8 bg-[#020617]/50 backdrop-blur-md">
-            <h2 class="font-bold text-slate-200">System Status: <span class="text-emerald-400 text-sm" id="upload-status">Ready</span></h2>
+            <div>
+                <h2 class="text-sm font-bold text-slate-400 uppercase tracking-widest" id="status-label">System Ready</h2>
+            </div>
+            
             <div class="flex items-center gap-4">
                 <div class="text-right">
-                    <p class="text-xs font-bold text-white" id="user-email">Loading...</p>
+                    <p class="text-xs font-bold text-white leading-tight" id="user-display-name">Loading...</p>
+                    <p class="text-[10px] text-emerald-400 font-bold" id="user-plan">Free Student</p>
                 </div>
-                <div class="w-10 h-10 rounded-xl bg-slate-800 flex items-center justify-center overflow-hidden border border-slate-700">
-                    <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+                    <i data-lucide="user" class="text-slate-400 w-5 h-5"></i>
                 </div>
             </div>
         </header>
@@ -47,31 +83,69 @@
         <section class="flex-1 overflow-y-auto p-8">
             <div class="max-w-6xl mx-auto">
                 
-                <div id="drop-zone" class="glass-card mb-8 p-10 rounded-[2rem] border-dashed border-2 border-slate-700 flex flex-col items-center justify-center transition-all">
-                    <div class="w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4">
-                        <i data-lucide="upload-cloud" class="text-emerald-400 w-8 h-8"></i>
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                    <div>
+                        <h1 class="text-3xl font-bold font-['Plus_Jakarta_Sans']">Student Workspace</h1>
+                        <p class="text-slate-400">Manage your documents and AI-generated insights.</p>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Upload Study Material</h3>
-                    <p class="text-slate-400 text-sm mb-6">PDF, DOCX, or TXT (Max 50MB)</p>
-                    <input type="file" id="fileInput" class="hidden" accept=".pdf,.docx,.txt">
-                    <button onclick="document.getElementById('fileInput').click()" class="bg-emerald-600 hover:bg-emerald-500 px-8 py-3 rounded-xl font-bold transition-all">Select File</button>
+                    <button onclick="document.getElementById('file-input').click()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 transition-all shadow-lg shadow-emerald-600/20">
+                        <i data-lucide="plus" class="w-5 h-5"></i> Upload Document
+                    </button>
+                    <input type="file" id="file-input" class="hidden" accept=".pdf,.docx,.txt">
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                     <div class="glass-card p-6 rounded-2xl">
-                        <p class="text-slate-400 text-xs font-bold uppercase mb-2">Storage Used</p>
-                        <p class="text-2xl font-bold" id="file-count">0 Files</p>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-500 text-xs font-bold uppercase">Library Size</span>
+                            <i data-lucide="files" class="text-blue-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold" id="stat-books">0 Books</p>
                     </div>
-                    <div class="glass-card p-6 rounded-2xl border-emerald-500/20">
-                        <p class="text-emerald-400 text-xs font-bold uppercase mb-2">AI Processing</p>
-                        <p class="text-2xl font-bold" id="progress-text">Idle</p>
+                    <div id="progress-card" class="glass-card p-6 rounded-2xl transition-all border-transparent">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-500 text-xs font-bold uppercase">AI Indexing</span>
+                            <i data-lucide="cpu" class="text-emerald-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold" id="stat-progress">Idle</p>
+                        <div class="w-full bg-slate-800 h-1 rounded-full mt-3 overflow-hidden">
+                            <div id="progress-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="glass-card p-6 rounded-2xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-slate-500 text-xs font-bold uppercase">AI Tokens</span>
+                            <i data-lucide="zap" class="text-amber-400 w-4 h-4"></i>
+                        </div>
+                        <p class="text-2xl font-bold">Unlimited</p>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-3xl overflow-hidden">
-                    <div class="p-6 border-b border-slate-800/50"><h3 class="font-bold">Library</h3></div>
-                    <div id="file-list" class="divide-y divide-slate-800/50">
-                        <div class="p-8 text-center text-slate-500">No documents uploaded yet.</div>
+                <div class="glass-card rounded-[2rem] overflow-hidden">
+                    <div class="p-6 border-b border-slate-800/50 bg-white/5 flex items-center justify-between">
+                        <h3 class="font-bold flex items-center gap-2"><i data-lucide="database" class="w-4 h-4 text-emerald-400"></i> My Knowledge Base</h3>
+                        <button onclick="fetchLibrary()" class="p-2 hover:bg-white/10 rounded-lg transition-colors"><i data-lucide="refresh-cw" class="w-4 h-4 text-slate-400"></i></button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="text-[10px] uppercase text-slate-500 bg-slate-900/50">
+                                <tr>
+                                    <th class="px-8 py-4 font-bold">Document Name</th>
+                                    <th class="px-8 py-4 font-bold">Upload Date</th>
+                                    <th class="px-8 py-4 font-bold text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="library-body" class="divide-y divide-slate-800/50">
+                                <tr>
+                                    <td colspan="3" class="px-8 py-12 text-center text-slate-500">
+                                        <div class="flex flex-col items-center gap-2">
+                                            <i data-lucide="inbox" class="w-8 h-8 opacity-20"></i>
+                                            <p>No documents found. Upload your first PDF to begin.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -79,85 +153,156 @@
     </main>
 
     <script>
-        // --- CONFIGURATION (Matches your app.html) ---
+        // --- INITIALIZATION (From your app.html) ---
         const SUPABASE_URL = "https://hffbjtbahfwudigywzzx.supabase.co";
         const SUPABASE_KEY = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
-        const API_BASE = "https://study-ai-tq7i.onrender.com";
-        
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        let currentUser = null;
+        const API_URL = "https://study-ai-tq7i.onrender.com"; // Your server.js port
 
-        // --- AUTH CHECK ---
-        async function checkSession() {
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        let user = null;
+
+        async function init() {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
-                window.location.href = "app.html"; // Redirect to login if no session
+                window.location.href = "app.html";
                 return;
             }
-            currentUser = session.user;
-            document.getElementById('user-email').innerText = currentUser.email;
-            document.getElementById('main-body').classList.remove('opacity-0');
-            setupSSE();
+            user = session.user;
+            document.getElementById('user-display-name').innerText = user.email.split('@')[0];
+            document.getElementById('dashboard-body').classList.remove('opacity-0');
+            
+            fetchLibrary();
+         //   setupSSE();
+            lucide.createIcons();
         }
 
-        async function signOut() {
-            await supabase.auth.signOut();
-            window.location.href = "app.html";
+        // --- FETCH LIBRARY ---
+        async function fetchLibrary() {
+            const { data, error } = await supabase
+                .from('books')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (error) return console.error(error);
+            
+            const container = document.getElementById('library-body');
+            document.getElementById('stat-books').innerText = `${data.length} Books`;
+            
+            if (data.length === 0) return;
+
+            container.innerHTML = data.map(book => `
+                <tr class="hover:bg-white/5 transition-colors group">
+                    <td class="px-8 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 bg-blue-500/10 rounded flex items-center justify-center">
+                                <i data-lucide="file-text" class="text-blue-400 w-4 h-4"></i>
+                            </div>
+                            <span class="text-sm font-semibold text-slate-200">${book.filename}</span>
+                        </div>
+                    </td>
+                    <td class="px-8 py-4 text-xs text-slate-500">
+                        ${new Date(book.created_at).toLocaleDateString()}
+                    </td>
+                    <td class="px-8 py-4 text-right">
+                        <button onclick="deleteBook('${book.filename}')" class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+            lucide.createIcons();
         }
 
-        // --- FILE UPLOAD LOGIC (Connects to server.js) ---
-        const fileInput = document.getElementById('fileInput');
-        fileInput.addEventListener('change', async (e) => {
+        // --- UPLOAD LOGIC ---
+        document.getElementById('file-input').addEventListener('change', async (e) => {
             const file = e.target.files[0];
             if (!file) return;
 
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('userId', currentUser.id);
+            formData.append('userId', user.id);
 
-            document.getElementById('upload-status').innerText = "Uploading...";
-            
+            updateStatus("Uploading...", "emerald");
+
             try {
-                const response = await fetch(`${API_BASE}/upload`, {
+                const res = await fetch(`${API_URL}/upload-stream`, {
                     method: 'POST',
                     body: formData
                 });
-                const result = await response.json();
-                
+                const result = await res.json();
                 if (result.success) {
-                    document.getElementById('upload-status').innerText = "Analyzing...";
+                    updateStatus("Indexing Started", "blue");
                 } else {
                     alert("Upload failed: " + result.error);
                 }
             } catch (err) {
-                console.error(err);
-                alert("Server connection failed");
+                alert("Backend not responding. Is server.js running?");
             }
         });
 
-        // --- PROGRESS TRACKING (Connects to server.js /progress) ---
+        // --- SSE PROGRESS ---
         function setupSSE() {
-            const eventSource = new EventSource(`${API_BASE}/progress?userId=${currentUser.id}`);
+            const es = new EventSource(`${API_URL}/progress?userId=${user.id}`);
             
-            eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                const progressDisplay = document.getElementById('progress-text');
-                const statusDisplay = document.getElementById('upload-status');
+            es.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                const bar = document.getElementById('progress-bar');
+                const text = document.getElementById('stat-progress');
+                const card = document.getElementById('progress-card');
 
                 if (data.status === 'processing') {
-                    progressDisplay.innerText = `${data.progress}%`;
-                    statusDisplay.innerText = `Reading: ${data.filename}`;
-                } else if (data.status === 'completed') {
-                    progressDisplay.innerText = "Done";
-                    statusDisplay.innerText = "Ready";
-                    // Add logic here to refresh file list
+                    card.style.borderColor = "rgba(16, 185, 129, 0.3)";
+                    text.innerText = `${data.progress}%`;
+                    bar.style.width = `${data.progress}%`;
+                    document.getElementById('status-label').innerText = `Analyzing: ${data.filename}`;
+                } 
+                
+                if (data.status === 'completed') {
+                    text.innerText = "Done";
+                    bar.style.width = "100%";
+                    setTimeout(() => {
+                        bar.style.width = "0%";
+                        text.innerText = "Idle";
+                        card.style.borderColor = "transparent";
+                        document.getElementById('status-label').innerText = "System Ready";
+                        fetchLibrary();
+                    }, 3000);
                 }
             };
         }
 
-        // Initialize
-        checkSession();
-        lucide.createIcons();
+        // --- DELETE LOGIC ---
+        async function deleteBook(filename) {
+            if (!confirm(`Delete ${filename}?`)) return;
+            
+         /*   const res = await fetch(`${API_URL}/delete-book`, {
+              method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, filename })
+            });*/
+
+            await fetch(`${API_URL}/delete-book/${encodeURIComponent(filename)}`, {
+    method: "DELETE",
+    headers: {
+        "x-user-id": user.id
+    }
+});
+            if (res.ok) fetchLibrary();
+        }
+
+        function updateStatus(msg, color) {
+            const label = document.getElementById('status-label');
+            label.innerText = msg;
+            label.className = `text-sm font-bold uppercase tracking-widest text-${color}-400`;
+        }
+
+        async function handleSignOut() {
+            await supabase.auth.signOut();
+            window.location.href = "app.html";
+        }
+
+        init();
     </script>
 </body>
 </html>
