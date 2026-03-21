@@ -1006,6 +1006,16 @@ if (email) {
         showToast("✅ Email verified! Please login");
     }
 
+      function trackActivity(type, value = 1) {
+    let stats = JSON.parse(localStorage.getItem("studyStats") || "{}");
+
+    if (!stats[type]) stats[type] = 0;
+
+    stats[type] += value;
+
+    localStorage.setItem("studyStats", JSON.stringify(stats));
+      }
+
     // THEN run auth check
     setTimeout(checkUser, 800);
 })();
