@@ -204,14 +204,85 @@
 
     <script>
         const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
+const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function checkUser() {
+    const { data } = await supabaseClient.auth.getSession();
+
+    if (!data.session) {
+        window.location.href = "/";
+    }
+        }
         // Keep your existing JS logic here
         
-        function logout() { alert("Logging out..."); }
+        async function logout() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "/";
+        }
+        const api = "https://study-ai-tq7i.onrender.com";
+let currentUser = null;
+
+       async function loadDashboard() {
+    const { data } = await supabaseClient.auth.getUser();
+    currentUser = data.user;
+
+    if (!currentUser) return;
+
+    loadBooks();
+       }
+
+
+        async function loadBooks() {
+    try {
+        const res = await fetch(`${api}/books`, {
+            headers: { "x-user-id": currentUser.id }
+        });
+
+        const books = await res.json();
+
+        // ✅ Update document count
+        document.getElementById("docsCount").innerText = books.length;
+
+        // ✅ Send books to UI
+        renderBooks(books);
+
+    } catch (err) {
+        console.error("Error loading books", err);
+    }
+        }
+
+        function renderBooks(books) {
+    const container = document.querySelector(".custom-scrollbar");
+
+    if (!books.length) return;
+
+    container.innerHTML = books.map(book => `
+        <div class="flex items-center justify-between p-3 rounded-xl hover:bg-slate-800/50 transition-colors cursor-pointer border border-transparent hover:border-slate-700/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-500/10 rounded-lg flex items-center justify-center text-emerald-400">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-white">${book.filename || book.name}</p>
+                    <p class="text-xs text-slate-500">Indexed recently</p>
+                </div>
+            </div>
+            <i data-lucide="chevron-right" class="w-4 h-4 text-slate-600"></i>
+        </div>
+    `).join("");
+lucide.createIcons();
+        }
+
+        
         function goUpload() { alert("Opening textbook upload modal..."); }
         function goChat() { alert("Opening Chat UI loaded with current textbook context..."); }
         function generateQuiz() { alert("Generating multi-choice quiz from current chapter..."); }
 
-        lucide.createIcons();
+        checkUser();
+loadDashboard();
+lucide.createIcons();
     </script>
 </body>
 </html>
