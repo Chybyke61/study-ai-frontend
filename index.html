@@ -363,10 +363,7 @@ if (isGoogle) {
 
         loadBooks();
         hideLoader();
-    } else {
-        window.location.replace("/dashboard");
-    }
-
+    } 
     return;
 }
         
@@ -434,7 +431,7 @@ window.location.href = "/dashboard";
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: window.location.origin  
+            redirectTo: window.location.origin + "/dashboard"  
         }
     });
 
