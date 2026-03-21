@@ -307,10 +307,17 @@ lucide.createIcons();
         }
 
         
-        function goUpload() { alert("Opening textbook upload modal..."); }
-        function goChat() { alert("Opening Chat UI loaded with current textbook context..."); }
-        function generateQuiz() { alert("Generating multi-choice quiz from current chapter..."); }
+        function goUpload() {
+    window.location.href = "/app.html?tab=upload";
+}
 
+function goChat() {
+    window.location.href = "/app.html?tab=chat";
+}
+
+function generateQuiz() {
+    window.location.href = "/app.html?tab=quiz";
+}
         checkUser();
 loadDashboard();
 window.addEventListener("load", () => {
