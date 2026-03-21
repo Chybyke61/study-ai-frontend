@@ -350,6 +350,10 @@ class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-80
 
             resetBtn(); // 🔥 important fix
 
+            if (window.turnstile) {
+            turnstile.reset();
+            }
+
             /*const loader = document.getElementById("globalLoader");
 
             loader.style.display = "flex";
