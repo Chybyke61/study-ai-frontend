@@ -1047,6 +1047,26 @@ window.rationales = rationales;
         (async () => {
     await handleEmailRedirect();
 
+            const params = new URLSearchParams(window.location.search);
+const tab = params.get("tab");
+
+// 🎯 Handle navigation from dashboard
+if (tab === "upload") {
+    showToast("📂 Ready to upload document");
+
+    // Optional: scroll to upload section
+    document.getElementById("bookFile")?.scrollIntoView({ behavior: "smooth" });
+}
+
+if (tab === "chat") {
+    document.getElementById("topic")?.focus();
+}
+
+if (tab === "quiz") {
+    document.getElementById("topic")?.focus();
+    showToast("🧠 Enter topic and click Quiz");
+}
+
     const params = new URLSearchParams(window.location.search);
        /* const email = params.get("email");
 if (email) {
