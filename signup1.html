@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Study.AI | Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+        .btn-emerald { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            transition: all 0.3s ease;
+        }
+        .btn-emerald:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 20px -10px #10b981; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl">
+        <div class="text-center mb-10">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl mb-6 shadow-xl">
+                <i data-lucide="user-plus" class="text-emerald-400 w-8 h-8"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-['Plus_Jakarta_Sans']">Create Identity</h2>
+            <p class="text-slate-400 text-sm font-medium">Join the future of document intelligence</p>
+        </div>
+
+        <div class="space-y-4">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Email Address</label>
+                <input id="email" type="email" placeholder="student@example.com" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all">
+            </div>
+
+            <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Password</label>
+
+    <div class="relative">
+        <input 
+            id="password" 
+            type="password" 
+            placeholder="Min. 6 characters"
+            class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12"
+        >
+
+        <!-- 👁 Eye -->
+        <button 
+            type="button" 
+            onclick="togglePassword('password', this)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+        >
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
+            </div>
+
+            <div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Confirm Password</label>
+
+    <div class="relative">
+        <input 
+            id="confirmPassword" 
+            type="password" 
+            placeholder="Repeat password"
+            class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12"
+        >
+
+        <!-- 👁 Eye -->
+        <button 
+            type="button" 
+            onclick="togglePassword('confirmPassword', this)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+        >
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
+            </div>
+
+            <button onclick="signUp()" id="signupBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95">INITIALIZE ACCOUNT</button>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800/50 text-center text-sm">
+            <span class="text-slate-500">Already a member?</span> 
+            <a href="/app" class="text-emerald-400 font-bold hover:underline ml-1">Sign In</a>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 z-[100] font-bold text-sm pointer-events-none border border-slate-600"></div>
+
+    <script>
+        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
+        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        lucide.createIcons();
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.borderColor = isError ? "#ef4444" : "#10b981";
+            toast.classList.replace("opacity-0", "opacity-100");
+            
+            setTimeout(() => {
+                toast.classList.replace("opacity-100", "opacity-0");
+            }, 3000);
+        }
+
+       /* async function signUp() {
+            const btn = document.getElementById("signupBtn");
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirm = document.getElementById("confirmPassword").value;
+
+            if (!email || !password || !confirm) return showToast("⚠️ Please fill all fields", true);
+            if (password !== confirm) return showToast("❌ Passwords do not match", true);
+            if (password.length < 6) return showToast("⚠️ Min. 6 characters required", true);
+
+            btn.disabled = true;
+            btn.innerText = "INITIALIZING...";
+
+            const { error } = await supabaseClient.auth.signUp({
+               email,
+               password,
+               options: {
+                  emailRedirectTo: window.location.origin
+               }
+           });
+
+            if (error) {
+
+    // ✅ Detect existing user
+               if (error.message.toLowerCase().includes("already")) {
+
+        showToast("❌ User already exists. Please login", true);
+
+        setTimeout(() => {
+            window.location.href = "index.html?email=" + encodeURIComponent(email);
+        }, 1500);
+
+        return;
+    }
+
+    // Other errors
+    showToast(`❌ ${error.message}`, true);
+
+    btn.disabled = false;
+    btn.innerText = "INITIALIZE ACCOUNT";
+    return;
+            }
+     
+            // Immediately sign out to force manual login for verification
+            await supabaseClient.auth.signOut();
+
+            showToast("📩 Check your email to verify your account");
+            
+            setTimeout(() => {
+                window.location.href = "index.html?verify=1&email=" + encodeURIComponent(email);
+            }, 2000);
+        }*/
+
+        async function signUp() {
+    const btn = document.getElementById("signupBtn");
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const confirm = document.getElementById("confirmPassword").value;
+
+    // 🔧 Reset helper
+    const resetBtn = () => {
+        btn.disabled = false;
+        btn.innerText = "INITIALIZE ACCOUNT";
+    };
+
+    // ✅ 1. Validation
+    if (!email || !password || !confirm) {
+        showToast("⚠️ Please fill all fields", true);
+        return;
+    }
+
+    if (password !== confirm) {
+        showToast("❌ Passwords do not match", true);
+        return;
+    }
+
+    if (password.length < 6) {
+        showToast("⚠️ Min. 6 characters required", true);
+        return;
+    }
+
+    // ✅ 2. Loading state
+    btn.disabled = true;
+    btn.innerText = "INITIALIZING...";
+
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password,
+            options: {
+                emailRedirectTo: window.location.origin
+            }
+        });
+
+        // ✅ 3. Handle explicit errors
+        if (error) {
+            const msg = (error.message || "").toLowerCase();
+
+            if (
+                msg.includes("already") ||
+                msg.includes("exists") ||
+                msg.includes("registered") ||
+                msg.includes("duplicate")
+            ) {
+                showToast("❌ User already exists. Please login", true);
+
+                resetBtn(); // 🔥 important fix
+
+                setTimeout(() => {
+                    window.location.href = "/?email=" + encodeURIComponent(email);
+                }, 1500);
+
+            } else {
+                showToast(`❌ ${error.message}`, true);
+                resetBtn();
+            }
+
+            return;
+        }
+
+        // ✅ 4. Handle Supabase silent duplicate (VERY IMPORTANT)
+        if (
+            data?.user &&
+            Array.isArray(data.user.identities) &&
+            data.user.identities.length === 0
+        ) {
+            showToast("❌ User already exists. Please login", true);
+
+            resetBtn(); // 🔥 important fix
+
+            setTimeout(() => {
+                window.location.href = "/?email=" + encodeURIComponent(email);
+            }, 1500);
+
+            return;
+        }
+
+        // ✅ 5. Success
+        await supabaseClient.auth.signOut();
+
+        showToast("📩 Check your email to verify your account");
+
+        setTimeout(() => {
+            window.location.href = "/?verify=1&email=" + encodeURIComponent(email);
+        }, 2000);
+
+    } catch (err) {
+        showToast("❌ Network error. Try again", true);
+        resetBtn();
+    }
+        }
+
+        function togglePassword(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector("i");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.setAttribute("data-lucide", "eye-off");
+    } else {
+        input.type = "password";
+        icon.setAttribute("data-lucide", "eye");
+    }
+
+    lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
