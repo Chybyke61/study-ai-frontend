@@ -258,13 +258,13 @@
                     window.location.href = "/?email=" + encodeURIComponent(email);
                 }, 1500);*/
 
-                setTimeout(() => {
+               /* setTimeout(() => {
                 const loader = document.getElementById("globalLoader");
 
                 loader.style.display = "flex";
                 loader.style.opacity = "1";
 
-                }, 800);
+                }, 800);*/
 
                 setTimeout(() => {
                 window.location.href = "/app?email=" + encodeURIComponent(email);
@@ -288,14 +288,14 @@
 
             resetBtn(); // 🔥 important fix
 
-            const loader = document.getElementById("globalLoader");
+            /*const loader = document.getElementById("globalLoader");
 
             loader.style.display = "flex";
-            loader.style.opacity = "1";
+            loader.style.opacity = "1";*/
 
             setTimeout(() => {
             window.location.href = "/app?email=" + encodeURIComponent(email);
-            }, 800);
+            }, 1500);
 
            /*  setTimeout(() => {
                 window.location.href = "/?email=" + encodeURIComponent(email);
@@ -309,17 +309,17 @@
 
         showToast("📩 Check your email to verify your account");
 
-        setTimeout(() => {
+      /*  setTimeout(() => {
     const loader = document.getElementById("globalLoader");
 
     loader.style.display = "flex";
     loader.style.opacity = "1";
 
-}, 2000);
+}, 2000);*/
 
 setTimeout(() => {
     window.location.href = "/app?email=" + encodeURIComponent(email);
-}, 2800);
+}, 2000);
        /* setTimeout(() => {
             window.location.href = "/?verify=1&email=" + encodeURIComponent(email);
         }, 2000);*/
