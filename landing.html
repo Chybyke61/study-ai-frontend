@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="scroll-behavior: smooth;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study.AI | Your Personal Academic Intelligence</title>
+    <title>Study.AI | Academic Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -34,25 +34,31 @@
             transform: translateY(-2px); 
             box-shadow: 0 10px 20px -10px #10b981; 
         }
+        .step-line {
+            background: linear-gradient(to bottom, #10b981 0%, transparent 100%);
+        }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <nav class="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-emerald-600/20 border border-emerald-500/30 rounded-xl flex items-center justify-center">
-                <i data-lucide="brain-circuit" class="text-emerald-400 w-6 h-6"></i>
+    <nav class="sticky top-0 z-50 glass-card border-x-0 border-t-0 bg-slate-950/80">
+        <div class="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-emerald-600/20 border border-emerald-500/30 rounded-lg flex items-center justify-center">
+                    <i data-lucide="brain-circuit" class="text-emerald-400 w-5 h-5"></i>
+                </div>
+                <span class="text-lg font-extrabold tracking-tight font-['Plus_Jakarta_Sans']">Study.AI</span>
             </div>
-            <span class="text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans']">Study.AI</span>
-        </div>
-        <div class="flex items-center gap-6">
-            <a href="/app" class="text-slate-400 hover:text-white font-medium transition-colors text-sm">Sign In</a>
-            <a href="/app" class="btn-emerald px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg">Get Started</a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#how-it-works" class="text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">How it works</a>
+                <a href="/app" class="text-slate-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">Sign In</a>
+                <a href="/app" class="btn-emerald px-5 py-2 rounded-xl text-xs font-bold shadow-lg">Get Started</a>
+            </div>
         </div>
     </nav>
 
-    <header class="max-w-7xl mx-auto px-8 pt-20 pb-32 text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold tracking-widest uppercase mb-8">
+    <header class="max-w-7xl mx-auto px-8 pt-24 pb-20 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold tracking-[0.2em] uppercase mb-8">
             <i data-lucide="sparkles" class="w-3 h-3"></i> The Future of Learning
         </div>
         <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] text-gradient mb-6 leading-tight">
@@ -63,53 +69,93 @@
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="/app" class="w-full sm:w-auto btn-emerald px-10 py-5 rounded-2xl text-lg font-bold shadow-2xl">Start for Free</a>
-            <button class="w-full sm:w-auto glass-card px-10 py-5 rounded-2xl text-lg font-bold hover:bg-slate-800 transition-colors">How it works</button>
+            <a href="#how-it-works" class="w-full sm:w-auto glass-card px-10 py-5 rounded-2xl text-lg font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-2">
+                Learn the Process <i data-lucide="arrow-down" class="w-5 h-5"></i>
+            </a>
+        </div>
+
+        <div class="mt-24 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto border-t border-slate-800/50 pt-12">
+            <div>
+                <div class="text-2xl font-bold text-white">95%</div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Accuracy Rate</div>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-white">10k+</div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Docs Indexed</div>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-white">2sec</div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Response Time</div>
+            </div>
+            <div>
+                <div class="text-2xl font-bold text-white">24/7</div>
+                <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">AI Tutor</div>
+            </div>
         </div>
     </header>
 
-    <section class="max-w-7xl mx-auto px-8 pb-32">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card p-8 rounded-[2rem] hover:border-emerald-500/30 transition-all group">
-                <div class="w-12 h-12 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i data-lucide="file-text" class="text-emerald-400 w-6 h-6"></i>
+    <section id="how-it-works" class="max-w-7xl mx-auto px-8 py-32 scroll-mt-20">
+        <div class="text-center mb-20">
+            <h2 class="text-3xl md:text-5xl font-extrabold font-['Plus_Jakarta_Sans'] mb-4">Master any subject in 3 steps</h2>
+            <p class="text-slate-400 font-medium">Built on advanced RAG technology to ensure your notes are factually grounded.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+            <div class="relative group">
+                <div class="glass-card p-10 rounded-[2.5rem] relative z-10 hover:border-emerald-500/40 transition-all">
+                    <div class="w-14 h-14 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl flex items-center justify-center mb-8">
+                        <i data-lucide="upload-cloud" class="text-emerald-400 w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 font-['Plus_Jakarta_Sans']">01. Upload</h3>
+                    <p class="text-slate-400 leading-relaxed">Drop your PDF textbooks, lecture notes, or research papers. Our system handles documents of any size.</p>
                 </div>
-                <h3 class="text-xl font-bold mb-3 font-['Plus_Jakarta_Sans']">Smart Indexing</h3>
-                <p class="text-slate-400 text-sm leading-relaxed">Upload any textbook or document. Our RAG engine indexes every detail for instant retrieval.</p>
             </div>
 
-            <div class="glass-card p-8 rounded-[2rem] hover:border-emerald-500/30 transition-all group">
-                <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i data-lucide="layout-list" class="text-blue-400 w-6 h-6"></i>
+            <div class="relative group">
+                <div class="glass-card p-10 rounded-[2.5rem] relative z-10 hover:border-emerald-500/40 transition-all">
+                    <div class="w-14 h-14 bg-blue-600/20 border border-blue-500/30 rounded-2xl flex items-center justify-center mb-8">
+                        <i data-lucide="cpu" class="text-blue-400 w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 font-['Plus_Jakarta_Sans']">02. Analyze</h3>
+                    <p class="text-slate-400 leading-relaxed">The AI indexes the content into a vector knowledge base, creating a digital "brain" of your specific curriculum.</p>
                 </div>
-                <h3 class="text-xl font-bold mb-3 font-['Plus_Jakarta_Sans']">AI Summaries</h3>
-                <p class="text-slate-400 text-sm leading-relaxed">Condense 500-page chapters into high-fidelity study notes and key concepts in seconds.</p>
             </div>
 
-            <div class="glass-card p-8 rounded-[2rem] hover:border-emerald-500/30 transition-all group">
-                <div class="w-12 h-12 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i data-lucide="help-circle" class="text-indigo-400 w-6 h-6"></i>
+            <div class="relative group">
+                <div class="glass-card p-10 rounded-[2.5rem] relative z-10 hover:border-emerald-500/40 transition-all">
+                    <div class="w-14 h-14 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl flex items-center justify-center mb-8">
+                        <i data-lucide="graduation-cap" class="text-indigo-400 w-7 h-7"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 font-['Plus_Jakarta_Sans']">03. Learn</h3>
+                    <p class="text-slate-400 leading-relaxed">Ask questions, generate flashcards, or create instant summaries. The AI only uses your provided materials.</p>
                 </div>
-                <h3 class="text-xl font-bold mb-3 font-['Plus_Jakarta_Sans']">Instant Quizzes</h3>
-                <p class="text-slate-400 text-sm leading-relaxed">Automatically generate flashcards and practice quizzes based on your specific curriculum.</p>
             </div>
         </div>
     </section>
 
     <section class="max-w-5xl mx-auto px-8 pb-40">
-        <div class="glass-card p-4 rounded-[2.5rem] shadow-2xl relative overflow-hidden group">
-            <div class="absolute inset-0 bg-gradient-to-tr from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div class="bg-slate-950 rounded-[2rem] aspect-video flex flex-col items-center justify-center border border-slate-800 relative z-10">
-                <div class="flex items-center gap-4 text-slate-500 animate-pulse">
-                    <i data-lucide="upload-cloud" class="w-10 h-10"></i>
-                    <span class="font-bold tracking-widest text-sm uppercase">Upload Textbook to Begin</span>
-                </div>
-            </div>
+        <div class="glass-card p-12 md:p-20 rounded-[3rem] text-center border-emerald-500/20 bg-gradient-to-br from-slate-900/50 to-emerald-900/10">
+            <h2 class="text-4xl md:text-5xl font-extrabold font-['Plus_Jakarta_Sans'] mb-6">Ready to upgrade your GPA?</h2>
+            <p class="text-slate-400 text-lg mb-10 max-w-xl mx-auto leading-relaxed">Join the private beta today and start indexing your curriculum for the next semester.</p>
+            <a href="signup.html" class="inline-block btn-emerald px-12 py-5 rounded-2xl text-xl font-bold shadow-2xl">Initialize Your Account</a>
+            <div class="mt-8 text-slate-500 text-sm font-medium">No credit card required · Free while in Beta</div>
         </div>
     </section>
+
+    <footer class="max-w-7xl mx-auto px-8 py-12 border-t border-slate-800/50 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="flex items-center gap-2">
+            <i data-lucide="brain-circuit" class="text-emerald-400 w-5 h-5"></i>
+            <span class="font-bold font-['Plus_Jakarta_Sans']">Study.AI</span>
+        </div>
+        <div class="text-slate-500 text-sm">© 2026 Study AI. Built for the future of education.</div>
+        <div class="flex gap-6">
+            <a href="#" class="text-slate-500 hover:text-white transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
+            <a href="#" class="text-slate-500 hover:text-white transition-colors"><i data-lucide="github" class="w-5 h-5"></i></a>
+        </div>
+    </footer>
 
     <script>
         lucide.createIcons();
     </script>
 </body>
 </html>
-
