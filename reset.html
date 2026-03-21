@@ -180,6 +180,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!session) {
         showToast("❌ Invalid or expired reset link", true);
+        
+        setTimeout(() => {
+        window.location.href = "/app";
+    }, 2000);
+    
         return;
     }
 
@@ -238,7 +243,7 @@ emailInput.classList.add("text-slate-300");
         await supabase.auth.signOut();
 
         setTimeout(() => {
-            window.location.href = "index.html?reset=success";
+            window.location.href = "/app?reset=success";
         }, 2000);
     });
 
