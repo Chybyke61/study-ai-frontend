@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study.AI | Workspace</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-
     <style>
         body { 
             font-family: 'Inter', sans-serif;
@@ -28,17 +26,15 @@
             background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
             transition: all 0.3s ease;
         }
-        .btn-emerald:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 10px 20px -10px #10b981; 
-        }
+        .btn-emerald:hover { transform: translateY(-2px); box-shadow: 0 10px 20px -10px #10b981; }
+        .empty-state { border: 2px dashed rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col">
+<body class="min-h-screen flex flex-col pb-12">
 
     <nav class="glass-card border-x-0 border-t-0 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <div class="w-10 h-10 bg-emerald-600/20 border border-emerald-500/30 rounded-xl flex items-center justify-center shadow-lg">
                     <i data-lucide="brain-circuit" class="text-emerald-400 w-5 h-5"></i>
@@ -47,151 +43,104 @@
             </div>
             
             <div class="flex items-center gap-4">
-                <span class="hidden sm:inline-block text-sm font-bold text-slate-300 mr-2" id="userEmailDisplay">student@example.com</span>
-                <button onclick="logout()" class="w-10 h-10 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-red-400 hover:border-red-500/50 transition-colors" title="Logout">
+                <div class="hidden sm:block text-right mr-2">
+                    <p class="text-xs font-bold text-slate-300" id="userEmailDisplay">student@example.com</p>
+                    <p class="text-[9px] text-emerald-400 uppercase font-bold tracking-widest">Free Plan</p>
+                </div>
+                <button onclick="logout()" class="w-9 h-9 rounded-full bg-slate-800/50 border border-slate-700 flex items-center justify-center text-slate-400 hover:text-red-400 transition-colors">
                     <i data-lucide="log-out" class="w-4 h-4"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto w-full px-4 sm:px-6 py-10 flex-grow">
-        
-        <div class="mb-10 text-center sm:text-left">
-            <h1 class="text-3xl sm:text-4xl font-extrabold font-['Plus_Jakarta_Sans'] text-white mb-2">Your Workspace</h1>
-            <p class="text-slate-400">Upload materials, chat with your documents, or generate quizzes.</p>
-        </div>
+    <main class="max-w-6xl mx-auto w-full px-4 sm:px-6 py-10 space-y-10">
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
-            
-            <button onclick="goUpload()" class="btn-emerald p-6 rounded-[1.5rem] text-left group shadow-lg flex flex-col justify-between min-h-[140px] active:scale-95">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <button onclick="goUpload()" class="btn-emerald p-6 rounded-[1.5rem] text-left group shadow-lg flex flex-col justify-between min-h-[130px]">
                 <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                     <i data-lucide="upload-cloud" class="text-white w-6 h-6"></i>
                 </div>
                 <div>
                     <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Upload Textbook</h4>
-                    <p class="text-emerald-100 text-xs mt-1">Index a new PDF to your database</p>
+                    <p class="text-emerald-100 text-xs">PDF, DOCX, or Text</p>
                 </div>
             </button>
 
-            <button onclick="goChat()" class="glass-card p-6 rounded-[1.5rem] text-left group hover:bg-slate-800/60 hover:border-blue-500/30 transition-all flex flex-col justify-between min-h-[140px] active:scale-95">
-                <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <button onclick="goChat()" class="glass-card p-6 rounded-[1.5rem] text-left group hover:border-blue-500/30 transition-all flex flex-col justify-between min-h-[130px]">
+                <div class="w-12 h-12 bg-blue-500/10 border border-blue-500/20 rounded-xl flex items-center justify-center mb-4">
                     <i data-lucide="message-square-text" class="text-blue-400 w-6 h-6"></i>
                 </div>
-                <div>
-                    <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Ask Questions</h4>
-                    <p class="text-slate-400 text-xs mt-1">Chat with your indexed materials</p>
-                </div>
+                <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Ask Questions</h4>
             </button>
 
-            <button onclick="generateQuiz()" class="glass-card p-6 rounded-[1.5rem] text-left group hover:bg-slate-800/60 hover:border-indigo-500/30 transition-all flex flex-col justify-between min-h-[140px] active:scale-95">
-                <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+            <button onclick="generateQuiz()" class="glass-card p-6 rounded-[1.5rem] text-left group hover:border-indigo-500/30 transition-all flex flex-col justify-between min-h-[130px]">
+                <div class="w-12 h-12 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex items-center justify-center mb-4">
                     <i data-lucide="graduation-cap" class="text-indigo-400 w-6 h-6"></i>
                 </div>
-                <div>
-                    <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Generate Quiz</h4>
-                    <p class="text-slate-400 text-xs mt-1">Create practice tests instantly</p>
-                </div>
+                <h4 class="font-bold text-white text-lg font-['Plus_Jakarta_Sans']">Generate Quiz</h4>
             </button>
-
         </div>
 
-        <div class="glass-card p-6 sm:p-8 rounded-[2rem] mb-6">
-            <h3 class="text-lg font-bold font-['Plus_Jakarta_Sans'] text-white mb-6 flex items-center gap-2">
-                <i data-lucide="library" class="w-5 h-5 text-emerald-400"></i> Indexed Materials
+        <section id="continueSection" class="hidden">
+            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i data-lucide="play-circle" class="w-4 h-4 text-emerald-400"></i> Continue Learning
+            </h3>
+            <div class="glass-card p-6 rounded-[2rem] flex items-center justify-between">
+                <div>
+                    <h4 id="lastDocName" class="text-xl font-bold text-white font-['Plus_Jakarta_Sans'] mb-1">Textbook Name</h4>
+                    <p class="text-sm text-slate-400">Jump back into your last session</p>
+                </div>
+                <button onclick="resumeStudy()" class="bg-white/5 hover:bg-white/10 text-white px-6 py-3 rounded-xl font-bold border border-white/10 transition-all">Resume</button>
+            </div>
+        </section>
+
+        <section>
+            <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <i data-lucide="library" class="w-4 h-4 text-emerald-400"></i> My Materials
             </h3>
             
-            <div id="documentsList" class="space-y-3">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-emerald-500/30 transition-colors group">
-                    <div class="flex items-center gap-4 mb-3 sm:mb-0">
-                        <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-colors">
-                            <i data-lucide="file-text" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-white">Biology_101_Textbook.pdf</p>
-                            <p class="text-xs text-slate-500">Indexed Oct 15 • 420 pages</p>
-                        </div>
+            <div id="docContainer" class="space-y-3">
+                <div id="emptyState" class="empty-state p-12 rounded-[2rem] text-center space-y-4">
+                    <div class="w-16 h-16 bg-slate-800/50 rounded-full flex items-center justify-center mx-auto text-slate-600">
+                        <i data-lucide="file-minus" class="w-8 h-8"></i>
                     </div>
-                    <div class="flex items-center gap-2 sm:w-auto w-full">
-                        <button onclick="goChat()" class="flex-1 sm:flex-none text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors border border-slate-700">Chat</button>
-                        <button onclick="generateQuiz()" class="flex-1 sm:flex-none text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors border border-slate-700">Quiz</button>
+                    <div>
+                        <h4 class="text-lg font-bold text-white">No documents yet</h4>
+                        <p class="text-sm text-slate-500">Upload your first textbook to begin your intelligence index.</p>
                     </div>
+                    <button onclick="goUpload()" class="text-emerald-400 font-bold hover:underline">Upload Now →</button>
                 </div>
 
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-emerald-500/30 transition-colors group">
-                    <div class="flex items-center gap-4 mb-3 sm:mb-0">
-                        <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-colors">
-                            <i data-lucide="file-text" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <p class="text-sm font-bold text-white">Lecture_Notes_Week_3.pdf</p>
-                            <p class="text-xs text-slate-500">Indexed Oct 18 • 15 pages</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 sm:w-auto w-full">
-                        <button onclick="goChat()" class="flex-1 sm:flex-none text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors border border-slate-700">Chat</button>
-                        <button onclick="generateQuiz()" class="flex-1 sm:flex-none text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors border border-slate-700">Quiz</button>
-                    </div>
                 </div>
-            </div>
+        </section>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <section>
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Saved Summaries</h3>
+                <div class="glass-card p-6 rounded-[2rem] min-h-[200px] flex flex-col justify-center items-center text-slate-600">
+                    <i data-lucide="sticky-note" class="w-8 h-8 mb-2 opacity-20"></i>
+                    <p class="text-xs font-medium">Your generated notes will appear here</p>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4">Recent Activity</h3>
+                <div id="activityLog" class="space-y-2">
+                    <p class="text-xs text-slate-500 italic p-4 text-center">No recent activity found.</p>
+                </div>
+            </section>
         </div>
 
-        <div class="glass-card p-6 sm:p-8 rounded-[2rem] mb-6">
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="text-lg font-bold font-['Plus_Jakarta_Sans'] text-white flex items-center gap-2">
-                    <i data-lucide="book-open" class="w-5 h-5 text-blue-400"></i> Saved Summaries
-                </h3>
-                <button class="text-xs font-bold text-blue-400 hover:text-blue-300 transition-colors">View All</button>
+        <div class="glass-card p-6 rounded-[1.5rem] flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <i data-lucide="database" class="w-5 h-5 text-slate-400"></i>
+                <span class="text-sm font-bold text-white">Cloud Storage</span>
             </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="p-5 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-blue-500/30 transition-colors cursor-pointer group">
-                    <h4 class="text-sm font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Cellular Respiration Overview</h4>
-                    <p class="text-xs text-slate-500 mb-4 line-clamp-1">Extracted from Biology_101_Textbook.pdf</p>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                            <i data-lucide="clock" class="w-3 h-3 mr-1"></i> 2 days ago
-                        </div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors"></i>
-                    </div>
-                </div>
-
-                <div class="p-5 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-blue-500/30 transition-colors cursor-pointer group">
-                    <h4 class="text-sm font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">Key Terms: Genetics</h4>
-                    <p class="text-xs text-slate-500 mb-4 line-clamp-1">Generated from Chat Session</p>
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-                            <i data-lucide="clock" class="w-3 h-3 mr-1"></i> 4 days ago
-                        </div>
-                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-600 group-hover:text-blue-400 transition-colors"></i>
-                    </div>
-                </div>
+            <div class="w-full sm:w-1/2 h-2 bg-slate-800 rounded-full overflow-hidden">
+                <div class="h-full bg-emerald-500/50 rounded-full w-[5%] shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
             </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            
-            <div class="glass-card p-6 rounded-[1.5rem] flex flex-col justify-center">
-                <div class="flex justify-between items-center mb-3">
-                    <h4 class="text-sm font-bold text-white flex items-center gap-2">
-                        <i data-lucide="hard-drive" class="w-4 h-4 text-slate-400"></i> Workspace Storage
-                    </h4>
-                    <span class="text-xs text-slate-500 font-bold">120 MB / 1 GB</span>
-                </div>
-                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-emerald-500 rounded-full w-[12%] shadow-[0_0_10px_rgba(16,185,129,0.3)]"></div>
-                </div>
-            </div>
-
-            <div class="glass-card p-6 rounded-[1.5rem] bg-gradient-to-br from-emerald-900/10 to-transparent border-emerald-500/20">
-                <h4 class="text-sm font-bold text-emerald-400 flex items-center gap-2 mb-1.5">
-                    <i data-lucide="sparkles" class="w-4 h-4"></i> AI Prompting Tip
-                </h4>
-                <p class="text-xs text-slate-400 leading-relaxed">
-                    When chatting, ask the AI to "explain like I'm 5" or "format as bullet points" to get answers perfectly tailored to how you learn.
-                </p>
-            </div>
-
+            <span class="text-xs text-slate-500 font-bold">5 MB / 1 GB</span>
         </div>
 
     </main>
@@ -200,84 +149,132 @@
         const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
         const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-        const api = "https://study-ai-tq7i.onrender.com";
 
-        async function checkUser() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-
-    if (!session) {
-        window.location.href = "/";
-        return;
-    }
-
-    document.getElementById('userEmailDisplay').innerText = session.user.email;
+        // 🟢 1. LocalStorage Management
+        function updateContinueLearning(docName) {
+            localStorage.setItem('lastStudied', docName);
+            renderContinueSection();
         }
 
+        function renderContinueSection() {
+            const lastDoc = localStorage.getItem('lastStudied');
+            const section = document.getElementById('continueSection');
+            if (lastDoc) {
+                section.classList.remove('hidden');
+                document.getElementById('lastDocName').innerText = lastDoc;
+            }
+        }
+
+        function logActivity(action) {
+            let activities = JSON.parse(localStorage.getItem('studyActivity') || '[]');
+            activities.unshift({ action, time: new Date().toLocaleTimeString() });
+            localStorage.setItem('studyActivity', JSON.stringify(activities.slice(0, 3)));
+            renderActivity();
+        }
+
+        function renderActivity() {
+            const container = document.getElementById('activityLog');
+            const logs = JSON.parse(localStorage.getItem('studyActivity') || '[]');
+            if (logs.length > 0) {
+                container.innerHTML = logs.map(log => `
+                    <div class="glass-card p-3 px-4 rounded-xl flex justify-between items-center text-xs">
+                        <span class="text-slate-300 font-medium">${log.action}</span>
+                        <span class="text-slate-600">${log.time}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 🟢 2. Backend Fetch
         async function loadDocuments() {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-    const user = session?.user;
+            const { data: session } = await supabaseClient.auth.getSession();
+            if (!session.session) return window.location.href = "index.html";
+            
+            document.getElementById('userEmailDisplay').innerText = session.session.user.email;
 
-    if (!user) return;
+            // Simulated fetch from your /books endpoint or Supabase
+            // const { data: books, error } = await supabaseClient.from('books').select('*');
+            const res = await fetch("https://study-ai-tq7i.onrender.com/books", {
+    headers: {
+        "x-user-id": session.session.user.id
+    }
+});
 
-    try {
-        const res = await fetch(`${api}/books`, {
-            headers: { "x-user-id": user.id }
-        });
+const books = await res.json(); // Start with empty for the Empty State test
 
-        const books = await res.json();
+            const container = document.getElementById('docContainer');
+            const emptyState = document.getElementById('emptyState');
 
-        const container = document.getElementById("documentsList");
-        container.innerHTML = "";
+            // 🟢 2. Real Documents List & 🟢 4. Empty State
+if (books && books.length > 0) {
+    // Hide empty state and populate list
+    emptyState.classList.add('hidden');
 
-        if (books.length === 0) {
-            container.innerHTML = `<p class="text-slate-500 text-sm">No documents yet</p>`;
-            return;
-        }
+    container.innerHTML = books.map(book => {
+        // Optional: Format date and page count if they exist in your DB
+        const dateInfo = book.created_at 
+            ? new Date(book.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) 
+            : 'Recently';
+        const pageInfo = book.page_count ? `${book.page_count} pages` : 'Document';
+        const displayName = book.filename || book.name;
 
-        books.forEach(book => {
-            const name = book.filename || book.name;
-
-            container.innerHTML += `
-            <div class="flex justify-between p-4 bg-slate-900 rounded-xl border border-slate-800">
-                <span class="text-sm">${name}</span>
-                <div class="flex gap-2">
-                    <button onclick="goChat()" class="text-xs bg-slate-700 px-3 py-1 rounded">Chat</button>
-                    <button onclick="generateQuiz()" class="text-xs bg-slate-700 px-3 py-1 rounded">Quiz</button>
+        return `
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl bg-slate-900/50 border border-slate-800 hover:border-emerald-500/30 transition-all group">
+                <div class="flex items-center gap-4 mb-3 sm:mb-0">
+                    <div class="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-emerald-400 transition-colors">
+                        <i data-lucide="file-text" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-white truncate max-w-[200px] sm:max-w-xs">${displayName}</p>
+                        <p class="text-[11px] text-slate-500 font-medium uppercase tracking-tight">
+                            Indexed ${dateInfo} • ${pageInfo}
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 sm:w-auto w-full">
+                    <button onclick="openChat(${JSON.stringify(displayName)})" 
+                        class="flex-1 sm:flex-none text-xs font-bold bg-slate-800/40 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl transition-colors border border-slate-700/50 active:scale-95">
+                        Chat
+                    </button>
+                    <button onclick="openQuiz(${JSON.stringify(displayName)})" 
+                        class="flex-1 sm:flex-none text-xs font-bold bg-slate-800/40 hover:bg-slate-700 text-white px-5 py-2.5 rounded-xl transition-colors border border-slate-700/50 active:scale-95">
+                        Quiz
+                    </button>
                 </div>
             </div>
-            `;
-        });
+        `;
+    }).join('');
 
-    } catch (err) {
-        console.error("Failed to load documents", err);
-    }
+    // 🔥 Re-initialize icons for the newly injected HTML
+    lucide.createIcons(); 
+} else {
+    // Show empty state if no books found
+    emptyState.classList.remove('hidden');
+    container.innerHTML = ''; 
+}
+            
+
+        function openChat(name) {
+            updateContinueLearning(name);
+            logActivity(`Chatted with ${name}`);
+            alert(`Opening Chat for: ${name}`);
         }
 
-
-        
         async function logout() {
             await supabaseClient.auth.signOut();
             window.location.href = "index.html";
         }
 
-        function goUpload() {
-    window.location.href = "/app.html";
-}
+        function goUpload() { alert("Modal: Upload textbook"); }
+        function goChat() { alert("Chat: Select a document first"); }
+        function generateQuiz() { alert("Quiz: Select a document first"); }
 
-function goChat() {
-    window.location.href = "/app.html";
-}
-
-function generateQuiz() {
-    window.location.href = "/app.html?tab=quiz";
-}
-
-        // Initialize user check and icons
-        (async () => {
-    await checkUser();
-    loadDocuments();
-    lucide.createIcons();
-})();
+        // Init
+        loadDocuments();
+        renderContinueSection();
+        renderActivity();
+        lucide.createIcons();
     </script>
 </body>
 </html>
