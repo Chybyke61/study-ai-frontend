@@ -194,13 +194,25 @@
 
             // Simulated fetch from your /books endpoint or Supabase
             // const { data: books, error } = await supabaseClient.from('books').select('*');
-            const res = await fetch("https://study-ai-tq7i.onrender.com/books", {
-    headers: {
-        "x-user-id": session.session.user.id
-    }
-});
+            const res = await fetch("https://study-ai-tq7i.onrender.com/books");
+            
+let books = [];
 
-const books = await res.json(); // Start with empty for the Empty State test
+try {
+    const res = await fetch("https://study-ai-tq7i.onrender.com/books");
+    const data = await res.json();
+
+    if (data.error) {
+        console.warn("Backend error:", data.error);
+        books = [];
+    } else {
+        books = data;
+    }
+
+} catch (err) {
+    console.error("Fetch failed:", err);
+    books = [];
+} // Start with empty for the Empty State test
 
             const container = document.getElementById('docContainer');
             const emptyState = document.getElementById('emptyState');
