@@ -336,22 +336,23 @@ if (isGoogle) {
 
     if (isNewUser) {
         showToast("🎉 Account created successfully");
+    } else {
+        showToast("✅ Authenticated Successfully");
+    }
 
+    // ✅ FIX: prevent infinite loop
+    if (!window.location.pathname.startsWith("/dashboard")) {
         document.getElementById("loadingScreen").style.display = "flex";
         document.getElementById("loadingScreen").style.opacity = "1";
 
         setTimeout(() => {
             window.location.href = "/dashboard";
         }, 1200);
-
-    } else {
-        showToast("✅ Authenticated Successfully");
-        window.location.href = "/dashboard";
     }
 
     return;
 }
-
+        
         // 👉 Allow dashboard
         
         if (path.startsWith("/dashboard")) {
