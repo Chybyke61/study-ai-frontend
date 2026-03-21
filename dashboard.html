@@ -292,6 +292,18 @@ lucide.createIcons();
     window.location.href = "/app";
         }
 
+        function loadStats() {
+    const stats = JSON.parse(localStorage.getItem("studyStats") || "{}");
+
+    document.getElementById("notesCount").innerText = stats.notes || 0;
+    document.getElementById("docsCount").innerText = stats.documents || 0;
+    
+    // Questions not shown directly, but you can add later
+
+    const streak = localStorage.getItem("streak") || 1;
+    document.getElementById("streakCount").innerText = streak;
+        }
+
         
         function goUpload() { alert("Opening textbook upload modal..."); }
         function goChat() { alert("Opening Chat UI loaded with current textbook context..."); }
@@ -300,6 +312,7 @@ lucide.createIcons();
         checkUser();
 loadDashboard();
 lucide.createIcons();
+        loadStats();
     </script>
 </body>
 </html>
