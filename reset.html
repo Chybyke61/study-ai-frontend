@@ -218,7 +218,7 @@
 
                 showToast("✅ Password reset successful, please login");
                 await supabase.auth.signOut();
-                setTimeout(() => { window.location.href = "index.html?reset=success"; }, 2000);
+                setTimeout(() => { window.location.href = "/app?reset=success"; }, 2000);
             });
         });
 
