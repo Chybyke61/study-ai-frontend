@@ -120,6 +120,22 @@
             <button onclick="signUp()" id="signupBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95">INITIALIZE ACCOUNT</button>
         </div>
 
+       <div class="flex items-center my-6">
+    <div class="flex-1 border-t border-slate-800"></div>
+    <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">or</span>
+    <div class="flex-1 border-t border-slate-800"></div>
+</div>
+
+<button onclick="googleLogin()" 
+class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-3 group">
+
+    <div class="bg-white p-1.5 rounded-xl group-hover:scale-110 transition-transform">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4">
+    </div>
+
+    <span>Continue with Google</span>
+</button>
+
         <div class="mt-8 pt-6 border-t border-slate-800/50 text-center text-sm">
             <span class="text-slate-500">Already a member?</span> 
             <a href="/app" class="text-emerald-400 font-bold hover:underline ml-1">Sign In</a>
@@ -327,6 +343,19 @@ setTimeout(() => {
     } catch (err) {
         showToast("❌ Network error. Try again", true);
         resetBtn();
+    }
+        }
+
+        async function googleLogin() {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: window.location.origin + "/app"
+        }
+    });
+
+    if (error) {
+        showToast("❌ Google login failed", true);
     }
         }
 
