@@ -44,17 +44,74 @@
             <p class="text-slate-400 text-sm font-medium">Create a new password for your account</p>
         </div>
 
+        <div class="mb-6">
+    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">
+        Account Email
+    </label>
+    
+    <div class="relative group">
+        <input 
+            id="userEmail"
+            type="email"
+            readonly
+            class="w-full px-5 py-4 rounded-2xl bg-slate-900/40 border border-slate-800 text-slate-500 cursor-not-allowed focus:outline-none transition-all italic text-sm font-medium"
+        >
+        <div class="absolute right-5 top-1/2 -translate-y-1/2 text-slate-600">
+            <i data-lucide="lock" class="w-4 h-4"></i>
+        </div>
+    </div>
+</div>
+
+
         <form id="resetForm" class="space-y-4">
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">New Password</label>
-                <input id="newPassword" type="password" required placeholder="Min. 6 characters" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all">
+    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">
+        New Password
+    </label>
+
+    <div class="relative">
+        <input 
+            id="newPassword" 
+            type="password" 
+            required 
+            placeholder="Min. 6 characters"
+            class="w-full px-5 py-4 pr-12 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+        >
+
+        <button 
+            type="button"
+            onclick="togglePassword('newPassword', this)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+        >
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
             </div>
 
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Confirm Password</label>
-                <input id="confirmPassword" type="password" required placeholder="Repeat password" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all">
-            </div>
+    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">
+        Confirm Password
+    </label>
 
+    <div class="relative">
+        <input 
+            id="confirmPassword" 
+            type="password" 
+            required 
+            placeholder="Repeat password"
+            class="w-full px-5 py-4 pr-12 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all"
+        >
+
+        <button 
+            type="button"
+            onclick="togglePassword('confirmPassword', this)"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+        >
+            <i data-lucide="eye"></i>
+        </button>
+    </div>
+            </div>
+          
             <button type="submit" id="submitBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-4 active:scale-95">
                 UPDATE PASSWORD
             </button>
@@ -126,6 +183,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
     }
 
+    // ✅ Autofill email
+     const emailInput = document.getElementById("userEmail");
+
+emailInput.value = session.user.email;
+
+// 🔥 UI fix
+emailInput.classList.remove("italic");
+emailInput.classList.add("text-slate-300");
+
     sessionReady = true;
 
     // ✅ NOW attach form safely
@@ -177,6 +243,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
 });
+
+        function togglePassword(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector("i");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.setAttribute("data-lucide", "eye-off");
+    } else {
+        input.type = "password";
+        icon.setAttribute("data-lucide", "eye");
+    }
+
+    lucide.createIcons(); // refresh icon
+        }
+        
     </script>
 </body>
 </html>
