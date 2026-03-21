@@ -30,6 +30,7 @@
             box-shadow: 0 10px 20px -10px #10b981; 
         }
     </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
@@ -394,6 +395,14 @@ window.addEventListener('load', () => {
         }, 700);
     }, 600);
 });
+
+        window.onload = () => {
+    if (window.turnstile) {
+        turnstile.render('#turnstile-container', {
+            sitekey: '0x4AAAAAACuLeZ39cRRtBKwI'
+        });
+    }
+};
     </script>
 
 </body>
