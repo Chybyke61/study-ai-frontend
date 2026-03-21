@@ -225,6 +225,19 @@ emailInput.classList.add("text-slate-300");
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        const btn = document.getElementById('submitBtn');
+        if (btn?.disabled) return;
+
+        const key = "resetAttempt";
+        const lastAttempt = localStorage.getItem(key);
+        const now = Date.now();
+
+if (lastAttempt && now - lastAttempt < 3000) {
+    showToast("⏳ Please wait a moment...");
+    return;
+}
+
+
         console.log("Submit clicked");
 
         if (!sessionReady) {
@@ -232,14 +245,16 @@ emailInput.classList.add("text-slate-300");
             return;
         }
 
+
         const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
       if (!token) {
     showToast("⚠️ Please verify you're human", true);
     return;
 }
+        localStorage.setItem(key, now);
 
-        const btn = document.getElementById('submitBtn');
+     //   const btn = document.getElementById('submitBtn');
         const newPassword = document.getElementById("newPassword").value;
         const confirm = document.getElementById("confirmPassword").value;
 
