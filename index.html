@@ -289,13 +289,31 @@
     }
         }
 
+        async function waitForSession() {
+    let tries = 0;
+
+    while (tries < 10) {
+        const { data: { session } } = await supabaseClient.auth.getSession();
+
+        if (session?.user) {
+            return session;
+        }
+
+        await new Promise(res => setTimeout(res, 300));
+        tries++;
+    }
+
+    return null;
+        }
+
 
         // --- AUTH ---
     async function checkUser() {
         const loader = document.getElementById("loadingScreen");
 loader.style.opacity = "1";
 loader.style.display = "flex";
-    const { data: { session } } = await supabaseClient.auth.getSession();
+    await new Promise(res => setTimeout(res, 200));
+const { data: { session } } = await supabaseClient.auth.getSession();
 const user = session?.user;
     const path = window.location.pathname;
 
@@ -346,7 +364,7 @@ if (isGoogle) {
         loadBooks();
         hideLoader();
     } else {
-        window.location.href = "/dashboard";
+        window.location.replace("/dashboard");
     }
 
     return;
@@ -365,7 +383,7 @@ if (isGoogle) {
         
          else {
             // 👉 redirect logged-in users to dashboard
-            window.location.href = "/dashboard";
+            window.location.href = "/dashboard";;
         }
 
     } else {
@@ -412,6 +430,7 @@ window.location.href = "/dashboard";
         } 
 
         async function googleLogin() {
+    document.getElementById("loadingScreen").style.display = "flex";
     const { error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
@@ -1031,7 +1050,15 @@ if (email) {
     }
 
     // THEN run auth check
+    //await checkUser();
+    const session = await waitForSession();
+
+if (session) {
     await checkUser();
+} else {
+    await checkUser(); // fallback
+}
+     
 })();
     </script>
 </body>
