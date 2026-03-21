@@ -456,6 +456,14 @@ window.location.href = "/dashboard";
                 opt.innerText = displayName;
                 selector.appendChild(opt);
             });
+
+            // ✅ Auto-select last opened book
+const savedBook = localStorage.getItem("selectedBook");
+
+if (savedBook) {
+    selector.value = savedBook;
+}
+     
             lucide.createIcons();
         }
 
