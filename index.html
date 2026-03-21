@@ -244,11 +244,11 @@
         const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-        supabaseClient.auth.onAuthStateChange((event, session) => {
+      /*  supabaseClient.auth.onAuthStateChange((event, session) => {
     if (session?.user) {
         checkUser();
     }
-});
+});*/
         let currentUser = null;
         let allBooks = [];
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
@@ -268,29 +268,26 @@
         window.location.replace("/?verified=1");
     }
 }*/
-
-async function handleEmailRedirect() {
+        async function handleEmailRedirect() {
     const hash = window.location.hash;
 
     if (!hash) return;
 
-    // 🔥 Detect provider
-    const isGoogle = hash.includes("provider_token") || hash.includes("provider=google");
+    const isGoogle = hash.includes("provider_token");
 
     if (hash.includes("access_token")) {
 
-        // ✅ GOOGLE LOGIN → go straight to dashboard
         if (isGoogle) {
-            window.location.replace("/dashboard");
+            // ✅ CLEAN URL + go dashboard
+            window.location.replace("/dashboard?google=1");
             return;
         }
 
-        // ✅ EMAIL VERIFICATION → force login again
+        // ✅ Email verification
         await supabaseClient.auth.signOut();
-
         window.location.replace("/?verified=1");
     }
-}
+        }
 
 
         // --- AUTH ---
@@ -328,26 +325,28 @@ const user = session?.user;
 
         const isGoogle = user.app_metadata?.provider === "google";
 
+// ✅ GOOGLE LOGIN HANDLER
 if (isGoogle) {
-    const created = new Date(user.created_at).getTime();
-    const lastLogin = new Date(user.last_sign_in_at).getTime();
 
-    const isNewUser = Math.abs(created - lastLogin) < 5000;
+    const params = new URLSearchParams(window.location.search);
+    const isGoogleLogin = params.get("google");
 
-    if (isNewUser) {
+    if (isGoogleLogin) {
         showToast("🎉 Account created successfully");
-    } else {
-        showToast("✅ Authenticated Successfully");
+
+        // clean URL after showing message
+        window.history.replaceState({}, document.title, "/dashboard");
     }
 
-    // ✅ FIX: prevent infinite loop
-    if (!window.location.pathname.startsWith("/dashboard")) {
-        document.getElementById("loadingScreen").style.display = "flex";
-        document.getElementById("loadingScreen").style.opacity = "1";
+    // ✅ SHOW DASHBOARD (NO REDIRECT LOOP)
+    if (path.startsWith("/dashboard")) {
+        document.getElementById("loginScreen").classList.add("hidden");
+        document.getElementById("appContainer").classList.remove("hidden");
 
-        setTimeout(() => {
-            window.location.href = "/dashboard";
-        }, 1200);
+        loadBooks();
+        hideLoader();
+    } else {
+        window.location.href = "/dashboard";
     }
 
     return;
@@ -1032,7 +1031,7 @@ if (email) {
     }
 
     // THEN run auth check
-    setTimeout(checkUser, 800);
+    await checkUser();
 })();
     </script>
 </body>
