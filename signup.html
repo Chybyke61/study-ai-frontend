@@ -234,12 +234,31 @@ class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-80
         }*/
 
         async function signUp() {
+
+     const btn = document.getElementById("signupBtn");
+
+    // ✅ 1. Stop double click
+    if (btn?.disabled) return;
+
+    // ✅ 2. Rate limit (anti spam)
+    const key = "signupAttempt";
+    const lastAttempt = localStorage.getItem(key);
+    const now = Date.now();
+
+    if (lastAttempt && now - lastAttempt < 3000) {
+        showToast("⏳ Please wait a moment...");
+        return;
+    }
+            
      const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
     if (!token) {
     return showToast("⚠️ Please verify you're human", true);
 }
-    const btn = document.getElementById("signupBtn");
+
+    localStorage.setItem(key, now);
+            
+    //const btn = document.getElementById("signupBtn");
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirmPassword").value;
@@ -312,6 +331,10 @@ class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-80
             } else {
                 showToast(`❌ ${error.message}`, true);
                 resetBtn();
+
+                if (window.turnstile) {
+            turnstile.reset();
+                }
             }
 
             return;
