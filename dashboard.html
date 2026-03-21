@@ -210,7 +210,7 @@ if (books && books.length > 0) {
     // Hide empty state and populate list
     emptyState.classList.add('hidden');
 
-    container.innerHTML = books.map(book => {
+    const html = books.map(book => {
         // Optional: Format date and page count if they exist in your DB
         const dateInfo = book.created_at 
             ? new Date(book.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) 
@@ -245,6 +245,8 @@ if (books && books.length > 0) {
             </div>
         `;
     }).join('');
+    container.innerHTML = html;
+
 
     // 🔥 Re-initialize icons for the newly injected HTML
     lucide.createIcons(); 
@@ -253,6 +255,7 @@ if (books && books.length > 0) {
     emptyState.classList.remove('hidden');
     container.innerHTML = ''; 
 }
+        } 
             
 
         function openChat(name) {
@@ -260,6 +263,13 @@ if (books && books.length > 0) {
             logActivity(`Chatted with ${name}`);
             alert(`Opening Chat for: ${name}`);
         }
+
+function openQuiz(name) {
+    updateContinueLearning(name);
+    logActivity(`Quiz on ${name}`);
+    alert(`Opening Quiz for: ${name}`);
+}
+
 
         async function logout() {
             await supabaseClient.auth.signOut();
