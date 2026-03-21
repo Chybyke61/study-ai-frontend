@@ -117,6 +117,8 @@
     </div>
             </div>
 
+            <div class="cf-turnstile mt-4" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI"></div>
+
             <button onclick="signUp()" id="signupBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95">INITIALIZE ACCOUNT</button>
         </div>
 
@@ -216,6 +218,11 @@ class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-80
         }*/
 
         async function signUp() {
+     const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
+
+    if (!token) {
+    return showToast("⚠️ Please verify you're human", true);
+}
     const btn = document.getElementById("signupBtn");
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
