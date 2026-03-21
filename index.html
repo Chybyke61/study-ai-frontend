@@ -113,6 +113,17 @@
                   <div class="flex-1 border-t border-slate-800"></div>
                </div>
 
+                <button onclick="googleLogin()" 
+    class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-3 group">
+    
+    <div class="bg-white p-1.5 rounded-xl group-hover:scale-110 transition-transform">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4">
+    </div>
+    
+    <span class="tracking-tight">Continue with Google</span>
+</button>
+
+
               <a href="/signup" class="w-full flex items-center justify-center bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-2">
                   <i data-lucide="user-plus" class="w-4 h-4 text-indigo-400"></i>
                   Create New Account
@@ -233,6 +244,11 @@
         const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+        checkUser(); // re-run when session is ready
+    }
+});
         let currentUser = null;
         let allBooks = [];
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
@@ -241,7 +257,7 @@
         lucide.createIcons();
 
         // 🚫 Prevent auto-login after email verification
-async function handleEmailRedirect() {
+/*async function handleEmailRedirect() {
     const hash = window.location.hash;
 
     if (hash && hash.includes("access_token")) {
@@ -251,21 +267,40 @@ async function handleEmailRedirect() {
         // Clean redirect (no token in URL)
         window.location.replace("/?verified=1");
     }
-}
+}*/
+        async function handleEmailRedirect() {
+    const hash = window.location.hash;
+
+    if (!hash || !hash.includes("access_token")) return;
+
+    const { data } = await supabaseClient.auth.getSession();
+
+    const provider = data?.session?.user?.app_metadata?.provider;
+
+    if (provider === "google") {
+        window.location.replace("/dashboard");
+    } else {
+        await supabaseClient.auth.signOut();
+        window.location.replace("/?verified=1");
+    }
+        }
 
         // --- AUTH ---
     async function checkUser() {
         const loader = document.getElementById("loadingScreen");
 loader.style.opacity = "1";
 loader.style.display = "flex";
-    const { data } = await supabaseClient.auth.getUser();
+    //const { data } = await supabaseClient.auth.getUser();
+    const { data: { session } } = await supabaseClient.auth.getSession();
+const user = session?.user;
     const path = window.location.pathname;
 
     // ✅ If user is logged in
-    if (data?.user) {
+    if (user) {
 
         // block unverified users
-        if (!data.user.email_confirmed_at) {
+       // if (!data.user.email_confirmed_at && data.user.app_metadata.provider !== "google") {
+        if (!user.email_confirmed_at && user.app_metadata.provider !== "google") {
             await supabaseClient.auth.signOut();
 
             showToast("📩 Verify your email first");
@@ -276,7 +311,7 @@ loader.style.display = "flex";
             return;
         }
 
-        currentUser = data.user;
+        currentUser = user;
 
         // 👉 Allow dashboard
         
@@ -336,7 +371,19 @@ loader.style.display = "flex";
 // redirect to dashboard
 window.location.href = "/dashboard";
         } 
-        
+
+        async function googleLogin() {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: window.location.origin + "/dashboard"
+        }
+    });
+
+    if (error) {
+        showToast("❌ Google login failed");
+    }
+        }
 
         async function logout() {
     await supabaseClient.auth.signOut();
@@ -945,7 +992,7 @@ if (email) {
     }
 
     // THEN run auth check
-    await checkUser();
+    setTimeout(checkUser, 600);
 })();
     </script>
 </body>
