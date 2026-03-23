@@ -847,6 +847,7 @@ if (
         // --- AI ---
         async function requestAI(type) {
     const topic = document.getElementById("topic").value;
+    const uniqueTopic = topic + " (variation " + Date.now() + ")";
     const resultBox = document.getElementById("result");
 
     if (!topic) {
@@ -873,11 +874,11 @@ if (
                 "x-user-id": currentUser.id
             },
             body: JSON.stringify({
-                topic,
+                topic: type === "quiz" ? uniqueTopic : topic,
                 level: document.getElementById("level").value,
                 book: document.getElementById("bookSelector").value,
                 sessionId
-                seed: Date.now()   // 🔥 ADD THIS LINE
+                //seed: Date.now()   // 🔥 ADD THIS LINE
             })
         });
 
