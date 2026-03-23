@@ -1066,6 +1066,7 @@ lucide.createIcons();
 
     let correctAnswers = [];
     let rationales = [];
+    let allOptions = [];
 
     let html = "";
 
@@ -1175,6 +1176,8 @@ questions.forEach((q, i) => {
         `;
     });
 
+    allOptions.push(options);
+
     html += `</div>`;
 });
     
@@ -1191,7 +1194,8 @@ questions.forEach((q, i) => {
     `;
 
       window.correctAnswers = correctAnswers;
-window.rationales = rationales;
+      window.rationales = rationales;
+      window.allOptions = allOptions;
 
     resultBox.innerHTML = html;
       lucide.createIcons();
@@ -1207,8 +1211,21 @@ window.rationales = rationales;
 
     for (let i = 0; i < total; i++) {
         const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        /*const userAnswer = selected ? selected.value : null;
+        const correct = window.correctAnswers[i];
+        
+        const correctText = options.find(opt => opt.letter === correct)?.text || "";
+        const userText = options.find(opt => opt.letter === userAnswer)?.text || "";
+        
+        const explanation = window.rationales[i] || "";*/
+
         const userAnswer = selected ? selected.value : null;
         const correct = window.correctAnswers[i];
+        const options = window.allOptions[i] || [];
+
+        const correctText = options.find(opt => opt.letter === correct)?.text || "";
+        const userText = options.find(opt => opt.letter === userAnswer)?.text || "";
+
         const explanation = window.rationales[i] || "";
 
         const isCorrect = userAnswer === correct;
@@ -1237,14 +1254,20 @@ window.rationales = rationales;
             ${
                 !isCorrect
                     ? `<p class="text-xs text-slate-400 mb-1">
-                        Your Answer: ${userAnswer || "Not answered"}
+                        Your Answer: ${
+                          userAnswer 
+                         ? userAnswer + " — " + userText 
+                          : "Not answered"
+                        }
                        </p>`
                     : ""
             }
 
             <p class="text-xs text-slate-300 mb-2">
                 Correct Answer:
-                <span class="text-white font-semibold">${correct}</span>
+                <span class="text-white font-semibold">
+    ${correct} — ${correctText}
+</span>
             </p>
 
             ${
