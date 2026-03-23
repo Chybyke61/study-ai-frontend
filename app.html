@@ -236,6 +236,17 @@
                             <button onclick="requestAI('notes')" class="flex-1 xl:flex-none min-w-[120px] bg-amber-600 hover:bg-amber-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
                                 <i data-lucide="file-text" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Notes
                             </button>
+
+                            <button onclick="runFlashcards(event)"
+  class="flex-1 xl:flex-none min-w-[140px] bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white py-3.5 px-6 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center justify-center gap-2 group shadow-[0_10px_20px_-10px_rgba(16,185,129,0.4)] border border-white/10 hover:scale-[1.02] active:scale-[0.98]">
+  
+  <i data-lucide="layers" class="w-4 h-4 text-emerald-100 group-hover:animate-bounce transition-transform"></i>
+  
+  <span class="tracking-wide">Flashcards</span>
+  
+  <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md uppercase font-black tracking-tighter opacity-80 group-hover:opacity-100 transition-opacity">AI</span>
+</button>
+
                         </div>
                     </div>
                 </div>
@@ -868,6 +879,72 @@ if (
         lucide.createIcons();
     }
         }
+
+    async function runFlashcards(event) {
+    const btn = event?.currentTarget;
+
+    // Disable button while loading
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = "⏳ Loading...";
+    }
+
+    const topic = document.getElementById("topic").value;
+    const resultBox = document.getElementById("result");
+
+    if (!topic) {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = "Flashcards";
+        }
+        return showToast("⚠️ Enter a topic first");
+    }
+
+    // Loading UI
+    resultBox.innerHTML = `
+    <div class="flex flex-col items-center justify-center h-full text-purple-400">
+        <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
+        <p class="font-bold text-xs">Generating flashcards...</p>
+    </div>`;
+    lucide.createIcons();
+
+    try {
+        const res = await fetch(`${api}/flashcards`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-user-id": currentUser.id
+            },
+            body: JSON.stringify({
+                topic,
+                level: document.getElementById("level").value,
+                book: document.getElementById("bookSelector").value
+            })
+        });
+
+        const data = await res.json();
+
+        resultBox.innerHTML = `
+        <div class="markdown-content">
+            <h2>🧠 Flashcards</h2>
+            ${marked.parse(data.flashcards || "")}
+        </div>
+        `;
+
+    } catch (err) {
+        resultBox.innerHTML = "❌ Failed to generate flashcards";
+    }
+
+    // Restore button
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = `
+            <i data-lucide="layers" class="w-4 h-4"></i>
+            Flashcards
+        `;
+        lucide.createIcons();
+    }
+    }
 
         // --- UTILS ---
         function updateFileName() {
