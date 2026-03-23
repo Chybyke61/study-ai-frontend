@@ -948,21 +948,19 @@ if (
 
         const data = await res.json();
 
-        resultBox.innerHTML = `
-        <div class="markdown-content">
-            <h2>🧠 Flashcards</h2>
-           
-           const raw = data.flashcards || "";
+        const raw = data.flashcards || "";
 const cards = raw.split("\n").filter(line => line.includes("Q:") && line.includes("A:"));
 
 let html = `
-    <div class="flex items-center gap-2 mb-6">
-        <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
-            <i data-lucide="layers" class="text-emerald-400 w-4 h-4"></i>
-        </div>
-        <h2 class="text-xl font-bold text-white font-['Plus_Jakarta_Sans']">Neural Flashcards</h2>
+<div class="flex items-center gap-2 mb-6">
+    <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
+        <i data-lucide="layers" class="text-emerald-400 w-4 h-4"></i>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 perspective-1000">`;
+    <h2 class="text-xl font-bold text-white font-['Plus_Jakarta_Sans']">Neural Flashcards</h2>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 perspective-1000">
+`;
 
 cards.forEach((line, i) => {
     const parts = line.split("A:");
@@ -970,22 +968,21 @@ cards.forEach((line, i) => {
     const answer = parts[1]?.trim() || "";
 
     html += `
-    <div class="flashcard h-48 cursor-pointer group
-            perspective-1000" onclick="this.classList.toggle('flipped')">
+    <div class="flashcard h-48 cursor-pointer group perspective-1000"
+         onclick="this.classList.toggle('flipped')">
+
         <div class="flashcard-inner relative w-full h-full preserve-3d shadow-xl rounded-2xl">
-            
-            <div class="absolute inset-0 backface-hidden bg-slate-900 border border-white/10 rounded-2xl p-6 flex flex-col justify-between group-hover:border-emerald-500/30 transition-colors">
+
+            <div class="absolute inset-0 backface-hidden bg-slate-900 border border-white/10 rounded-2xl p-6 flex flex-col justify-between">
                 <span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Question</span>
                 <p class="text-white font-semibold leading-relaxed">${question}</p>
-                <div class="text-[10px] text-slate-500 italic">Click to flip</div>
+                <div class="text-[10px] text-slate-500 italic">Tap to flip</div>
             </div>
 
-            <div class="absolute inset-0 backface-hidden bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-6 flex flex-col justify-between [transform:rotateY(180deg)] backdrop-blur-xl">
+            <div class="absolute inset-0 backface-hidden bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-6 flex flex-col justify-between"
+                 style="transform: rotateY(180deg);">
                 <span class="text-[10px] font-black text-white uppercase tracking-widest">Answer</span>
                 <p class="text-emerald-50 text-sm leading-relaxed">${answer}</p>
-                <div class="w-full h-1 bg-white/20 rounded-full overflow-hidden">
-                    <div class="bg-white h-full w-full opacity-50"></div>
-                </div>
             </div>
 
         </div>
@@ -994,11 +991,11 @@ cards.forEach((line, i) => {
 });
 
 html += `</div>`;
-resultBox.innerHTML = html;
-lucide.createIcons(); // Refresh icons
 
-        </div>
-        `;
+resultBox.innerHTML = html;
+lucide.createIcons();
+
+        
 
     } catch (err) {
         resultBox.innerHTML = "❌ Failed to generate flashcards";
