@@ -1096,7 +1096,7 @@ lucide.createIcons();
 `;
 
 questions.forEach((q, i) => {
-    html += `<div class="mb-6 p-5 rounded-2xl bg-slate-900/60 border border-white/5 shadow-lg">`;
+    html += `<div id="question-${i}" class="mb-6 p-5 rounded-2xl bg-slate-900/60 border border-white/5 shadow-lg">`;
 
     // Question header
     html += `
@@ -1163,7 +1163,11 @@ questions.forEach((q, i) => {
     // ✅ Display options (clean UI)
     options.forEach(opt => {
         html += `
-        <label class="flex items-center gap-3 p-3 mb-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer">
+        <label 
+    id="q${i}-${opt.letter}"
+    data-letter="${opt.letter}"
+    class="flex items-center gap-3 p-3 mb-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer"
+>
             
             <input type="radio" name="q${i}" value="${opt.letter}"
                 class="accent-emerald-500 w-5 h-5">
@@ -1229,6 +1233,27 @@ questions.forEach((q, i) => {
         const explanation = window.rationales[i] || "";
 
         const isCorrect = userAnswer === correct;
+        // 🎯 Highlight correct option (GREEN)
+       const correctEl = document.getElementById(`q${i}-${correct}`);
+          if (correctEl) {
+             correctEl.classList.remove("bg-white/5");
+             correctEl.classList.add("bg-emerald-500/20", "border-emerald-500");
+          }
+
+       // ❌ Highlight wrong selected option (RED)
+        if (userAnswer && userAnswer !== correct) {
+            const wrongEl = document.getElementById(`q${i}-${userAnswer}`);
+        if (wrongEl) {
+            wrongEl.classList.remove("bg-white/5");
+            wrongEl.classList.add("bg-red-500/20", "border-red-500");
+       }
+    }
+
+        // 🔒 Lock all options (disable inputs)
+         const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+             inputs.forEach(input => {
+             input.disabled = true;
+        });
 
         if (isCorrect) score++;
 
