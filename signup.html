@@ -113,7 +113,29 @@
                 <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="dark"></div>
             </div>
 
-            <button onclick="signUp()" id="signupBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95">INITIALIZE ACCOUNT</button>
+            <div class="flex items-start gap-3 mt-4 mb-2 ml-1">
+    <div class="flex items-center h-5">
+        <input 
+            id="termsCheckbox" 
+            type="checkbox" 
+            class="w-4 h-4 rounded border-slate-700 bg-slate-900/50 text-emerald-500 focus:ring-emerald-500/40 transition-all cursor-pointer accent-emerald-500"
+        >
+    </div>
+    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.1em] leading-tight">
+        <label for="termsCheckbox" class="cursor-pointer select-none">
+            I agree to the 
+            <a href="/terms" target="_blank" class="text-emerald-400 hover:underline">Terms of Use</a> 
+            & 
+            <a href="/privacy" target="_blank" class="text-blue-400 hover:underline">Privacy Policy</a>
+        </label>
+    </div>
+</div>
+
+
+             <button onclick="signUp()" id="signupBtn" disabled class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale">
+    INITIALIZE ACCOUNT
+</button>
+
         </div>
 
         <div class="flex items-center my-6">
