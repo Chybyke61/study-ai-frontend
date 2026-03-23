@@ -1123,13 +1123,11 @@ questions.forEach((q, i) => {
 
         // 🔥 Extract correct answer
         if (line.includes("Correct Answer")) {
-            const ansMatch = line.match(/[A-D]/);
-            if (ansMatch) {
-            correctAnswers.push(ansMatch[0]); // only FIRST letter
+    const match = line.match(/Correct Answer:\s*([A-D])/i);
+    if (match) {
+        correctAnswers.push(match[1]); // ✅ always ONE clean letter
+    }
         }
-            if (ans) correctAnswers.push(ans);
-        }
-
         // 🔥 Extract explanation
         if (line.includes("Academic Rationale")) {
             const exp = line.split(":")[1]?.trim();
@@ -1205,7 +1203,7 @@ window.rationales = rationales;
 
     let resultHTML = "";
 
-    const percentage = Math.round((score / total) * 100);
+  //  const percentage = Math.round((score / total) * 100);
 
     for (let i = 0; i < total; i++) {
         const selected = document.querySelector(`input[name="q${i}"]:checked`);
