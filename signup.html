@@ -240,6 +240,7 @@ async function signUp() {
     const password = document.getElementById("password").value;
     const confirm = document.getElementById("confirmPassword").value;
     const turnstileResponse = document.querySelector('[name="cf-turnstile-response"]')?.value;
+    const SUPABASE_ANON_KEY = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
 
     // ✅ Enforce terms agreement
     if (!checkbox.checked) {
@@ -257,30 +258,69 @@ async function signUp() {
     btn.innerText = "INITIALIZING...";
 
     try {
-        const { data, error } = await supabaseClient.auth.signUp({
-            email,
-            password,
-            options: { emailRedirectTo: window.location.origin + "/app" }
-        });
+    // 🔐 SEND OTP
+    const res = await fetch("https://hffbjtbahfwudigywzzx.supabase.co/functions/v1/send-otp", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email })
+    });
 
-        if (error) throw error;
+    const result = await res.json();
 
-        if (data?.user && data.user.identities?.length === 0) {
-            showToast("❌ User already exists. Redirecting...", true);
-            setTimeout(() => window.location.href = "/app?email=" + encodeURIComponent(email), 1500);
-            return;
+    if (result.error) throw new Error(result.error);
+
+    showToast("📩 OTP sent to your email");
+
+    // 👉 TEMP INPUT (we'll upgrade later)
+    const code = prompt("Enter the OTP sent to your email:");
+
+    if (!code) throw new Error("OTP required");
+
+    // 🔍 VERIFY OTP
+    const verifyRes = await fetch(
+        `https://hffbjtbahfwudigywzzx.supabase.co/rest/v1/otp_codes?email=eq.${email}&code=eq.${code}`,
+        {
+            headers: {
+                "apikey": SUPABASE_ANON_KEY,
+                "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+            }
         }
+    );
 
-        showToast("📩 Verification email sent!");
-        setTimeout(() => window.location.href = "/app?verify=sent", 2000);
+    const verifyData = await verifyRes.json();
 
-    } catch (err) {
-        showToast(`❌ ${err.message}`, true);
-        btn.disabled = false;
-        btn.innerText = "INITIALIZE ACCOUNT";
-        if (window.turnstile) turnstile.reset();
+    if (verifyData.length === 0) {
+        throw new Error("Invalid OTP");
     }
-}
+
+    // ✅ CREATE ACCOUNT AFTER OTP VERIFIED
+    const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: window.location.origin + "/app" }
+    });
+
+    if (error) throw error;
+
+    if (data?.user && data.user.identities?.length === 0) {
+        showToast("❌ User already exists. Redirecting...", true);
+        setTimeout(() => window.location.href = "/app?email=" + encodeURIComponent(email), 1500);
+        return;
+    }
+
+    showToast("🎉 Account created!");
+    setTimeout(() => window.location.href = "/app?verify=sent", 2000);
+
+} catch (err) {
+    showToast(`❌ ${err.message}`, true);
+    btn.disabled = false;
+    btn.innerText = "INITIALIZE ACCOUNT";
+
+    // ✅ KEEP THIS (VERY IMPORTANT)
+    if (window.turnstile) turnstile.reset();
+    }
 
 // Google login
 async function googleLogin() {
