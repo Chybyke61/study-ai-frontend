@@ -948,9 +948,23 @@ if (
 
         const data = await res.json();
 
-        const raw = data.flashcards || "";
-const cards = raw.split("\n").filter(line => line.includes("Q:") && line.includes("A:"));
+     const raw = data.flashcards || "";
+const lines = raw.split("\n");
 
+let cards = [];
+
+for (let i = 0; i < lines.length; i++) {
+    if (lines[i].startsWith("Q:")) {
+        const question = lines[i].replace("Q:", "").trim();
+        const nextLine = lines[i + 1] || "";
+
+        if (nextLine.startsWith("A:")) {
+            const answer = nextLine.replace("A:", "").trim();
+            cards.push({ question, answer });
+        }
+    }
+}
+        
 let html = `
 <div class="flex items-center gap-2 mb-6">
     <div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center">
@@ -962,8 +976,9 @@ let html = `
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 perspective-1000">
 `;
 
-cards.forEach((line, i) => {
-    const parts = line.split("A:");
+cards.forEach((card, i) => {
+    const question = card.question;
+    const answer = card.answer;
     const question = parts[0].replace("Q:", "").trim();
     const answer = parts[1]?.trim() || "";
 
@@ -993,7 +1008,7 @@ cards.forEach((line, i) => {
 html += `</div>`;
 
 resultBox.innerHTML = html;
-lucide.createIcons();
+lucide.createIcons();   
 
         
 
