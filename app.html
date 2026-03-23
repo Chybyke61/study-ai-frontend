@@ -1122,10 +1122,10 @@ questions.forEach((q, i) => {
         }
 
         // 🔥 Extract correct answer
-        if (line.includes("Correct Answer")) {
-    const match = line.match(/Correct Answer:\s*([A-D])/i);
+        if (line.toLowerCase().includes("correct answer")) {
+    const match = line.match(/[A-D]/i);
     if (match) {
-        correctAnswers.push(match[1]); // ✅ always ONE clean letter
+        correctAnswers.push(match[0].toUpperCase());
     }
         }
         // 🔥 Extract explanation
