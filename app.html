@@ -1123,10 +1123,10 @@ questions.forEach((q, i) => {
 
         // 🔥 Extract correct answer
         if (line.includes("Correct Answer")) {
-            const ans = line
-                .split(":")[1]
-                ?.replace(/[^A-D]/g, "")
-                .trim();
+            const ansMatch = line.match(/[A-D]/);
+            if (ansMatch) {
+            correctAnswers.push(ansMatch[0]); // only FIRST letter
+        }
             if (ans) correctAnswers.push(ans);
         }
 
