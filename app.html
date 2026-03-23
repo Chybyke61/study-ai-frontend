@@ -1094,53 +1094,92 @@ lucide.createIcons();
 </div>
 `;
 
+questions.forEach((q, i) => {
+    html += `<div class="mb-6 p-5 rounded-2xl bg-slate-900/60 border border-white/5 shadow-lg">`;
 
-    questions.forEach((q, i) => {
-        html += `<div class="mb-6 p-4 rounded-xl bg-slate-900 text-white">`;
-        html += `<p class="font-bold mb-2">Question ${i + 1}</p>`;
+    // Question header
+    html += `
+    <div class="mb-3">
+        <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">
+            Question ${i + 1}
+        </p>
+    </div>
+    `;
 
-        const lines = q.split("\n");
+    const lines = q.split("\n");
 
-        lines.forEach(line => {
+    let questionText = "";
+    let options = [];
 
-            // 🔥 Extract correct answers
-if (line.includes("Correct Answer")) {
-    const ans = line
-    .split(":")[1]
-    ?.replace(/[^A-D]/g, "")
-    .trim();
-    if (ans) correctAnswers.push(ans);
-}
+    lines.forEach(line => {
 
-// 🔥 Extract explanations
-if (line.includes("Academic Rationale")) {
-    const exp = line.split(":")[1]?.trim();
-    if (exp) rationales.push(exp);
-}
-            if (
-                line.startsWith("A)") ||
-                line.startsWith("B)") ||
-                line.startsWith("C)") ||
-                line.startsWith("D)")
-            ) {
-                const option = line.charAt(0);
+        // ✅ Extract clean question
+        if (line.toLowerCase().includes("stem") || (!questionText && line.length > 20)) {
+    questionText = line
+        .replace(/\*\*/g, "")
+        .replace(/stem:/i, "")
+        .trim();
+        }
 
-                html += `
-                <label class="block cursor-pointer mb-1">
-                    <input type="radio" name="q${i}" value="${option}" class="mr-2">
-                    ${line}
-                </label>
-                `;
-            } else if (
-                !line.includes("Correct Answer") &&
-                !line.includes("Academic Rationale")
-            ) {
-                html += `<p class="text-sm mb-1">${line}</p>`;
-            }
-        });
+        // 🔥 Extract correct answer
+        if (line.includes("Correct Answer")) {
+            const ans = line
+                .split(":")[1]
+                ?.replace(/[^A-D]/g, "")
+                .trim();
+            if (ans) correctAnswers.push(ans);
+        }
 
-        html += `</div>`;
+        // 🔥 Extract explanation
+        if (line.includes("Academic Rationale")) {
+            const exp = line.split(":")[1]?.trim();
+            if (exp) rationales.push(exp);
+        }
+
+        // ✅ Extract options
+        if (
+            line.startsWith("A)") ||
+            line.startsWith("B)") ||
+            line.startsWith("C)") ||
+            line.startsWith("D)")
+        ) {
+            const letter = line.charAt(0);
+            const cleanOption = line
+                .replace(/^[A-D]\)\s*/, "")
+                .replace(/\*\*/g, "")
+                .replace(/^\s+|\s+$/g, "")    // trim spaces properly
+                .trim();
+
+            options.push({ letter, text: cleanOption });
+        }
     });
+
+    // ✅ Display clean question AFTER extraction
+    html += `
+    <p class="text-white font-semibold leading-relaxed mb-4">
+        ${questionText}
+    </p>
+    `;
+
+    // ✅ Display options (clean UI)
+    options.forEach(opt => {
+        html += `
+        <label class="flex items-center gap-3 p-3 mb-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer">
+            
+            <input type="radio" name="q${i}" value="${opt.letter}"
+                class="accent-emerald-500 w-5 h-5">
+
+            <span class="text-sm text-slate-200">
+                ${opt.text}
+            </span>
+
+        </label>
+        `;
+    });
+
+    html += `</div>`;
+});
+    
 
     html += `
     <button 
