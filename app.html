@@ -1131,8 +1131,8 @@ questions.forEach((q, i) => {
         }
         // 🔥 Extract explanation
         if (line.includes("Academic Rationale")) {
-            const exp = line.split(":")[1]?.trim();
-            if (exp) rationales.push(exp);
+    const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim();
+    if (exp) rationales.push(exp);
         }
 
         // ✅ Extract options
@@ -1207,6 +1207,10 @@ questions.forEach((q, i) => {
 
         function submitQuiz() {
     let score = 0;
+     if (!window.correctAnswers || window.correctAnswers.length === 0) {
+    return showToast("⚠️ Quiz not ready. Generate again.");
+     }
+            
     const total = window.correctAnswers.length;
 
     let resultHTML = "";
@@ -1237,7 +1241,12 @@ questions.forEach((q, i) => {
        const correctEl = document.getElementById(`q${i}-${correct}`);
           if (correctEl) {
              correctEl.classList.remove("bg-white/5");
-             correctEl.classList.add("bg-emerald-500/20", "border-emerald-500");
+             correctEl.classList.add(
+             "bg-emerald-500/20",
+             "border-emerald-500",
+             "ring-2",
+             "ring-emerald-400"
+            );
           }
 
        // ❌ Highlight wrong selected option (RED)
@@ -1309,7 +1318,9 @@ questions.forEach((q, i) => {
         `;
     }
 
-    const percentageScore = Math.round((score / total) * 100);
+    const percentageScore = total
+    ? Math.round((score / total) * 100)
+    : 0;
 
     document.getElementById("result").innerHTML = `
     <div class="max-w-2xl mx-auto">
