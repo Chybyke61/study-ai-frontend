@@ -1198,40 +1198,98 @@ window.rationales = rationales;
     resultBox.innerHTML = html;
       lucide.createIcons();
         }
-        
-       function submitQuiz() {
+
+        function submitQuiz() {
     let score = 0;
     const total = window.correctAnswers.length;
 
     let resultHTML = "";
 
+    const percentage = Math.round((score / total) * 100);
+
     for (let i = 0; i < total; i++) {
         const selected = document.querySelector(`input[name="q${i}"]:checked`);
         const userAnswer = selected ? selected.value : null;
         const correct = window.correctAnswers[i];
+        const explanation = window.rationales[i] || "";
 
-        if (userAnswer === correct) {
-            score++;
-            resultHTML += `<p class="text-green-400">Q${i + 1}: Correct ✅</p>`;
-        } else {
-            resultHTML += `
-            <div class="text-red-400 mb-3">
-                Q${i + 1}: Wrong ❌ <br>
-                <span class="text-slate-300">Correct Answer: ${correct}</span><br>
-                <span class="text-slate-400 text-sm">${window.rationales[i] || ""}</span>
-            </div>`;
-        }
+        const isCorrect = userAnswer === correct;
+
+        if (isCorrect) score++;
+
+        resultHTML += `
+        <div class="mb-4 p-5 rounded-2xl border ${
+            isCorrect
+                ? "bg-emerald-500/10 border-emerald-500/30"
+                : "bg-red-500/10 border-red-500/30"
+        } shadow-lg">
+
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-bold text-white">
+                    Question ${i + 1}
+                </span>
+
+                <span class="text-xs font-bold ${
+                    isCorrect ? "text-emerald-400" : "text-red-400"
+                }">
+                    ${isCorrect ? "✔ Correct" : "✖ Wrong"}
+                </span>
+            </div>
+
+            ${
+                !isCorrect
+                    ? `<p class="text-xs text-slate-400 mb-1">
+                        Your Answer: ${userAnswer || "Not answered"}
+                       </p>`
+                    : ""
+            }
+
+            <p class="text-xs text-slate-300 mb-2">
+                Correct Answer:
+                <span class="text-white font-semibold">${correct}</span>
+            </p>
+
+            ${
+                explanation
+                    ? `<div class="border-t border-white/5 pt-2 mt-2">
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            ${explanation}
+                        </p>
+                       </div>`
+                    : ""
+            }
+
+        </div>
+        `;
     }
 
+    const percentageScore = Math.round((score / total) * 100);
+
     document.getElementById("result").innerHTML = `
-    <div class="p-6 bg-slate-900 rounded-2xl">
-        <h2 class="text-2xl font-bold mb-4 text-white">
-            Score: ${score}/${total}
-        </h2>
+    <div class="max-w-2xl mx-auto">
+
+        <div class="mb-6 p-6 rounded-2xl bg-slate-900/60 border border-white/5 shadow-xl text-center">
+            <h2 class="text-2xl font-extrabold text-white mb-2">
+                Score: ${score}/${total}
+            </h2>
+            <p class="text-sm text-emerald-400 font-bold">
+                ${percentageScore}%
+            </p>
+        </div>
+
         ${resultHTML}
+
+        <button onclick="resetQuiz(event)"
+            class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all">
+            🔄 Try Again
+        </button>
+
     </div>
     `;
-       }
+
+    lucide.createIcons();
+        }
+       
 
       async function resetQuiz(event) {
     const btn = event?.currentTarget;
