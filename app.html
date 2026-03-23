@@ -159,6 +159,10 @@
                 <h1 class="text-lg sm:text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] uppercase tracking-wider">Study.AI <span class="text-indigo-500 text-xs hidden sm:inline">PRO</span></h1>
             </div>
             <div class="flex items-center gap-2 sm:gap-4">
+                <button onclick="testEmail()" 
+class="px-4 py-2 bg-emerald-600 text-white text-xs rounded-xl">
+    Test Email
+                </button>
                 <button onclick="loadBooks()" class="p-2 sm:p-2.5 rounded-xl glass-card hover:bg-white/5 transition-all text-slate-400" title="Sync Library">
                     <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                 </button>
@@ -1023,6 +1027,27 @@ window.rationales = rationales;
 
     lucide.createIcons();
         }
+
+        // ✅ TEST EMAIL FUNCTION
+async function testEmail() {
+    try {
+        const res = await fetch(`${api}/test-email`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                email: "obilordelight@gmail.com"
+            })
+        });
+
+        const data = await res.json();
+        showToast("📩 " + JSON.stringify(data));
+
+    } catch (err) {
+        showToast("❌ " + err.message);
+    }
+}
 
     async function forgotPassword() {
     const email = document.getElementById("email").value;
