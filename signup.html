@@ -3,204 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Identity | Study.AI</title>
+    <title>Join Study.AI | Create Account</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #f8fafc; background-attachment: fixed; background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.05) 0px, transparent 50%); }
-        .glass-card { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .otp-input:focus { border-color: #10b981; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
-        .btn-emerald { background: #059669; transition: all 0.3s ease; }
-        .btn-emerald:hover { background: #10b981; transform: translateY(-1px); }
-        .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: #10b981; border-radius: 50%; display: inline-block; animation: rotation 1s linear infinite; }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-color: #020617; 
+            color: #f8fafc;
+            background-image: radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
+        }
+        .glass-card { 
+            background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08); 
+        }
+        .btn-emerald { 
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
+            transition: all 0.3s ease;
+        }
+        .btn-emerald:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 20px -10px #10b981; 
+        }
+        svg { display: inline-block; vertical-align: middle; }
+        /* Smooth transition for OTP step */
+        .auth-step { transition: all 0.4s ease; }
     </style>
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
+<body class="min-h-screen flex items-center justify-center p-4">
 
-    <div id="globalLoader" class="fixed inset-0 z-[100] bg-slate-950 flex items-center justify-center transition-opacity duration-700">
-        <span class="loader"></span>
+    <div id="globalLoader" class="fixed inset-0 flex flex-col items-center justify-center bg-[#020617] z-[9999] transition-opacity duration-700">
+        <div class="flex flex-col items-center relative z-10">
+            <div class="relative w-24 h-24 mb-8">
+                <div class="absolute inset-0 border-[3px] border-emerald-500/10 rounded-full"></div>
+                <div class="absolute inset-0 border-[3px] border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i data-lucide="brain-circuit" class="text-emerald-400 w-10 h-10 animate-pulse"></i>
+                </div>
+            </div>
+            <h1 class="text-white font-['Plus_Jakarta_Sans'] font-extrabold text-2xl tracking-tight mb-2">Study.AI</h1>
+            <p class="text-slate-500 text-[10px] font-bold tracking-[0.3em] uppercase">Synchronizing Neural Base</p>
+        </div>
     </div>
 
-    <div class="glass-card p-8 md:p-10 rounded-[2.5rem] shadow-2xl w-full max-w-md border-white/5 relative">
+    <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl overflow-hidden">
         
-        <div id="step-identity" class="space-y-5">
-            <div class="text-center mb-6">
-                <h2 id="auth-title" class="text-3xl font-black font-['Plus_Jakarta_Sans'] text-white">Initialize</h2>
-                <p id="auth-desc" class="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1">Create your academic profile</p>
+        <div id="step-identity" class="auth-step">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl mb-6 shadow-xl">
+                    <i data-lucide="user-plus" class="text-emerald-400 w-8 h-8"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-['Plus_Jakarta_Sans']">Create Identity</h2>
+                <p class="text-slate-400 text-sm font-medium">Join the future of document intelligence</p>
             </div>
 
             <div class="space-y-4">
-                <input id="email" type="email" placeholder="Email Address" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-4 text-white focus:border-emerald-500 outline-none transition-all">
-                
-                <div id="password-fields" class="space-y-3">
-                    <input id="password" type="password" placeholder="Password" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-4 text-white focus:border-emerald-500 outline-none transition-all">
-                    <input id="confirmPassword" type="password" placeholder="Confirm Password" class="w-full bg-slate-900/50 border border-slate-800 rounded-xl px-4 py-4 text-white focus:border-emerald-500 outline-none transition-all">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Email Address</label>
+                    <input id="email" type="email" placeholder="student@example.com" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all">
                 </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Password</label>
+                    <div class="relative">
+                        <input id="password" type="password" placeholder="Min. 8 characters" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12">
+                        <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="passwordRules" class="mt-4 ml-1 space-y-2.5">
+                        <div id="rule-length" class="flex items-center gap-2.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]"><i data-lucide="circle" class="w-3 h-3 text-slate-600/80"></i><span>8+ characters</span></div>
+                        <div id="rule-letter" class="flex items-center gap-2.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]"><i data-lucide="circle" class="w-3 h-3 text-slate-600/80"></i><span>At least one letter</span></div>
+                        <div id="rule-number" class="flex items-center gap-2.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]"><i data-lucide="circle" class="w-3 h-3 text-slate-600/80"></i><span>At least one number</span></div>
+                        <div id="rule-symbol" class="flex items-center gap-2.5 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]"><i data-lucide="circle" class="w-3 h-3 text-slate-600/80"></i><span>Special symbol (@$!%*#?&)</span></div>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] ml-1 mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <input id="confirmPassword" type="password" placeholder="Repeat password" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/40 transition-all pr-12">
+                        <button type="button" onclick="togglePassword('confirmPassword', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-3 px-1 py-2">
+                    <input id="termsCheckbox" type="checkbox" class="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 accent-emerald-500 cursor-pointer">
+                    <label for="termsCheckbox" class="text-[10px] font-bold text-slate-500 uppercase leading-tight cursor-pointer">
+                        I agree to the <a href="terms.html" class="text-emerald-400 hover:underline">Terms</a> & <a href="privacy.html" class="text-blue-400 hover:underline">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <div class="p-4 rounded-2xl bg-slate-900/40 border border-slate-800/50 flex flex-col items-center justify-center backdrop-blur-sm">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="dark"></div>
+                </div>
+
+                <button onclick="requestOTP()" id="signupBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg mt-2 active:scale-95 uppercase tracking-widest text-sm">Initialize Account</button>
             </div>
 
-            <div class="flex justify-center py-2">
-                <div class="cf-turnstile" data-sitekey="0x4AAAAAAA4p8Bw_M_7_Y-N2" data-theme="dark"></div>
-            </div>
+            <div id="social-container">
+                <div class="flex items-center my-6">
+                    <div class="flex-1 border-t border-slate-800"></div>
+                    <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">or</span>
+                    <div class="flex-1 border-t border-slate-800"></div>
+                </div>
 
-            <div id="terms-wrap" class="flex items-start gap-3 px-1">
-                <input id="termsCheckbox" type="checkbox" class="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-900 text-emerald-500 accent-emerald-500 cursor-pointer">
-                <label for="termsCheckbox" class="text-[10px] font-bold text-slate-500 uppercase leading-tight cursor-pointer">
-                    I agree to the <a href="terms.html" class="text-emerald-400">Terms</a> & <a href="privacy.html" class="text-blue-400">Privacy Policy</a>
-                </label>
-            </div>
-
-            <button onclick="startAuth()" id="actionBtn" class="w-full py-4 btn-emerald text-white font-bold rounded-2xl shadow-lg shadow-emerald-900/20 active:scale-95">
-                START INITIALIZATION
-            </button>
-
-            <div id="social-area" class="space-y-4">
-                <div class="flex items-center gap-4 text-slate-600"><div class="h-px w-full bg-slate-800"></div><span class="text-[10px] font-bold uppercase">OR</span><div class="h-px w-full bg-slate-800"></div></div>
-                <button onclick="googleLogin()" class="w-full py-4 bg-white/5 border border-white/10 text-white rounded-2xl flex items-center justify-center gap-3 hover:bg-white/10 transition-all font-bold text-sm">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
-                    Continue with Google
+                <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-3 group">
+                    <div class="bg-white p-1.5 rounded-xl group-hover:scale-110 transition-transform">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4" alt="Google">
+                    </div>
+                    <span>Continue with Google</span>
                 </button>
-            </div>
-
-            <div class="text-center pt-2">
-                <button id="mode-toggle" onclick="switchMode()" class="text-[10px] font-bold text-slate-500 uppercase hover:text-white transition-colors">Already have an account? Sign In</button>
             </div>
         </div>
 
-        <div id="step-otp" class="hidden space-y-8 py-4">
-            <div class="text-center">
+        <div id="step-otp" class="auth-step hidden py-4">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-emerald-600/20 border border-emerald-500/30 rounded-2xl mb-6 shadow-xl">
+                    <i data-lucide="shield-check" class="text-emerald-400 w-8 h-8"></i>
+                </div>
                 <h2 class="text-2xl font-black text-white font-['Plus_Jakarta_Sans']">Verify Identity</h2>
-                <p class="text-slate-400 text-xs">Enter code sent to <span id="display-email" class="text-emerald-400"></span></p>
+                <p class="text-slate-400 text-xs font-medium uppercase tracking-widest mt-2">Enter the code sent to your email</p>
             </div>
 
-            <div class="flex justify-between gap-2">
-                <input type="text" maxlength="1" class="otp-field w-12 h-16 bg-slate-900/50 border border-slate-800 text-center text-2xl font-bold text-emerald-400 rounded-xl outline-none">
-                <input type="text" maxlength="1" class="otp-field w-12 h-16 bg-slate-900/50 border border-slate-800 text-center text-2xl font-bold text-emerald-400 rounded-xl outline-none">
-                <input type="text" maxlength="1" class="otp-field w-12 h-16 bg-slate-900/50 border border-slate-800 text-center text-2xl font-bold text-emerald-400 rounded-xl outline-none">
-                <input type="text" maxlength="1" class="otp-field w-12 h-16 bg-slate-900/50 border border-slate-800 text-center text-2xl font-bold text-emerald-400 rounded-xl outline-none">
-                <input type="text" maxlength="1" class="otp-field w-12 h-16 bg-slate-900/50 border border-slate-800 text-center text-2xl font-bold text-emerald-400 rounded-xl outline-none">
-                <input type="text" maxlength="1" class="otp-field w-12 h-16 bg-slate-900/50 border border-slate-800 text-center text-2xl font-bold text-emerald-400 rounded-xl outline-none">
+            <div class="flex justify-between gap-2 mb-8" id="otp-inputs">
+                <input type="text" maxlength="1" class="otp-field w-12 h-14 bg-slate-900/50 border border-slate-800 text-center text-xl font-bold text-emerald-400 rounded-xl focus:border-emerald-500 outline-none transition-all">
+                <input type="text" maxlength="1" class="otp-field w-12 h-14 bg-slate-900/50 border border-slate-800 text-center text-xl font-bold text-emerald-400 rounded-xl focus:border-emerald-500 outline-none transition-all">
+                <input type="text" maxlength="1" class="otp-field w-12 h-14 bg-slate-900/50 border border-slate-800 text-center text-xl font-bold text-emerald-400 rounded-xl focus:border-emerald-500 outline-none transition-all">
+                <input type="text" maxlength="1" class="otp-field w-12 h-14 bg-slate-900/50 border border-slate-800 text-center text-xl font-bold text-emerald-400 rounded-xl focus:border-emerald-500 outline-none transition-all">
+                <input type="text" maxlength="1" class="otp-field w-12 h-14 bg-slate-900/50 border border-slate-800 text-center text-xl font-bold text-emerald-400 rounded-xl focus:border-emerald-500 outline-none transition-all">
+                <input type="text" maxlength="1" class="otp-field w-12 h-14 bg-slate-900/50 border border-slate-800 text-center text-xl font-bold text-emerald-400 rounded-xl focus:border-emerald-500 outline-none transition-all">
             </div>
 
-            <button onclick="verifyOTP()" id="verifyBtn" class="w-full py-4 btn-emerald text-white font-bold rounded-2xl active:scale-95">VERIFY CODE</button>
+            <button onclick="verifyAndSignUp()" id="verifyBtn" class="w-full btn-emerald text-white font-bold py-4 rounded-2xl shadow-lg active:scale-95 uppercase tracking-widest text-sm">Verify & Finalize</button>
             
-            <div class="text-center">
-                <p id="resend-text" class="text-[10px] font-bold text-slate-500 uppercase">Resend in <span id="timer">60</span>s</p>
-                <button id="resendBtn" onclick="startAuth()" class="hidden text-[10px] font-bold text-emerald-400 uppercase hover:underline">Resend Code</button>
-            </div>
+            <button onclick="location.reload()" class="w-full mt-6 text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em] hover:text-white transition-colors">Back to Information</button>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-slate-800/50 text-center text-sm">
+            <span class="text-slate-500">Already a member?</span> 
+            <a href="/app" class="text-emerald-400 font-bold hover:underline ml-1">Sign In</a>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl text-sm font-bold opacity-0 translate-y-4 transition-all duration-300 pointer-events-none z-[200]"></div>
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 z-[100] font-bold text-sm pointer-events-none border border-slate-700"></div>
 
     <script>
-        const SUPABASE_URL = "https://hffbjtbahfwudigywzzx.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
+        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        let mode = 'signup'; 
-        let countdown;
+        lucide.createIcons();
 
-        function showToast(msg, isError = false) {
-            const t = document.getElementById("toast");
-            t.innerText = msg; t.style.color = isError ? "#f87171" : "#10b981";
-            t.className = t.className.replace("opacity-0 translate-y-4", "opacity-100 translate-y-0");
-            setTimeout(() => { t.className = t.className.replace("opacity-100 translate-y-0", "opacity-0 translate-y-4"); }, 3000);
+        function showToast(message, isError = false) {
+            const toast = document.getElementById("toast");
+            toast.textContent = message;
+            toast.style.borderColor = isError ? "#ef4444" : "#10b981";
+            toast.style.color = isError ? "#f87171" : "#10b981";
+            toast.classList.replace("opacity-0", "opacity-100");
+            setTimeout(() => { toast.classList.replace("opacity-100", "opacity-0"); }, 3000);
         }
 
-        function switchMode() {
-            mode = (mode === 'signup') ? 'signin' : 'signup';
-            document.getElementById('auth-title').innerText = mode === 'signup' ? "Initialize" : "Welcome Back";
-            document.getElementById('actionBtn').innerText = mode === 'signup' ? "START INITIALIZATION" : "ACCESS ACCOUNT";
-            document.getElementById('confirmPassword').classList.toggle('hidden', mode === 'signin');
-            document.getElementById('terms-wrap').classList.toggle('hidden', mode === 'signin');
-            document.getElementById('mode-toggle').innerText = mode === 'signup' ? "Already have an account? Sign In" : "Need an account? Sign Up";
+        function togglePassword(id, btn) {
+            const input = document.getElementById(id);
+            const currentIcon = btn.querySelector("svg");
+            input.type = input.type === "password" ? "text" : "password";
+            const newIcon = input.type === "password" ? "eye" : "eye-off";
+            const iconEl = document.createElement("i");
+            iconEl.setAttribute("data-lucide", newIcon);
+            btn.innerHTML = ''; btn.appendChild(iconEl);
+            lucide.createIcons({ root: btn });
         }
+
+        // Real-time Rule Validation
+        document.getElementById("password").addEventListener("input", (e) => {
+            const val = e.target.value;
+            const updateRule = (id, valid) => {
+                const el = document.getElementById(id);
+                const icon = el.querySelector("svg");
+                el.className = `flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 ${valid ? 'text-emerald-400' : 'text-slate-500'}`;
+                const newIcon = document.createElement("i");
+                newIcon.setAttribute("data-lucide", valid ? "check-circle" : "circle");
+                newIcon.className = `w-3 h-3 ${valid ? 'text-emerald-500' : 'text-slate-600/80'}`;
+                el.replaceChild(newIcon, el.children[0]);
+                lucide.createIcons({ root: el });
+            };
+            updateRule("rule-length", val.length >= 8);
+            updateRule("rule-letter", /[A-Za-z]/.test(val));
+            updateRule("rule-number", /\d/.test(val));
+            updateRule("rule-symbol", /[@$!%*#?&]/.test(val));
+        });
 
         // OTP Auto-focus
         const otpFields = document.querySelectorAll('.otp-field');
-        otpFields.forEach((field, i) => {
-            field.oninput = () => { if (field.value && i < 5) otpFields[i+1].focus(); };
-            field.onkeydown = (e) => { if (e.key === 'Backspace' && !field.value && i > 0) otpFields[i-1].focus(); };
+        otpFields.forEach((f, i) => {
+            f.oninput = () => { if(f.value && i < 5) otpFields[i+1].focus(); };
+            f.onkeydown = (e) => { if(e.key === 'Backspace' && !f.value && i > 0) otpFields[i-1].focus(); };
         });
 
-        async function startAuth() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirm = document.getElementById('confirmPassword').value;
-            const terms = document.getElementById('termsCheckbox').checked;
+        async function requestOTP() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const confirm = document.getElementById("confirmPassword").value;
             const turnstile = document.querySelector('[name="cf-turnstile-response"]')?.value;
+            const terms = document.getElementById("termsCheckbox").checked;
 
-            if (!email || !password) return showToast("⚠️ Email and Password required", true);
-            if (mode === 'signup' && password !== confirm) return showToast("❌ Passwords mismatch", true);
-            if (mode === 'signup' && !terms) return showToast("⚠️ Accept Terms & Privacy", true);
-            if (!turnstile) return showToast("⚠️ Please verify you are human", true);
-
-            const btn = document.getElementById('actionBtn');
-            btn.disabled = true; btn.innerText = "SENDING CODE...";
+            if (!terms) return showToast("⚠️ Agree to Terms & Privacy", true);
+            if (!turnstile) return showToast("⚠️ Please verify you're human", true);
+            if (!email || !password || !confirm) return showToast("⚠️ Fill all fields", true);
+            if (password !== confirm) return showToast("❌ Passwords do not match", true);
+            
+            const btn = document.getElementById("signupBtn");
+            btn.disabled = true; btn.innerText = "REQUESTING CODE...";
 
             try {
-                const res = await fetch(`${SUPABASE_URL}/functions/v1/send-otp`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                const res = await fetch(`${supabaseUrl}/functions/v1/send-otp`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ email })
                 });
-                if (!res.ok) throw new Error("Failed to send OTP");
+                const result = await res.json();
+                if (result.error) throw new Error(result.error);
 
-                document.getElementById('display-email').innerText = email;
+                showToast("📩 OTP sent to your inbox");
                 document.getElementById('step-identity').classList.add('hidden');
                 document.getElementById('step-otp').classList.remove('hidden');
-                
-                let timeLeft = 60;
-                document.getElementById('resend-text').classList.remove('hidden');
-                document.getElementById('resendBtn').classList.add('hidden');
-                clearInterval(countdown);
-                countdown = setInterval(() => {
-                    timeLeft--; document.getElementById('timer').innerText = timeLeft;
-                    if (timeLeft <= 0) {
-                        clearInterval(countdown);
-                        document.getElementById('resend-text').classList.add('hidden');
-                        document.getElementById('resendBtn').classList.remove('hidden');
-                    }
-                }, 1000);
-
-                showToast("📩 Verification code sent!");
             } catch (err) {
                 showToast(`❌ ${err.message}`, true);
-                btn.disabled = false; btn.innerText = "TRY AGAIN";
+                btn.disabled = false; btn.innerText = "INITIALIZE ACCOUNT";
                 if (window.turnstile) turnstile.reset();
             }
         }
 
-        async function verifyOTP() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        async function verifyAndSignUp() {
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
             const code = Array.from(otpFields).map(f => f.value).join('');
 
             if (code.length < 6) return showToast("⚠️ Enter 6-digit code", true);
 
-            const btn = document.getElementById('verifyBtn');
+            const btn = document.getElementById("verifyBtn");
             btn.disabled = true; btn.innerText = "VERIFYING...";
 
             try {
-                const verifyRes = await fetch(`${SUPABASE_URL}/rest/v1/otp_codes?email=eq.${email}&code=eq.${code}`, {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': `Bearer ${SUPABASE_KEY}` }
+                // Verify via your custom Edge Function / Table
+                const verifyRes = await fetch(`${supabaseUrl}/rest/v1/otp_codes?email=eq.${email}&code=eq.${code}`, {
+                    headers: { "apikey": supabaseKey, "Authorization": `Bearer ${supabaseKey}` }
                 });
                 const verifyData = await verifyRes.json();
-                if (verifyData.length === 0) throw new Error("Invalid or expired code");
+                if (verifyData.length === 0) throw new Error("Invalid OTP");
 
-                const authFunc = (mode === 'signup') ? supabaseClient.auth.signUp : supabaseClient.auth.signInWithPassword;
-                const { error } = await authFunc({ email, password });
+                // Proceed with Supabase Auth
+                const { error } = await supabaseClient.auth.signUp({
+                    email, password, options: { emailRedirectTo: window.location.origin + "/app" }
+                });
                 if (error) throw error;
 
-                showToast("✅ Identity Confirmed!");
-                setTimeout(() => window.location.href = "/app", 1500);
+                showToast("🎉 Account created!");
+                setTimeout(() => window.location.href = "/app?verify=sent", 2000);
             } catch (err) {
                 showToast(`❌ ${err.message}`, true);
-                btn.disabled = false; btn.innerText = "VERIFY CODE";
+                btn.disabled = false; btn.innerText = "VERIFY & FINALIZE";
             }
         }
 
@@ -212,11 +283,9 @@
         }
 
         window.onload = () => {
-            lucide.createIcons();
             setTimeout(() => {
-                const loader = document.getElementById('globalLoader');
-                loader.style.opacity = '0';
-                setTimeout(() => loader.style.display = 'none', 700);
+                document.getElementById('globalLoader').style.opacity = '0';
+                setTimeout(() => document.getElementById('globalLoader').style.display = 'none', 700);
             }, 800);
         };
     </script>
