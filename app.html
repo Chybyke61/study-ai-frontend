@@ -1067,6 +1067,32 @@ lucide.createIcons();
 
     let html = "";
 
+     html += `
+<div class="flex items-center justify-between mb-8 group/header">
+    <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.1)]">
+            <i data-lucide="help-circle" class="text-emerald-400 w-5 h-5"></i>
+        </div>
+        
+        <div>
+            <h2 class="text-xl font-extrabold text-white font-['Plus_Jakarta_Sans'] tracking-tight">Practice Quiz</h2>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Neural Assessment Phase</p>
+        </div>
+    </div>
+
+    <button onclick="resetQuiz(event)"
+      class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-800 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 group shadow-lg"
+      title="Generate new questions">
+      
+      <span class="text-xs font-bold text-slate-400 group-hover:text-emerald-400 transition-colors">New Session</span>
+      <i data-lucide="refresh-cw"
+         class="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 group-hover:rotate-180 transition-all duration-700 ease-in-out">
+      </i>
+    </button>
+</div>
+`;
+
+
     questions.forEach((q, i) => {
         html += `<div class="mb-6 p-4 rounded-xl bg-slate-900 text-white">`;
         html += `<p class="font-bold mb-2">Question ${i + 1}</p>`;
@@ -1165,6 +1191,23 @@ window.rationales = rationales;
     </div>
     `;
        }
+
+      async function resetQuiz(event) {
+    const btn = event?.currentTarget;
+    const icon = btn?.querySelector("i");
+    const text = btn?.querySelector("span");
+
+    // show loading state
+    if (icon) icon.classList.add("animate-spin");
+    if (text) text.innerText = "Loading...";
+
+    // 🔥 call your existing quiz system
+    await requestAI("quiz");
+
+    // restore button
+    if (icon) icon.classList.remove("animate-spin");
+    if (text) text.innerText = "New Session";
+      }
 
         function togglePassword(id, btn) {
     const input = document.getElementById(id);
