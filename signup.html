@@ -271,6 +271,20 @@
                 setTimeout(() => loader.style.display = 'none', 700);
             }, 800);
         });
+
+        <script id="step1">
+document.addEventListener("DOMContentLoaded", () => {
+    const checkbox = document.getElementById("termsCheckbox");
+    const btn = document.getElementById("signupBtn");
+
+    btn.disabled = true; // start disabled
+
+    checkbox.addEventListener("change", () => {
+        btn.disabled = !checkbox.checked;
+    });
+});
+</script>
+    
     </script>
 </body>
 </html>
