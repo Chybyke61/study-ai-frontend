@@ -163,6 +163,13 @@
 class="px-4 py-2 bg-emerald-600 text-white text-xs rounded-xl">
     Test Email
                 </button>
+
+                <input id="emailInput" placeholder="Enter email" class="border p-2 text-black">
+<button onclick="sendOTP()" class="bg-blue-600 text-white px-3 py-2">Send OTP</button>
+
+<input id="otpInput" placeholder="Enter OTP" class="border p-2 text-black mt-2">
+<button onclick="verifyOTP()" class="bg-green-600 text-white px-3 py-2">Verify OTP</button>
+                
                 <button onclick="loadBooks()" class="p-2 sm:p-2.5 rounded-xl glass-card hover:bg-white/5 transition-all text-slate-400" title="Sync Library">
                     <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                 </button>
@@ -1027,6 +1034,34 @@ window.rationales = rationales;
 
     lucide.createIcons();
         }
+
+        async function sendOTP() {
+    const email = document.getElementById("emailInput").value;
+
+    const res = await fetch("/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+    });
+
+    const data = await res.json();
+    alert(data.success ? "OTP sent 📩" : "Failed ❌");
+}
+
+async function verifyOTP() {
+    const email = document.getElementById("emailInput").value;
+    const otp = document.getElementById("otpInput").value;
+
+    const res = await fetch("/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, otp })
+    });
+
+    const data = await res.json();
+    alert(data.success ? "Verified ✅" : "Invalid OTP ❌");
+}
+        
 
         // ✅ TEST EMAIL FUNCTION
 async function testEmail() {
