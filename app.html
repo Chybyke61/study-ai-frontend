@@ -1122,8 +1122,11 @@ questions.forEach((q, i) => {
         }
 
         // 🔥 Extract correct answer
-        if (line.toLowerCase().includes("correct answer")) {
-    const match = line.match(/correct answer:\s*([A-D])/i);
+        if (
+    line.toLowerCase().includes("correct answer") ||
+    line.toLowerCase().includes("answer:")
+) {
+    const match = line.match(/\b([A-D])\b/);
     if (match) {
         correctAnswers.push(match[1].toUpperCase());
     }
