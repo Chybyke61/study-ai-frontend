@@ -1123,13 +1123,13 @@ questions.forEach((q, i) => {
 
         // 🔥 Extract correct answer
         if (line.toLowerCase().includes("correct answer")) {
-    const match = line.match(/[A-D]/i);
+    const match = line.match(/correct answer:\s*([A-D])/i);
     if (match) {
-        correctAnswers.push(match[0].toUpperCase());
+        correctAnswers.push(match[1].toUpperCase());
     }
         }
         // 🔥 Extract explanation
-        if (line.includes("Academic Rationale")) {
+        if (line.toLowerCase().includes("rationale")) {
     const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim();
     if (exp) rationales.push(exp);
         }
