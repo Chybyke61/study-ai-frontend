@@ -1234,6 +1234,15 @@ questions.forEach((q, i) => {
         const userText = options.find(opt => opt.letter === userAnswer)?.text || "";
 
         const explanation = window.rationales[i] || "";
+        // 🔒 Force consistency (replace wrong letter inside explanation)
+            let fixedExplanation = explanation;
+
+            if (correct && explanation) {
+            fixedExplanation = explanation.replace(
+              /correct answer is [A-D]/i,
+              `correct answer is ${correct}`
+            );
+         }
 
         const isCorrect = userAnswer === correct;
         // 🎯 Highlight correct option (GREEN)
@@ -1322,7 +1331,7 @@ questions.forEach((q, i) => {
         <div class="flex gap-3">
             <div class="w-1 bg-emerald-500/30 rounded-full h-auto"></div>
             <p class="text-xs text-slate-400 leading-relaxed font-medium">
-                ${explanation}
+                ${fixedExplanation}
             </p>
         </div>
     </div>
