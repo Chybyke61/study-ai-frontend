@@ -1381,6 +1381,27 @@ questions.forEach((q, i) => {
     if (text) text.innerText = "New Session";
       }
 
+        function toggleExplanation(i) {
+    const box = document.getElementById(`explanation-${i}`);
+    const text = document.getElementById(`toggle-text-${i}`);
+    const icon = document.getElementById(`toggle-icon-${i}`);
+
+    if (!box || !text) return;
+
+    if (box.classList.contains("hidden")) {
+        box.classList.remove("hidden");
+        text.innerText = "Hide Explanation";
+
+        if (icon) icon.classList.add("rotate-180");
+
+    } else {
+        box.classList.add("hidden");
+        text.innerText = "Show Explanation";
+
+        if (icon) icon.classList.remove("rotate-180");
+    }
+        }
+
         function togglePassword(id, btn) {
     const input = document.getElementById(id);
     const icon = btn.querySelector("i");
