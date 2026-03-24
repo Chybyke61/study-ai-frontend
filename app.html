@@ -1310,14 +1310,16 @@ questions.forEach((q, i) => {
         onclick="toggleExplanation(${i})"
         class="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/5 border border-emerald-500/10 hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all duration-300"
     >
-        <i data-lucide="info" class="w-3.5 h-3.5 text-emerald-400"></i>
+        <i id="toggle-icon-${i}" data-lucide="chevron-down" 
+   class="w-3.5 h-3.5 text-emerald-400 transition-transform duration-300">
+</i>
         <span id="toggle-text-${i}" class="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest group-hover:text-emerald-400">
             Show Explanation
         </span>
     </button>
 
     <div id="explanation-${i}" 
-         class="hidden mt-3 p-4 rounded-2xl bg-slate-950/40 border border-white/5 shadow-inner transition-all duration-500">
+         class="hidden mt-3 p-4 rounded-2xl bg-slate-950/40 border border-white/5 shadow-inner transition-all duration-500 ease-in-out"
         <div class="flex gap-3">
             <div class="w-1 bg-emerald-500/30 rounded-full h-auto"></div>
             <p class="text-xs text-slate-400 leading-relaxed font-medium">
