@@ -1062,8 +1062,7 @@ lucide.createIcons();
         function renderQuiz(quizText) {
     const resultBox = document.getElementById("result");
 
-    const questions = quizText.split("## Question").slice(1);
-
+    const questions = quizText.split("## Question").slice(1, 6);
     let correctAnswers = [];
     let rationales = [];
     let allOptions = [];
@@ -1197,10 +1196,10 @@ questions.forEach((q, i) => {
 
     `;
 
-      window.correctAnswers = correctAnswers;
-      window.rationales = rationales;
-      window.allOptions = allOptions;
-
+      window.correctAnswers = correctAnswers.slice(0, questions.length);
+      window.rationales = rationales.slice(0, questions.length);
+      window.allOptions = allOptions.slice(0, questions.length);
+            
     resultBox.innerHTML = html;
       lucide.createIcons();
         }
@@ -1300,7 +1299,7 @@ questions.forEach((q, i) => {
             <p class="text-xs text-slate-300 mb-2">
                 Correct Answer:
                 <span class="text-white font-semibold">
-    ${correct} — ${correctText}
+    ${correct} — ${correctText || "Option text missing"}
 </span>
             </p>
 
@@ -1319,7 +1318,7 @@ questions.forEach((q, i) => {
     </button>
 
     <div id="explanation-${i}" 
-         class="hidden mt-3 p-4 rounded-2xl bg-slate-950/40 border border-white/5 shadow-inner transition-all duration-500 ease-in-out"
+         class="hidden mt-3 p-4 rounded-2xl bg-slate-950/40 border border-white/5 shadow-inner transition-all duration-500 ease-in-out">
         <div class="flex gap-3">
             <div class="w-1 bg-emerald-500/30 rounded-full h-auto"></div>
             <p class="text-xs text-slate-400 leading-relaxed font-medium">
