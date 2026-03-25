@@ -1123,14 +1123,15 @@ questions.forEach((q, i) => {
         }
 
 
-        // 🔥 Extract correct answer (FIXED)
-if (/correct answer|answer:/i.test(line)) {
-    const match = line.match(/(?:correct answer|answer:)\s*([A-D])/i);
+        // 🔥 Extract correct answer (ULTRA ROBUST)
+if (/correct answer|answer|option/i.test(line)) {
+    const match = line.match(/\b([A-D])\b/);
 
     if (match) {
         correctAnswers.push(match[1].toUpperCase());
     }
 }
+        
         // 🔥 Extract explanation
         if (line.toLowerCase().includes("rationale")) {
     const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim();
@@ -1200,13 +1201,23 @@ if (/correct answer|answer:/i.test(line)) {
     `;
 
       if (correctAnswers.length === 0) {
-    showToast("⚠️ Failed to extract answers. Try again.");
-    return;
+    console.log("⚠️ RAW QUIZ TEXT:", quizText);
+    showToast("⚠️ AI format changed. Retrying...");
+    return requestAI("quiz");
       }
 
-      window.correctAnswers = correctAnswers.slice(0, questions.length);
+            // 🔒 Fix mismatch issues
+       correctAnswers = correctAnswers.slice(0, questions.length);
+       rationales = rationales.slice(0, questions.length);
+       allOptions = allOptions.slice(0, questions.length);
+
+        window.correctAnswers = correctAnswers;
+        window.rationales = rationales;
+        window.allOptions = allOptions;
+            
+      /*window.correctAnswers = correctAnswers.slice(0, questions.length);
       window.rationales = rationales.slice(0, questions.length);
-      window.allOptions = allOptions.slice(0, questions.length);
+      window.allOptions = allOptions.slice(0, questions.length);*/
             
     resultBox.innerHTML = html;
       lucide.createIcons();
