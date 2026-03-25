@@ -1252,7 +1252,7 @@ if (/correct answer|answer:/i.test(line)) {
             );
          }
 
-        const isCorrect = userAnswer === correct;
+        const isCorrect = userAnswer?.trim() === correct?.trim();
         // 🎯 Highlight correct option (GREEN)
        const correctEl = document.getElementById(`q${i}-${correct}`);
           if (correctEl) {
