@@ -1062,7 +1062,8 @@ lucide.createIcons();
         function renderQuiz(quizText) {
     const resultBox = document.getElementById("result");
 
-    const questions = quizText.split("## Question").slice(1, 6);
+    const rawQuestions = quizText.split(/##\s*Question/i).slice(1);
+    const questions = rawQuestions.slice(0, 5).filter(q => q.trim().length > 0);
     let correctAnswers = [];
     let rationales = [];
     let allOptions = [];
@@ -1114,23 +1115,22 @@ questions.forEach((q, i) => {
     lines.forEach(line => {
 
         // ✅ Extract clean question
-        if (line.toLowerCase().includes("stem") || (!questionText && line.length > 20)) {
+        if (!questionText && line.length > 15 && !line.match(/^[A-D]\)/)) {
     questionText = line
         .replace(/\*\*/g, "")
         .replace(/stem:/i, "")
         .trim();
         }
 
-        // 🔥 Extract correct answer
-        if (
-    line.toLowerCase().includes("correct answer") ||
-    line.toLowerCase().includes("answer:")
-) {
-    const match = line.match(/\b([A-D])\b/);
+
+        // 🔥 Extract correct answer (FIXED)
+if (/correct answer|answer:/i.test(line)) {
+    const match = line.match(/(?:correct answer|answer:)\s*([A-D])/i);
+
     if (match) {
         correctAnswers.push(match[1].toUpperCase());
     }
-        }
+}
         // 🔥 Extract explanation
         if (line.toLowerCase().includes("rationale")) {
     const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim();
