@@ -190,7 +190,7 @@
                 <button onclick="loadBooks()" class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#1e1f20] transition-all text-gray-600 dark:text-gray-300" title="Sync Library">
                     <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                 </button>
-                <button onclick="logout()" class="ml-2 w-8 h-8 bg-gray-200 dark:bg-[#282a2c] hover:bg-gray-300 dark:hover:bg-[#333537] text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center transition-all hidden sm:flex" title="Logout">
+                <button onclick="logout()" class="ml-2 w-8 h-8 bg-gray-200 dark:bg-[#282a2c] hover:bg-gray-300 dark:hover:bg-[#333537] text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center transition-all" title="Logout">
                     <i data-lucide="user" class="w-4 h-4"></i>
                 </button>
             </div>
@@ -240,10 +240,10 @@
 
             <div id="sidebarOverlay" class="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-30 hidden lg:hidden"></div>
 
-            <main class="flex-1 flex flex-col h-full relative bg-white dark:bg-[#131314] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-gray-100 dark:lg:border-[#282a2c]">
+            <main class="flex-1 flex flex-col h-full relative bg-white dark:bg-[#131314] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-gray-100 dark:lg:border-[#282a2c] overflow-hidden">
                 
                 <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pb-56 sm:pb-48 w-full max-w-4xl mx-auto scroll-smooth">
-                    <div class="h-full flex flex-col items-center justify-center text-center opacity-80">
+                    <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center opacity-80">
                         <div class="p-4 rounded-full mb-4 bg-gradient-to-tr from-blue-50 to-purple-50 dark:from-[#1e1f20] dark:to-[#282a2c]">
                             <i data-lucide="sparkles" class="w-12 h-12 text-[#4285f4] dark:text-[#a8c7fa]"></i>
                         </div>
@@ -252,7 +252,7 @@
                     </div>
                 </div>
 
-                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent dark:from-[#131314] dark:via-[#131314] dark:to-transparent z-20">
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white to-transparent dark:from-[#131314] dark:via-[#131314] dark:to-transparent z-20 shrink-0">
                     <div class="max-w-3xl mx-auto w-full flex flex-col gap-3 relative overflow-visible">
                         
                         <div class="flex gap-2 overflow-x-auto hide-scrollbar max-w-full px-2">
@@ -273,7 +273,7 @@
                         </div>
 
                         <div class="relative flex flex-col bg-[#f0f4f9] dark:bg-[#1e1f20] rounded-3xl p-2 focus-within:ring-1 focus-within:ring-gray-300 dark:focus-within:ring-[#444746] transition-shadow">
-                            <input id="topic" type="text" placeholder="Enter a topic to analyze..." autocomplete="off" class="w-full bg-transparent border-none py-3 px-4 text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-0 text-base">
+                            <input id="topic" type="text" placeholder="Select a text to analyse the fix this problem" autocomplete="off" class="w-full bg-transparent border-none py-3 px-4 text-slate-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-0 text-base">
                             
                             <div class="flex justify-between items-center mt-2 px-2 pb-1">
                                 <div class="flex gap-1 overflow-x-auto hide-scrollbar">
@@ -346,6 +346,9 @@
             if(mobileBtn) mobileBtn.addEventListener('click', toggleSidebar);
             if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
             if(overlay) overlay.addEventListener('click', toggleSidebar);
+
+            // Load persisted chat
+            loadChatHistory();
         });
 
         const api = "https://study-ai-tq7i.onrender.com";
@@ -476,8 +479,9 @@ window.location.href = "/dashboard";
         async function logout() {
     await supabaseClient.auth.signOut();
     currentUser = null;
-    document.getElementById("appContainer").classList.add("hidden");
+    localStorage.removeItem("studyai_chat_history"); // Optional: clear history on logout
     document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("appContainer").classList.add("hidden");
     showToast("Logged out");
         }
 
@@ -635,6 +639,23 @@ if (
     }
         }
 
+        // --- PERSISTENCE HELPERS ---
+        function saveToChatHistory(htmlSnippet) {
+            let history = localStorage.getItem("studyai_chat_history") || "";
+            history += htmlSnippet;
+            localStorage.setItem("studyai_chat_history", history);
+        }
+
+        function loadChatHistory() {
+            const history = localStorage.getItem("studyai_chat_history");
+            const resultBox = document.getElementById("result");
+            if (history) {
+                resultBox.innerHTML = history;
+                lucide.createIcons();
+                resultBox.scrollTop = resultBox.scrollHeight;
+            }
+        }
+
         // --- AI ---
         async function requestAI(type) {
     const topic = document.getElementById("topic").value;
@@ -646,10 +667,15 @@ if (
         return showToast("Enter a topic to analyze.");
     }
 
-    // 2️⃣ Thinking States (Gemini subtle skeleton loader)
-    resultBox.innerHTML = `
-    <div class="flex flex-col mb-6">
-        <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-6 max-w-[85%]">
+    // Remove welcome placeholder if it exists
+    const welcome = document.getElementById("welcomePlaceholder");
+    if(welcome) welcome.remove();
+
+    // Append loading skeleton instead of overwriting
+    const loaderId = "loader-" + Date.now();
+    const loadingHtml = `
+    <div id="${loaderId}" class="flex flex-col mb-6">
+        <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-6 max-w-[85%] ml-auto">
             <p class="text-[15px]">${topic}</p>
         </div>
         <div class="flex items-start gap-4 w-full animate-pulse mt-2">
@@ -663,10 +689,10 @@ if (
             </div>
         </div>
     </div>`;
-    lucide.createIcons();
     
-    // Auto-scroll to bottom of chat
-    setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 50);
+    resultBox.insertAdjacentHTML('beforeend', loadingHtml);
+    lucide.createIcons();
+    resultBox.scrollTop = resultBox.scrollHeight;
 
     try {
         const endpoint = type === 'explain' ? 'deep-explain' : type;
@@ -690,13 +716,15 @@ if (
 
         if (!raw) throw new Error("Empty response");
 
+        // Remove the loader
+        document.getElementById(loaderId)?.remove();
+
         if (type === "quiz") {
             renderQuiz(raw);
         } else {
-            // 1️⃣ Chat UI Styling - Gemini Look
-            resultBox.innerHTML = `
+            const responseHtml = `
             <div class="flex flex-col mb-8">
-                <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%]">
+                <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%] ml-auto">
                     <p class="text-[15px]">${topic}</p>
                 </div>
                 <div class="flex items-start gap-4 w-full max-w-4xl">
@@ -708,10 +736,13 @@ if (
                     </div>
                 </div>
             </div>`;
+            resultBox.insertAdjacentHTML('beforeend', responseHtml);
+            saveToChatHistory(responseHtml);
         }
 
     } catch (err) {
-        resultBox.innerHTML = `
+        document.getElementById(loaderId)?.remove();
+        const errorHtml = `
         <div class="flex flex-col mb-6">
              <div class="flex items-start gap-4 w-full">
                 <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
@@ -722,6 +753,7 @@ if (
                 </div>
             </div>
         </div>`;
+        resultBox.insertAdjacentHTML('beforeend', errorHtml);
     }
     lucide.createIcons();
     setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 100);
@@ -745,10 +777,14 @@ if (
         return showToast("Enter a topic first");
     }
 
-    // Thinking state for flashcards
-    resultBox.innerHTML = `
-    <div class="flex flex-col mb-6">
-        <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-6 max-w-[85%]">
+    // Remove welcome placeholder if it exists
+    const welcome = document.getElementById("welcomePlaceholder");
+    if(welcome) welcome.remove();
+
+    const loaderId = "loader-" + Date.now();
+    const loadingHtml = `
+    <div id="${loaderId}" class="flex flex-col mb-6">
+        <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-6 max-w-[85%] ml-auto">
             <p class="text-[15px]">Flashcards: ${topic}</p>
         </div>
         <div class="flex items-start gap-4 w-full animate-pulse mt-2">
@@ -762,6 +798,9 @@ if (
             </div>
         </div>
     </div>`;
+    
+    resultBox.insertAdjacentHTML('beforeend', loadingHtml);
+    resultBox.scrollTop = resultBox.scrollHeight;
 
     try {
         const res = await fetch(`${api}/flashcards`, {
@@ -790,7 +829,8 @@ if (
             }
         }
         
-// 4️⃣ Flashcard Navigation (Gemini clean styling)
+        document.getElementById(loaderId)?.remove();
+
 let html = `
 <div class="mb-8 w-full">
     <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%] ml-auto w-fit">
@@ -834,11 +874,13 @@ cards.forEach((card, i) => {
 
 html += `</div></div></div></div>`;
 
-resultBox.innerHTML = html;
+resultBox.insertAdjacentHTML('beforeend', html);
+saveToChatHistory(html);
 lucide.createIcons();   
 
     } catch (err) {
-        resultBox.innerHTML = "Failed to generate flashcards";
+        document.getElementById(loaderId)?.remove();
+        resultBox.insertAdjacentHTML('beforeend', "Failed to generate flashcards");
     }
 
     if (btn) {
@@ -885,7 +927,7 @@ lucide.createIcons();
 
     let html = `
     <div class="flex flex-col mb-8">
-        <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%]">
+        <div class="self-end bg-[#f0f4f9] dark:bg-[#333537] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%] ml-auto">
             <p class="text-[15px]">Create a quiz: ${topic}</p>
         </div>
         
@@ -896,9 +938,6 @@ lucide.createIcons();
             <div class="flex-1 w-full max-w-2xl">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-xl font-medium text-slate-900 dark:text-white font-display">Practice Quiz</h2>
-                    <button onclick="resetQuiz(event)" class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-                      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                    </button>
                 </div>
     `;
 
@@ -963,8 +1002,10 @@ if (/correct answer|answer|option/i.test(line)) {
         window.rationales = rationales;
         window.allOptions = allOptions;
             
-    resultBox.innerHTML = html;
+    resultBox.insertAdjacentHTML('beforeend', html);
+    saveToChatHistory(html);
       lucide.createIcons();
+      resultBox.scrollTop = resultBox.scrollHeight;
         }
 
         function submitQuiz() {
@@ -1035,7 +1076,7 @@ if (/correct answer|answer|option/i.test(line)) {
 
     const percentageScore = total ? Math.round((score / total) * 100) : 0;
 
-    document.getElementById("result").innerHTML = `
+    const resultSummaryHtml = `
     <div class="flex items-start gap-4 w-full max-w-3xl mx-auto pb-8">
         <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
             <i data-lucide="sparkles" class="w-6 h-6 text-[#4285f4] dark:text-[#a8c7fa]"></i>
@@ -1046,12 +1087,14 @@ if (/correct answer|answer|option/i.test(line)) {
                 <p class="text-[15px] text-gray-600 dark:text-gray-400 font-medium">Score: ${percentageScore}%</p>
             </div>
             ${resultHTML}
-            <button onclick="resetQuiz(event)" class="mt-2 px-6 py-2.5 bg-white dark:bg-[#282a2c] border border-gray-200 dark:border-[#444746] text-gray-800 dark:text-white font-medium rounded-full transition-all text-sm">
-                Start New Session
-            </button>
         </div>
     </div>`;
+
+    document.getElementById("result").insertAdjacentHTML('beforeend', resultSummaryHtml);
+    saveToChatHistory(resultSummaryHtml);
     lucide.createIcons();
+    const resultBox = document.getElementById("result");
+    resultBox.scrollTop = resultBox.scrollHeight;
         }
        
       async function resetQuiz(event) {
