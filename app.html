@@ -41,251 +41,217 @@
         .markdown-content code { background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.9em; color: #f472b6; }
 
         /* ===== FLASHCARD 3D SYSTEM ===== */
-
-.perspective-1000 {
-    perspective: 1000px;
-}
-
-.preserve-3d {
-    transform-style: preserve-3d;
-}
-
-.backface-hidden {
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-}
-
-.flashcard-inner {
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.flashcard.flipped .flashcard-inner {
-    transform: rotateY(180deg);
-}
-        
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        .preserve-3d {
+            transform-style: preserve-3d;
+        }
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        .flashcard-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
     </style>
-
    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen flex flex-col">
 
     <div id="loadingScreen" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#020617] bg-[radial-gradient(at_0%_0%,rgba(99,102,241,0.15)_0%,transparent_50%),radial-gradient(at_100%_100%,rgba(16,185,129,0.1)_0%,transparent_50%)] backdrop-blur-sm transition-opacity duration-500">
-    
-    <div class="flex flex-col items-center">
-        <div class="relative flex items-center justify-center w-24 h-24 mb-6">
-            <svg class="absolute inset-0 w-full h-full text-indigo-600/30 animate-[spin_3s_linear_infinite]" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            
-            <div class="absolute inset-2 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl shadow-[0_0_30px_rgba(79,70,229,0.3)] flex items-center justify-center backdrop-blur-md">
-                <i data-lucide="brain-circuit" class="w-8 h-8 text-indigo-400 animate-pulse"></i>
+        <div class="flex flex-col items-center">
+            <div class="relative flex items-center justify-center w-24 h-24 mb-6">
+                <svg class="absolute inset-0 w-full h-full text-indigo-600/30 animate-[spin_3s_linear_infinite]" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <div class="absolute inset-2 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl shadow-[0_0_30px_rgba(79,70,229,0.3)] flex items-center justify-center backdrop-blur-md">
+                    <i data-lucide="brain-circuit" class="w-8 h-8 text-indigo-400 animate-pulse"></i>
+                </div>
             </div>
+            <h2 class="text-2xl font-extrabold tracking-tight text-white mb-4 font-['Plus_Jakarta_Sans']">Study.AI</h2>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.15s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.3s;"></div>
+            </div>
+            <p class="text-[10px] font-bold text-indigo-400/80 uppercase tracking-[0.2em] animate-pulse">Initializing Workspace...</p>
         </div>
-
-        <h2 class="text-2xl font-extrabold tracking-tight text-white mb-4 font-['Plus_Jakarta_Sans']">Study.AI</h2>
-        
-        <div class="flex items-center gap-2 mb-4">
-            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0s;"></div>
-            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.15s;"></div>
-            <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.3s;"></div>
-        </div>
-        
-        <p class="text-[10px] font-bold text-indigo-400/80 uppercase tracking-[0.2em] animate-pulse">Initializing Workspace...</p>
     </div>
-</div>
-
 
     <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-4">
-        <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl">
-            <div class="text-center mb-10">
-                <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
-                    <i data-lucide="graduation-cap" class="text-white w-8 h-8"></i>
+        <div class="glass-card rounded-3xl p-8 sm:p-10 w-full max-w-[420px] shadow-2xl border border-white/10">
+            <div class="text-center mb-8">
+                <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-2xl mb-5 shadow-xl shadow-indigo-500/20">
+                    <i data-lucide="graduation-cap" class="text-white w-7 h-7"></i>
                 </div>
                 <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-['Plus_Jakarta_Sans']">Welcome Back</h2>
                 <p class="text-slate-400 text-sm font-medium">Elevate your study session with AI</p>
             </div>
 
             <div class="space-y-4">
-                <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
-                <div class="relative">
-    <input 
-        id="password" 
-        type="password" 
-        placeholder="Password"
-        class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all"
-    >
-
-    <!-- 👁 Toggle -->
-    <button 
-        type="button" 
-        onclick="togglePassword('password', this)" 
-        class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
-    >
-        <i data-lucide="eye"></i>
-    </button>
+                <div>
+                    <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm">
                 </div>
-                <p 
-    onclick="forgotPassword()" 
-    class="text-right text-xs text-indigo-400 cursor-pointer hover:underline"
->
-    Forgot Password?
-                </p>
+                <div class="relative">
+                    <input id="password" type="password" placeholder="Password" class="w-full px-5 py-3.5 rounded-xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm">
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors">
+                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    </button>
+                </div>
                 
-                <div class="mt-6 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/50 flex flex-col items-center justify-center backdrop-blur-sm">
-    <div class="flex items-center gap-2 mb-3 self-start ml-1">
-        <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
-        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
-            Security Verification
-        </label>
-    </div>
+                <div class="flex justify-end">
+                    <p onclick="forgotPassword()" class="text-xs text-indigo-400 cursor-pointer hover:text-indigo-300 transition-colors">Forgot Password?</p>
+                </div>
+                
+                <div class="mt-4 p-4 rounded-xl bg-slate-900/40 border border-slate-800/50 flex flex-col items-center justify-center backdrop-blur-sm">
+                    <div class="flex items-center gap-2 mb-3 self-start ml-1">
+                        <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Security Verification</label>
+                    </div>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="dark" data-appearance="always" data-compact="false"></div>
+                </div>
 
-    <div 
-        class="cf-turnstile" 
-        data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" 
-        data-theme="dark"
-        data-appearance="always"
-        data-compact="false">
-    </div>
-</div>
-
-                <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
-                <div class="flex items-center my-6">
-                  <div class="flex-1 border-t border-slate-800"></div>
-                  <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">or</span>
-                  <div class="flex-1 border-t border-slate-800"></div>
+                <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all active:scale-95 text-sm mt-2">Sign In</button>
+                
+                <div class="flex items-center my-6 opacity-60">
+                  <div class="flex-1 border-t border-slate-700"></div>
+                  <span class="px-3 text-[10px] font-bold text-slate-400 uppercase tracking-widest">or</span>
+                  <div class="flex-1 border-t border-slate-700"></div>
                </div>
 
-                <button onclick="googleLogin()" 
-    class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-3 group">
-    
-    <div class="bg-white p-1.5 rounded-xl group-hover:scale-110 transition-transform">
-        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4">
-    </div>
-    
-    <span class="tracking-tight">Continue with Google</span>
-</button>
+                <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-slate-800/50 hover:bg-slate-700/80 border border-slate-700 text-white font-medium py-3 rounded-xl shadow-lg transition-all active:scale-95 gap-3 group text-sm">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4 group-hover:scale-110 transition-transform">
+                    <span>Continue with Google</span>
+                </button>
 
-
-              <a href="/signup" class="w-full flex items-center justify-center bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-2">
-                  <i data-lucide="user-plus" class="w-4 h-4 text-indigo-400"></i>
-                  Create New Account
-                  </a>
-                
+                <a href="/signup" class="w-full flex items-center justify-center bg-transparent hover:bg-white/5 border border-slate-700 text-white font-medium py-3 rounded-xl transition-all active:scale-95 gap-2 text-sm mt-3">
+                    <i data-lucide="user-plus" class="w-4 h-4 text-indigo-400"></i>
+                    Create New Account
+                </a>
             </div>
         </div>
-     </div>
+    </div>
 
-    <div id="appContainer" class="hidden min-h-screen flex flex-col">
-        <nav class="border-b border-white/5 bg-slate-950/50 backdrop-blur-md px-4 sm:px-6 h-20 flex justify-between items-center sticky top-0 z-50">
+    <div id="appContainer" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
+        
+        <nav class="border-b border-white/10 bg-slate-900/60 backdrop-blur-xl px-4 sm:px-8 h-16 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
-                <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="zap" class="text-white w-5 h-5"></i></div>
-                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] uppercase tracking-wider">Study.AI <span class="text-indigo-500 text-xs hidden sm:inline">PRO</span></h1>
+                <div class="bg-indigo-600 p-1.5 rounded-lg shadow-sm shadow-indigo-500/50"><i data-lucide="zap" class="text-white w-4 h-4"></i></div>
+                <h1 class="text-lg font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] uppercase">Study.AI <span class="text-indigo-400 text-[10px] align-top relative -top-1 ml-0.5 hidden sm:inline-block bg-indigo-500/10 px-1.5 py-0.5 rounded">PRO</span></h1>
             </div>
-            <div class="flex items-center gap-2 sm:gap-4">
-                <button onclick="loadBooks()" class="p-2 sm:p-2.5 rounded-xl glass-card hover:bg-white/5 transition-all text-slate-400" title="Sync Library">
-                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+            <div class="flex items-center gap-3">
+                <button onclick="loadBooks()" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-all text-slate-400 hover:text-white border border-white/5" title="Sync Library">
+                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                 </button>
-                <button onclick="logout()" class="px-4 sm:px-5 py-2 sm:py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-bold rounded-xl transition-all">
+                <button onclick="logout()" class="px-4 py-2 bg-red-500/10 hover:bg-red-500 text-red-400 hover:text-white text-xs font-bold rounded-lg transition-all border border-red-500/20 hover:border-red-500">
                     LOGOUT
                 </button>
             </div>
         </nav>
 
-        <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-4 lg:p-8 gap-6 lg:gap-8 overflow-hidden">
+        <div class="flex-1 flex flex-col lg:flex-row max-w-[1800px] mx-auto w-full p-4 lg:p-6 gap-6 overflow-hidden">
              
-            <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-6 flex-shrink-0 lg:h-[calc(100vh-8rem)]">
+            <aside class="w-full lg:w-80 flex flex-col gap-6 shrink-0 h-full overflow-y-auto custom-scrollbar pr-1 lg:pr-2">
                 
-                <div class="glass-card rounded-[2rem] p-6 shrink-0 shadow-lg">
-                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                         <i data-lucide="upload-cloud" class="w-3 h-3"></i> Ingest Material
+                <div class="glass-card rounded-2xl p-5 shadow-lg border border-white/10">
+                    <h3 class="text-xs font-bold text-indigo-400 uppercase tracking-[0.15em] mb-4 flex items-center gap-2">
+                         <i data-lucide="upload-cloud" class="w-4 h-4"></i> Knowledge Base
                     </h3>
                     <input type="file" id="bookFile" class="hidden" accept=".pdf,.doc,.docx" onchange="updateFileName()">
-                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-700 rounded-3xl cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group">
-                        <i data-lucide="plus-circle" class="w-6 h-6 text-slate-500 group-hover:text-indigo-400 mb-2 transition-colors"></i>
-                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center font-medium">Select PDF or DOCX only</span>
+                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-24 border border-dashed border-slate-600 rounded-xl cursor-pointer hover:border-indigo-400 hover:bg-indigo-500/5 transition-all group bg-slate-900/30">
+                        <i data-lucide="file-plus-2" class="w-6 h-6 text-slate-500 group-hover:text-indigo-400 mb-2 transition-colors"></i>
+                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center font-medium">Select PDF or DOCX</span>
                     </label>
-                    <button onclick="uploadBook()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
-                        <i data-lucide="database-zap" class="w-4 h-4"></i> Index Knowledge
+                    <button onclick="uploadBook()" class="w-full mt-3 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl shadow-md transition-all active:scale-95 flex justify-center items-center gap-2 text-sm">
+                        <i data-lucide="database-zap" class="w-4 h-4"></i> Index Material
                     </button>
                     
-                    <div id="progWrapper" class="hidden mt-4 bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+                    <div id="progWrapper" class="hidden mt-3 bg-slate-900/80 p-3 rounded-lg border border-slate-700">
                         <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
                             <span id="progText">Initializing... 0%</span>
                         </div>
-                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
                             <div id="progBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
                         </div>
                     </div>
-                 </div>
+                </div>
 
-                <div class="glass-card rounded-[2rem] p-6 flex-1 flex flex-col overflow-hidden shadow-lg min-h-[250px]">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Your Library (<span id="bookCount" class="text-indigo-400">0</span>)</h3>
-                        <i data-lucide="library" class="w-4 h-4 text-slate-600"></i>
+                <div class="glass-card rounded-2xl p-5 flex-1 flex flex-col overflow-hidden shadow-lg border border-white/10 min-h-[300px]">
+                    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-800">
+                        <h3 class="text-xs font-bold text-slate-300 uppercase tracking-[0.15em] flex items-center gap-2">
+                            <i data-lucide="library" class="w-4 h-4 text-slate-500"></i> Library
+                        </h3>
+                        <span id="bookCount" class="bg-slate-800 text-indigo-400 text-[10px] font-bold px-2 py-0.5 rounded-full">0</span>
                     </div>
-                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-2"></div>
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-1"></div>
                 </div>
             </aside>
 
-            <main class="flex-1 flex flex-col gap-6 overflow-hidden min-h-[500px]">
+            <main class="flex-1 flex flex-col gap-6 h-full min-w-0">
                 
-                <div class="glass-card rounded-[2rem] p-5 sm:p-6 lg:p-8 shadow-lg shrink-0">
-                    <div class="relative w-full mb-5 group">
-                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                <div class="glass-card rounded-2xl p-5 shadow-lg shrink-0 border border-white/10 flex flex-col gap-4">
+                    
+                    <div class="relative w-full group">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                             <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400 group-focus-within:text-indigo-300 transition-colors"></i>
                         </div>
-                        <input id="topic" type="text" placeholder="What should the AI analyze or explain today?" class="w-full bg-slate-900/60 border border-slate-700/80 rounded-2xl py-4 sm:py-5 pl-14 pr-6 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all shadow-inner text-sm sm:text-base">
+                        <input id="topic" type="text" placeholder="What specific concept should the AI analyze today?" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl py-3.5 pl-12 pr-4 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all shadow-inner text-sm">
                     </div>
 
-                    <div class="flex flex-col xl:flex-row gap-4">
-                        <div class="flex gap-3 sm:gap-4 flex-1">
-                            <select id="level" class="bg-slate-900/60 border border-slate-700/80 rounded-2xl px-4 sm:px-6 py-3.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/30">
-                                <option value="University">University</option>
-                                <option value="Secondary">Secondary</option>
-                                <option value="Primary">Primary</option>
-                            </select>
-                            <select id="bookSelector" class="bg-slate-900/60 border border-slate-700/80 rounded-2xl px-4 sm:px-6 py-3.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 truncate">
-                                <option value="all">All Library Files</option>
-                            </select>
+                    <div class="flex flex-col xl:flex-row gap-4 items-start xl:items-center justify-between">
+                        
+                        <div class="flex gap-3 w-full xl:w-auto">
+                            <div class="relative flex-1 xl:w-40">
+                                <select id="level" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl pl-4 pr-8 py-3 text-xs font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-slate-200">
+                                    <option value="University">University Level</option>
+                                    <option value="Secondary">Secondary Level</option>
+                                    <option value="Primary">Primary Level</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                            </div>
+                            <div class="relative flex-1 xl:w-56">
+                                <select id="bookSelector" class="w-full bg-slate-900/80 border border-slate-700/80 rounded-xl pl-4 pr-8 py-3 text-xs font-medium appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500/30 text-slate-200 truncate">
+                                    <option value="all">All Library Files</option>
+                                </select>
+                                <i data-lucide="chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none"></i>
+                            </div>
                         </div>
                         
-                        <div class="flex gap-2 sm:gap-3 flex-wrap xl:flex-nowrap">
-                            <button onclick="requestAI('explain')" class="flex-1 xl:flex-none min-w-[120px] bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
-                                <i data-lucide="book-open" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Explain
+                        <div class="flex gap-2.5 w-full xl:w-auto overflow-x-auto pb-1 xl:pb-0 hidden-scrollbar">
+                            <button onclick="requestAI('explain')" class="flex-1 xl:flex-none whitespace-nowrap bg-slate-800 hover:bg-indigo-600 border border-slate-700 hover:border-indigo-500 text-slate-200 hover:text-white py-2.5 px-4 rounded-xl transition-all font-medium text-xs flex items-center justify-center gap-2 group">
+                                <i data-lucide="book-open" class="w-4 h-4 text-indigo-400 group-hover:text-white transition-colors"></i> Explain
                             </button>
-                            <button onclick="requestAI('quiz')" class="flex-1 xl:flex-none min-w-[120px] bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
-                                <i data-lucide="help-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Quiz
+                            <button onclick="requestAI('quiz')" class="flex-1 xl:flex-none whitespace-nowrap bg-slate-800 hover:bg-emerald-600 border border-slate-700 hover:border-emerald-500 text-slate-200 hover:text-white py-2.5 px-4 rounded-xl transition-all font-medium text-xs flex items-center justify-center gap-2 group">
+                                <i data-lucide="help-circle" class="w-4 h-4 text-emerald-400 group-hover:text-white transition-colors"></i> Quiz
                             </button>
-                            <button onclick="requestAI('notes')" class="flex-1 xl:flex-none min-w-[120px] bg-amber-600 hover:bg-amber-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
-                                <i data-lucide="file-text" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Notes
+                            <button onclick="requestAI('notes')" class="flex-1 xl:flex-none whitespace-nowrap bg-slate-800 hover:bg-amber-600 border border-slate-700 hover:border-amber-500 text-slate-200 hover:text-white py-2.5 px-4 rounded-xl transition-all font-medium text-xs flex items-center justify-center gap-2 group">
+                                <i data-lucide="file-text" class="w-4 h-4 text-amber-400 group-hover:text-white transition-colors"></i> Notes
                             </button>
-
-                            <button onclick="runFlashcards(event)"
-  class="flex-1 xl:flex-none min-w-[140px] bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white py-3.5 px-6 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center justify-center gap-2 group shadow-[0_10px_20px_-10px_rgba(16,185,129,0.4)] border border-white/10 hover:scale-[1.02] active:scale-[0.98]">
-  
-  <i data-lucide="layers" class="w-4 h-4 text-emerald-100 group-hover:animate-bounce transition-transform"></i>
-  
-  <span class="tracking-wide">Flashcards</span>
-  
-  <span class="ml-1 text-[10px] bg-white/20 px-1.5 py-0.5 rounded-md uppercase font-black tracking-tighter opacity-80 group-hover:opacity-100 transition-opacity">AI</span>
-</button>
-
+                            <button onclick="runFlashcards(event)" class="flex-1 xl:flex-none whitespace-nowrap bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white py-2.5 px-5 rounded-xl transition-all duration-300 font-medium text-xs flex items-center justify-center gap-2 group shadow-[0_4px_14px_0_rgba(16,185,129,0.3)]">
+                                <i data-lucide="layers" class="w-4 h-4 group-hover:animate-bounce"></i>
+                                Flashcards <span class="ml-1 text-[9px] bg-white/20 px-1.5 py-0.5 rounded uppercase font-bold tracking-wider">AI</span>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="glass-card rounded-[2rem] flex-1 overflow-hidden flex flex-col shadow-2xl relative">
-                    <div id="result" class="flex-1 p-6 sm:p-8 lg:p-12 overflow-y-auto custom-scrollbar markdown-content text-slate-300">
-                        <div class="h-full flex flex-col items-center justify-center opacity-30 text-center">
-                            <div class="bg-slate-800 p-4 rounded-full mb-4">
-                                <i data-lucide="brain-circuit" class="w-10 h-10 text-indigo-400"></i>
-                             </div>
+                <div class="glass-card rounded-2xl flex-1 overflow-hidden flex flex-col shadow-xl border border-white/5 relative">
+                    <div id="result" class="flex-1 p-6 lg:p-10 overflow-y-auto custom-scrollbar markdown-content text-slate-300">
+                        <div class="h-full flex flex-col items-center justify-center opacity-40 text-center">
+                            <div class="bg-slate-800/50 p-5 rounded-full mb-5 border border-white/5 shadow-inner">
+                                <i data-lucide="brain-circuit" class="w-12 h-12 text-indigo-400"></i>
+                            </div>
                             <h4 class="text-xl font-bold font-['Plus_Jakarta_Sans'] text-white">Neural Engine Ready</h4>
-                            <p class="max-w-sm mt-3 text-sm leading-relaxed">Select a document from your library, type a concept above, and let the AI generate deep explanations, notes, or quizzes.</p>
+                            <p class="max-w-md mt-3 text-sm leading-relaxed text-slate-400">Select a document from your library, define a concept above, and trigger the AI to synthesize deep explanations, comprehensive notes, or dynamic quizzes.</p>
                         </div>
                     </div>
                 </div>
+                
             </main>
         </div>
     </div>
