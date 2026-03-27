@@ -242,7 +242,7 @@
 
             <main class="flex-1 flex flex-col h-full bg-white dark:bg-[#131314] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-gray-100 dark:lg:border-[#282a2c] overflow-hidden">
                 
-                <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pb-40 w-full max-w-4xl mx-auto scroll-smooth">
+                <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 w-full max-w-4xl mx-auto scroll-smooth">
                     <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center opacity-80">
                         <div class="p-4 rounded-full mb-4 bg-gradient-to-tr from-blue-50 to-purple-50 dark:from-[#1e1f20] dark:to-[#282a2c]">
                             <i data-lucide="brain-circuit" class="w-12 h-12 text-[#4285f4] dark:text-[#a8c7fa]"></i>
@@ -252,8 +252,7 @@
                     </div>
                 </div>
 
-                <div class="fixed bottom-0 left-0 w-full z-50 px-4 pb-4 pt-2 
-bg-transparent pointer-events-none">
+                <div id="inputBar" class="fixed bottom-0 left-0 w-full z-50 px-4 pb-4 pt-2 bg-transparent pointer-events-none">
 
                 
                     <div class="max-w-3xl mx-auto w-full pointer-events-auto">
@@ -669,7 +668,10 @@ if (
             if (history) {
                 resultBox.innerHTML = history;
                 lucide.createIcons();
-                resultBox.scrollTop = resultBox.scrollHeight;
+                resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+});
             }
         }
 
@@ -709,7 +711,10 @@ if (
     
     resultBox.insertAdjacentHTML('beforeend', loadingHtml);
     lucide.createIcons();
-    resultBox.scrollTop = resultBox.scrollHeight;
+    resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+});
 
     try {
         const endpoint = type === 'explain' ? 'deep-explain' : type;
@@ -773,7 +778,10 @@ if (
         resultBox.insertAdjacentHTML('beforeend', errorHtml);
     }
     lucide.createIcons();
-    setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 100);
+    setTimeout(() => { resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+}); }, 100);
         }
 
     async function runFlashcards(event) {
@@ -817,8 +825,10 @@ if (
     </div>`;
     
     resultBox.insertAdjacentHTML('beforeend', loadingHtml);
-    resultBox.scrollTop = resultBox.scrollHeight;
-
+    resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+});
     try {
         const res = await fetch(`${api}/flashcards`, {
             method: "POST",
@@ -905,7 +915,10 @@ lucide.createIcons();
         btn.innerHTML = originalText;
         lucide.createIcons();
     }
-    setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 100);
+    setTimeout(() => { resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+}); }, 100);
     }
 
         function updateFileName() {
@@ -1022,7 +1035,10 @@ if (/correct answer|answer|option/i.test(line)) {
     resultBox.insertAdjacentHTML('beforeend', html);
     saveToChatHistory(html);
       lucide.createIcons();
-      resultBox.scrollTop = resultBox.scrollHeight;
+      resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+});
         }
 
         function submitQuiz() {
@@ -1111,7 +1127,10 @@ if (/correct answer|answer|option/i.test(line)) {
     saveToChatHistory(resultSummaryHtml);
     lucide.createIcons();
     const resultBox = document.getElementById("result");
-    resultBox.scrollTop = resultBox.scrollHeight;
+    resultBox.scrollTo({
+    top: resultBox.scrollHeight,
+    behavior: "smooth"
+});
         }
        
       async function resetQuiz(event) {
@@ -1175,6 +1194,38 @@ if (email) {
     if (params.get("verified")) showToast("Email verified!");
     setTimeout(checkUser, 800);
 })();
+        <script>
+window.addEventListener("focusin", () => {
+    setTimeout(adjustChatPadding, 300);
+});
+
+window.addEventListener("focusout", () => {
+    setTimeout(adjustChatPadding, 300);
+});
+</script>
+
+        <script>
+function adjustChatPadding() {
+    const inputBar = document.getElementById("inputBar");
+    const result = document.getElementById("result");
+
+    if (!inputBar || !result) return;
+
+    const height = inputBar.offsetHeight;
+
+    // Add dynamic spacing
+    result.style.paddingBottom = (height + 20) + "px";
+}
+
+// Run on load
+window.addEventListener("load", adjustChatPadding);
+
+// Run on resize (VERY IMPORTANT for mobile)
+window.addEventListener("resize", adjustChatPadding);
+
+// Run after typing (input grows)
+document.getElementById("topic")?.addEventListener("input", adjustChatPadding);
+</script>
     </script>
 </body>
 </html>
