@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="dark"> <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Study.AI | Premium Learning Copilot</title>
@@ -8,81 +9,36 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    
-    <script>
-        // Check local storage for theme preference before page loads to prevent flashing
-        if (localStorage.getItem('theme') === 'light') {
-            document.documentElement.classList.remove('dark');
-        }
-        
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { primary: '#6366f1' }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
+        :root { --brand-primary: #6366f1; }
         body { 
             font-family: 'Inter', sans-serif;
-            background-attachment: fixed;
-            transition: background-color 0.3s ease, color 0.3s ease;
-        }
-        
-        /* Dark Mode Background */
-        .dark body {
             background-color: #020617; 
             color: #f8fafc;
             background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.1) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+            background-attachment: fixed;
         }
-        
-        /* Light Mode Background */
-        body {
-            background-color: #f8fafc;
-            color: #0f172a;
-            background-image: radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
-        }
-
         .glass-card { 
-            backdrop-filter: blur(16px);
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-        }
-        .dark .glass-card {
             background: rgba(15, 23, 42, 0.6); 
+            backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08); 
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.7);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-        }
-
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.3); border-radius: 10px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
         
-        /* Chat UI Markdown Styling */
+        /* Markdown Styling */
         .markdown-content h1, .markdown-content h2 { 
+            color: #818cf8;
             font-family: 'Plus Jakarta Sans'; 
             margin-top: 1.5rem; 
+            border-bottom: 1px solid rgba(255,255,255,0.05); 
             padding-bottom: 0.5rem; 
             font-weight: 700;
         }
-        .dark .markdown-content h1, .dark .markdown-content h2 { color: #818cf8; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .markdown-content h1, .markdown-content h2 { color: #4f46e5; border-bottom: 1px solid rgba(0,0,0,0.05); }
-        
-        .dark .markdown-content p, .dark .markdown-content ul { color: #cbd5e1; }
-        .markdown-content p, .markdown-content ul { color: #334155; margin-bottom: 1rem; line-height: 1.8; }
-        .markdown-content ul { list-style: disc; padding-left: 1.5rem; }
-        
-        .dark .markdown-content code { background: #1e293b; color: #f472b6; }
-        .markdown-content code { background: #f1f5f9; color: #db2777; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.9em; }
+        .markdown-content p { margin-bottom: 1rem; line-height: 1.8; color: #cbd5e1; }
+        .markdown-content ul { list-style: disc; padding-left: 1.5rem; margin-bottom: 1rem; color: #cbd5e1; }
+        .markdown-content code { background: #1e293b; padding: 0.2rem 0.4rem; border-radius: 6px; font-size: 0.9em; color: #f472b6; }
 
         /* ===== FLASHCARD 3D SYSTEM ===== */
         .perspective-1000 { perspective: 1000px; }
@@ -91,270 +47,190 @@
         .flashcard-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
         .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
     </style>
-
    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-<body class="min-h-screen flex flex-col transition-colors duration-300">
+<body class="min-h-screen">
 
-    <div id="loadingScreen" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white/90 dark:bg-[#020617]/90 backdrop-blur-sm transition-opacity duration-500">
+    <div id="loadingScreen" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-[#020617] bg-[radial-gradient(at_0%_0%,rgba(99,102,241,0.15)_0%,transparent_50%),radial-gradient(at_100%_100%,rgba(16,185,129,0.1)_0%,transparent_50%)] backdrop-blur-sm transition-opacity duration-500">
         <div class="flex flex-col items-center">
             <div class="relative flex items-center justify-center w-24 h-24 mb-6">
                 <svg class="absolute inset-0 w-full h-full text-indigo-600/30 animate-[spin_3s_linear_infinite]" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                 </svg>
-                <div class="absolute inset-2 bg-indigo-100 dark:bg-indigo-600/20 border border-indigo-200 dark:border-indigo-500/30 rounded-2xl shadow-[0_0_30px_rgba(79,70,229,0.3)] flex items-center justify-center backdrop-blur-md">
-                    <i data-lucide="brain-circuit" class="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-pulse"></i>
+                <div class="absolute inset-2 bg-indigo-600/20 border border-indigo-500/30 rounded-2xl shadow-[0_0_30px_rgba(79,70,229,0.3)] flex items-center justify-center backdrop-blur-md">
+                    <i data-lucide="brain-circuit" class="w-8 h-8 text-indigo-400 animate-pulse"></i>
                 </div>
             </div>
-            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-4 font-['Plus_Jakarta_Sans']">Study.AI</h2>
+            <h2 class="text-2xl font-extrabold tracking-tight text-white mb-4 font-['Plus_Jakarta_Sans']">Study.AI</h2>
             <div class="flex items-center gap-2 mb-4">
                 <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0s;"></div>
                 <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.15s;"></div>
                 <div class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-bounce" style="animation-delay: 0.3s;"></div>
             </div>
-            <p class="text-[10px] font-bold text-indigo-600 dark:text-indigo-400/80 uppercase tracking-[0.2em] animate-pulse">Initializing Workspace...</p>
+            <p class="text-[10px] font-bold text-indigo-400/80 uppercase tracking-[0.2em] animate-pulse">Initializing Workspace...</p>
         </div>
     </div>
 
     <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-4">
-        <div class="glass-card rounded-3xl p-8 w-full max-w-[420px] shadow-2xl">
-            <div class="text-center mb-8">
-                <div class="inline-flex items-center justify-center w-14 h-14 bg-indigo-600 rounded-2xl mb-5 shadow-xl shadow-indigo-500/20">
-                    <i data-lucide="graduation-cap" class="text-white w-7 h-7"></i>
+        <div class="glass-card rounded-[2.5rem] p-8 sm:p-10 w-full max-w-md shadow-2xl">
+            <div class="text-center mb-10">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
+                    <i data-lucide="graduation-cap" class="text-white w-8 h-8"></i>
                 </div>
-                <h2 class="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-2 font-['Plus_Jakarta_Sans']">Welcome Back</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm font-medium">Elevate your study session with AI</p>
+                <h2 class="text-3xl font-extrabold tracking-tight text-white mb-2 font-['Plus_Jakarta_Sans']">Welcome Back</h2>
+                <p class="text-slate-400 text-sm font-medium">Elevate your study session with AI</p>
             </div>
-
             <div class="space-y-4">
-                <div>
-                    <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-3.5 rounded-xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm">
-                </div>
+                <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
                 <div class="relative">
-                    <input id="password" type="password" placeholder="Password" class="w-full px-5 py-3.5 rounded-xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all text-sm shadow-sm">
-                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors">
-                        <i data-lucide="eye" class="w-4 h-4"></i>
+                    <input id="password" type="password" placeholder="Password" class="w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all">
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                        <i data-lucide="eye"></i>
                     </button>
                 </div>
-                
-                <div class="flex justify-end">
-                    <p onclick="forgotPassword()" class="text-xs text-indigo-600 dark:text-indigo-400 cursor-pointer hover:underline transition-colors">Forgot Password?</p>
+                <p onclick="forgotPassword()" class="text-right text-xs text-indigo-400 cursor-pointer hover:underline">Forgot Password?</p>
+                <div class="mt-6 p-4 rounded-2xl bg-slate-900/40 border border-slate-800/50 flex flex-col items-center justify-center backdrop-blur-sm">
+                    <div class="flex items-center gap-2 mb-3 self-start ml-1">
+                        <i data-lucide="shield-check" class="w-3 h-3 text-emerald-500"></i>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">Security Verification</label>
+                    </div>
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="dark" data-appearance="always" data-compact="false"></div>
                 </div>
-                
-                <div class="mt-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800/50 flex flex-col items-center justify-center">
-                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="auto" data-appearance="always" data-compact="false"></div>
-                </div>
-
-                <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition-all active:scale-95 text-sm mt-2">Sign In</button>
-                
-                <div class="flex items-center my-6 opacity-60">
-                  <div class="flex-1 border-t border-slate-300 dark:border-slate-700"></div>
-                  <span class="px-3 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-widest">or</span>
-                  <div class="flex-1 border-t border-slate-300 dark:border-slate-700"></div>
+                <button onclick="login()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95">Sign In</button>
+                <div class="flex items-center my-6">
+                  <div class="flex-1 border-t border-slate-800"></div>
+                  <span class="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest">or</span>
+                  <div class="flex-1 border-t border-slate-800"></div>
                </div>
-
-                <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-white dark:bg-slate-800/50 hover:bg-slate-50 dark:hover:bg-slate-700/80 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-medium py-3 rounded-xl shadow-sm transition-all active:scale-95 gap-3 group text-sm">
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4 group-hover:scale-110 transition-transform">
-                    <span>Continue with Google</span>
+                <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-slate-900/50 hover:bg-slate-800 border border-slate-700 hover:border-slate-600 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-3 group">
+                    <div class="bg-white p-1.5 rounded-xl group-hover:scale-110 transition-transform"><img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4"></div>
+                    <span class="tracking-tight">Continue with Google</span>
                 </button>
-
-                <a href="/signup" class="w-full flex items-center justify-center bg-transparent hover:bg-slate-50 dark:hover:bg-white/5 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white font-medium py-3 rounded-xl transition-all active:scale-95 gap-2 text-sm mt-3">
-                    <i data-lucide="user-plus" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
-                    Create New Account
+                <a href="/signup" class="w-full flex items-center justify-center bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all active:scale-95 gap-2">
+                    <i data-lucide="user-plus" class="w-4 h-4 text-indigo-400"></i>Create New Account
                 </a>
             </div>
         </div>
     </div>
 
-    <div id="appContainer" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
-        
-        <nav class="border-b border-slate-200 dark:border-white/10 bg-white/60 dark:bg-slate-900/60 backdrop-blur-xl px-4 sm:px-6 h-16 flex justify-between items-center shrink-0 z-50">
+    <div id="appContainer" class="hidden min-h-screen flex flex-col">
+        <nav class="border-b border-white/5 bg-slate-950/50 backdrop-blur-md px-4 sm:px-6 h-20 flex justify-between items-center sticky top-0 z-50">
             <div class="flex items-center gap-3">
-                <button id="mobileMenuBtn" class="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 rounded-lg transition-colors">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-                <div class="bg-indigo-600 p-1.5 rounded-lg shadow-sm shadow-indigo-500/50 hidden sm:block"><i data-lucide="zap" class="text-white w-4 h-4"></i></div>
-                <h1 class="text-lg font-extrabold tracking-tight text-slate-900 dark:text-white font-['Plus_Jakarta_Sans'] uppercase">Study.AI</h1>
+                <div class="bg-indigo-600 p-2 rounded-xl"><i data-lucide="zap" class="text-white w-5 h-5"></i></div>
+                <h1 class="text-lg sm:text-xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] uppercase tracking-wider">Study.AI <span class="text-indigo-500 text-xs hidden sm:inline">PRO</span></h1>
             </div>
-            
-            <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="p-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-all text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/5" title="Toggle Theme">
-                    <i id="themeIcon" data-lucide="sun" class="w-4 h-4"></i>
+            <div class="flex items-center gap-2 sm:gap-4">
+                <button onclick="loadBooks()" class="p-2 sm:p-2.5 rounded-xl glass-card hover:bg-white/5 transition-all text-slate-400" title="Sync Library">
+                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
                 </button>
-                <button onclick="loadBooks()" class="p-2 rounded-lg bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 transition-all text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/5" title="Sync Library">
-                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                </button>
-                <button onclick="logout()" class="px-3 py-2 bg-red-50 dark:bg-red-500/10 hover:bg-red-500 text-red-600 dark:text-red-400 hover:text-white text-xs font-bold rounded-lg transition-all border border-red-200 dark:border-red-500/20 hidden sm:block">
+                <button onclick="logout()" class="px-4 sm:px-5 py-2 sm:py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white text-xs font-bold rounded-xl transition-all">
                     LOGOUT
                 </button>
             </div>
         </nav>
 
-        <div class="flex-1 flex flex-row w-full overflow-hidden relative">
+        <div class="flex-1 flex flex-col lg:flex-row max-w-[1600px] mx-auto w-full p-4 lg:p-8 gap-6 lg:gap-8 overflow-hidden">
              
-            <aside id="sidebar" class="absolute lg:relative z-40 w-72 lg:w-80 h-full flex flex-col gap-4 p-4 bg-slate-50 dark:bg-transparent border-r border-slate-200 dark:border-white/10 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 overflow-y-auto custom-scrollbar">
-                
-                <div class="flex justify-between items-center lg:hidden mb-2">
-                    <h2 class="font-bold text-slate-900 dark:text-white">Menu</h2>
-                    <button id="closeSidebarBtn" class="p-1 rounded bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                        <i data-lucide="x" class="w-4 h-4"></i>
-                    </button>
-                </div>
-
-                <div class="glass-card rounded-2xl p-4 shadow-sm">
-                    <h3 class="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                         <i data-lucide="upload-cloud" class="w-4 h-4"></i> Knowledge Base
+            <aside class="w-full lg:w-80 xl:w-96 flex flex-col gap-6 flex-shrink-0 lg:h-[calc(100vh-8rem)]">
+                <div class="glass-card rounded-[2rem] p-6 shrink-0 shadow-lg">
+                    <h3 class="text-[10px] font-bold text-indigo-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                         <i data-lucide="upload-cloud" class="w-3 h-3"></i> Ingest Material
                     </h3>
                     <input type="file" id="bookFile" class="hidden" accept=".pdf,.doc,.docx" onchange="updateFileName()">
-                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-20 border border-dashed border-slate-300 dark:border-slate-600 rounded-xl cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-500/5 transition-all group bg-white dark:bg-slate-900/30">
-                        <i data-lucide="file-plus-2" class="w-5 h-5 text-slate-400 group-hover:text-indigo-500 dark:group-hover:text-indigo-400 mb-1 transition-colors"></i>
-                        <span id="fileNameDisplay" class="text-[10px] text-slate-500 px-2 text-center font-medium">Select PDF/DOCX</span>
+                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-28 border-2 border-dashed border-slate-700 rounded-3xl cursor-pointer hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all group">
+                        <i data-lucide="plus-circle" class="w-6 h-6 text-slate-500 group-hover:text-indigo-400 mb-2 transition-colors"></i>
+                        <span id="fileNameDisplay" class="text-xs text-slate-400 px-4 text-center font-medium">Select PDF or DOCX only</span>
                     </label>
-                    <button onclick="uploadBook()" class="w-full mt-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-xl shadow-sm transition-all active:scale-95 flex justify-center items-center gap-2 text-xs">
-                        <i data-lucide="database-zap" class="w-3.5 h-3.5"></i> Index Material
+                    <button onclick="uploadBook()" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all active:scale-95 flex justify-center items-center gap-2">
+                        <i data-lucide="database-zap" class="w-4 h-4"></i> Index Knowledge
                     </button>
-                    
-                    <div id="progWrapper" class="hidden mt-3 bg-slate-100 dark:bg-slate-900/80 p-3 rounded-lg border border-slate-200 dark:border-slate-700">
-                        <div class="flex justify-between text-[10px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wider">
+                    <div id="progWrapper" class="hidden mt-4 bg-slate-900/50 p-3 rounded-xl border border-slate-800">
+                        <div class="flex justify-between text-[10px] font-bold text-slate-400 mb-2 uppercase tracking-wider">
                             <span id="progText">Initializing... 0%</span>
                         </div>
-                        <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                        <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
                             <div id="progBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
                         </div>
                     </div>
-                </div>
+                 </div>
 
-                <div class="glass-card rounded-2xl p-4 flex-1 flex flex-col overflow-hidden shadow-sm min-h-[250px]">
-                    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-200 dark:border-slate-800">
-                        <h3 class="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-widest flex items-center gap-2">
-                            <i data-lucide="library" class="w-3.5 h-3.5 text-slate-400"></i> Library
-                        </h3>
-                        <span id="bookCount" class="bg-slate-200 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 text-[9px] font-bold px-2 py-0.5 rounded-full">0</span>
+                <div class="glass-card rounded-[2rem] p-6 flex-1 flex flex-col overflow-hidden shadow-lg min-h-[250px]">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Your Library (<span id="bookCount" class="text-indigo-400">0</span>)</h3>
+                        <i data-lucide="library" class="w-4 h-4 text-slate-600"></i>
                     </div>
-                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-1"></div>
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-2.5 pr-2"></div>
                 </div>
             </aside>
 
-            <div id="sidebarOverlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-30 hidden lg:hidden"></div>
-
-            <main class="flex-1 flex flex-col h-full relative bg-transparent w-full">
+            <main class="flex-1 flex flex-col gap-6 overflow-hidden min-h-[500px]">
                 
-                <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pb-56 sm:pb-48 w-full max-w-4xl mx-auto scroll-smooth">
-                    <div class="h-full flex flex-col items-center justify-center text-center opacity-60">
-                        <div class="bg-indigo-50 dark:bg-slate-800/50 p-5 rounded-full mb-5 border border-indigo-100 dark:border-white/5 shadow-inner">
-                            <i data-lucide="message-square-dashed" class="w-10 h-10 text-indigo-500 dark:text-indigo-400"></i>
+                <div class="glass-card rounded-[2rem] flex-1 overflow-hidden flex flex-col shadow-2xl relative">
+                    <div id="result" class="flex-1 p-6 sm:p-8 lg:p-12 overflow-y-auto custom-scrollbar markdown-content text-slate-300">
+                        <div class="h-full flex flex-col items-center justify-center opacity-30 text-center">
+                            <div class="bg-slate-800 p-4 rounded-full mb-4">
+                                <i data-lucide="brain-circuit" class="w-10 h-10 text-indigo-400"></i>
+                             </div>
+                            <h4 class="text-xl font-bold font-['Plus_Jakarta_Sans'] text-white">Neural Engine Ready</h4>
+                            <p class="max-w-sm mt-3 text-sm leading-relaxed">Select a document from your library, type a concept below, and let the AI generate deep explanations, notes, or quizzes.</p>
                         </div>
-                        <h4 class="text-xl font-bold font-['Plus_Jakarta_Sans'] text-slate-900 dark:text-white">AI Workspace Ready</h4>
-                        <p class="max-w-xs mt-2 text-sm text-slate-500 dark:text-slate-400">Configure your context below, type a topic, and start generating.</p>
                     </div>
                 </div>
 
-                <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5 bg-gradient-to-t from-white via-white/95 to-transparent dark:from-[#020617] dark:via-[#020617]/95 dark:to-transparent z-20">
-                    <div class="max-w-4xl mx-auto w-full glass-card rounded-2xl p-3 sm:p-4 shadow-xl border border-slate-200 dark:border-white/10 flex flex-col gap-3 relative overflow-visible">
+                <div class="glass-card rounded-[2rem] p-5 sm:p-6 lg:p-8 shadow-lg shrink-0 sticky bottom-0 z-10 bg-[#020617]/80 backdrop-blur-xl border-t border-white/5">
+                    <div class="relative w-full mb-5 group">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <i data-lucide="sparkles" class="w-5 h-5 text-indigo-400 group-focus-within:text-indigo-300 transition-colors"></i>
+                        </div>
+                        <input id="topic" type="text" placeholder="What should the AI analyze or explain today?" class="w-full bg-slate-900/60 border border-slate-700/80 rounded-2xl py-4 sm:py-5 pl-14 pr-6 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500/50 transition-all shadow-inner text-sm sm:text-base">
+                    </div>
+
+                    <div class="flex flex-col xl:flex-row gap-4">
+                        <div class="flex gap-3 sm:gap-4 flex-1">
+                            <select id="level" class="bg-slate-900/60 border border-slate-700/80 rounded-2xl px-4 sm:px-6 py-3.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/30">
+                                <option value="University">University</option>
+                                <option value="Secondary">Secondary</option>
+                                <option value="Primary">Primary</option>
+                            </select>
+                            <select id="bookSelector" class="bg-slate-900/60 border border-slate-700/80 rounded-2xl px-4 sm:px-6 py-3.5 text-xs sm:text-sm font-semibold appearance-none cursor-pointer flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 truncate text-slate-400">
+                                <option value="all">select a book</option>
+                            </select>
+                        </div>
                         
-                        <div class="absolute -top-10 left-4 flex gap-2 overflow-x-auto hide-scrollbar max-w-full pb-2">
-                            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full shadow-sm text-xs whitespace-nowrap">
-                                <i data-lucide="book" class="w-3 h-3 text-indigo-500"></i>
-                                <select id="bookSelector" class="bg-transparent text-slate-700 dark:text-slate-200 font-medium appearance-none focus:outline-none cursor-pointer pr-4 max-w-[120px] sm:max-w-[200px] truncate">
-                                    <option value="all">All Library Files</option>
-                                </select>
-                            </div>
-                            <div class="flex items-center gap-1.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-full shadow-sm text-xs whitespace-nowrap">
-                                <i data-lucide="bar-chart" class="w-3 h-3 text-emerald-500"></i>
-                                <select id="level" class="bg-transparent text-slate-700 dark:text-slate-200 font-medium appearance-none focus:outline-none cursor-pointer pr-4">
-                                    <option value="University">University</option>
-                                    <option value="Secondary">Secondary</option>
-                                    <option value="Primary">Primary</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="relative flex items-center bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 rounded-xl px-2 shadow-inner focus-within:border-indigo-500 dark:focus-within:border-indigo-500/50 transition-colors">
-                            <div class="pl-2">
-                                <i data-lucide="sparkles" class="w-4 h-4 text-indigo-500"></i>
-                            </div>
-                            <input id="topic" type="text" placeholder="Ask AI to explain, quiz, or summarize..." autocomplete="off" class="w-full bg-transparent border-none py-3.5 pl-3 pr-2 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-0 text-sm">
-                        </div>
-
-                        <div class="flex gap-2 w-full overflow-x-auto hide-scrollbar pb-1">
-                            <button onclick="requestAI('explain')" class="flex-1 min-w-[80px] bg-slate-100 dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-indigo-600/20 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500 py-2 px-3 rounded-lg transition-all font-medium text-xs flex items-center justify-center gap-1.5">
-                                <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-500"></i> Explain
+                        <div class="flex gap-2 sm:gap-3 flex-wrap xl:flex-nowrap">
+                            <button onclick="requestAI('explain')" class="flex-1 xl:flex-none min-w-[120px] bg-indigo-600 hover:bg-indigo-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
+                                <i data-lucide="book-open" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Explain
                             </button>
-                            <button onclick="requestAI('quiz')" class="flex-1 min-w-[80px] bg-slate-100 dark:bg-slate-800 hover:bg-emerald-50 dark:hover:bg-emerald-600/20 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-emerald-300 dark:hover:border-emerald-500 py-2 px-3 rounded-lg transition-all font-medium text-xs flex items-center justify-center gap-1.5">
-                                <i data-lucide="help-circle" class="w-3.5 h-3.5 text-emerald-500"></i> Quiz
+                            <button onclick="requestAI('quiz')" class="flex-1 xl:flex-none min-w-[120px] bg-emerald-600 hover:bg-emerald-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
+                                <i data-lucide="help-circle" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Quiz
                             </button>
-                            <button onclick="requestAI('notes')" class="flex-1 min-w-[80px] bg-slate-100 dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-amber-600/20 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-amber-300 dark:hover:border-amber-500 py-2 px-3 rounded-lg transition-all font-medium text-xs flex items-center justify-center gap-1.5">
-                                <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-500"></i> Notes
+                            <button onclick="requestAI('notes')" class="flex-1 xl:flex-none min-w-[120px] bg-amber-600 hover:bg-amber-500 text-white py-3.5 px-4 rounded-2xl transition-all font-bold text-sm flex items-center justify-center gap-2 group shadow-md">
+                                <i data-lucide="file-text" class="w-4 h-4 group-hover:scale-110 transition-transform"></i> Notes
                             </button>
-                            <button onclick="runFlashcards(event)" class="flex-1 min-w-[100px] bg-slate-900 dark:bg-emerald-600 hover:bg-slate-800 dark:hover:bg-emerald-500 text-white border border-transparent py-2 px-3 rounded-lg transition-all font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm">
-                                <i data-lucide="layers" class="w-3.5 h-3.5"></i> Cards
+                            <button onclick="runFlashcards(event)" class="flex-1 xl:flex-none min-w-[140px] bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-500 hover:to-teal-600 text-white py-3.5 px-6 rounded-2xl transition-all duration-300 font-bold text-sm flex items-center justify-center gap-2 group border border-white/10 shadow-lg">
+                                <i data-lucide="layers" class="w-4 h-4 text-emerald-100 group-hover:animate-bounce"></i>
+                                <span>Flashcards</span>
                             </button>
                         </div>
                     </div>
                 </div>
-                
             </main>
         </div>
     </div>
 
-    <div id="toast" class="fixed top-4 right-4 bg-slate-900 dark:bg-slate-800 text-white px-5 py-3 rounded-xl shadow-2xl opacity-0 transition-all duration-300 z-[200] font-medium text-sm pointer-events-none border border-slate-700 flex items-center gap-2 transform translate-y-[-10px]"></div>
+    <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transition-all duration-300 z-[100] font-bold text-sm pointer-events-none border border-slate-600 flex items-center gap-2"></div>
 
     <script>
-        // 6️⃣ Toggle Dark and Light Mode Logic
-        function toggleTheme() {
-            const html = document.documentElement;
-            const icon = document.getElementById('themeIcon');
-            
-            if (html.classList.contains('dark')) {
-                html.classList.remove('dark');
-                localStorage.setItem('theme', 'light');
-                icon.setAttribute('data-lucide', 'moon');
-            } else {
-                html.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-                icon.setAttribute('data-lucide', 'sun');
-            }
-            lucide.createIcons();
-        }
-
-        // Initialize theme icon on load
-        document.addEventListener('DOMContentLoaded', () => {
-            const icon = document.getElementById('themeIcon');
-            if(icon) {
-                if (document.documentElement.classList.contains('dark')) {
-                    icon.setAttribute('data-lucide', 'sun');
-                } else {
-                    icon.setAttribute('data-lucide', 'moon');
-                }
-            }
-            
-            // Mobile Sidebar Toggle Logic
-            const mobileBtn = document.getElementById('mobileMenuBtn');
-            const closeBtn = document.getElementById('closeSidebarBtn');
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-
-            function toggleSidebar() {
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            }
-
-            if(mobileBtn) mobileBtn.addEventListener('click', toggleSidebar);
-            if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
-            if(overlay) overlay.addEventListener('click', toggleSidebar);
-        });
-
         const api = "https://study-ai-tq7i.onrender.com";
         const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
         const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
 
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
         supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (session?.user) {
-        checkUser(); // re-run when session is ready
-    }
-});
+            if (session?.user) checkUser();
+        });
+
         let currentUser = null;
         let allBooks = [];
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
@@ -363,122 +239,104 @@
         lucide.createIcons();
 
         async function handleEmailRedirect() {
-    const hash = window.location.hash;
-    const isGoogle = hash.includes("provider_token");
-
-    if (!hash || !hash.includes("access_token")) return;
-
-    const { data } = await supabaseClient.auth.getSession();
-    const provider = data?.session?.user?.app_metadata?.provider;
-
-    if (isGoogle) {
-        window.location.replace("/dashboard");
-    } else {
-        await supabaseClient.auth.signOut();
-        window.location.replace("/?verified=1");
-    }
+            const hash = window.location.hash;
+            const isGoogle = hash.includes("provider_token");
+            if (!hash || !hash.includes("access_token")) return;
+            const { data } = await supabaseClient.auth.getSession();
+            const provider = data?.session?.user?.app_metadata?.provider;
+            if (isGoogle) {
+                window.location.replace("/dashboard");
+            } else {
+                await supabaseClient.auth.signOut();
+                window.location.replace("/?verified=1");
+            }
         }
 
-        // --- AUTH ---
-    async function checkUser() {
-        const loader = document.getElementById("loadingScreen");
-loader.style.opacity = "1";
-loader.style.display = "flex";
-    const { data: { session } } = await supabaseClient.auth.getSession();
-const user = session?.user;
-    const path = window.location.pathname;
+        async function checkUser() {
+            const loader = document.getElementById("loadingScreen");
+            loader.style.opacity = "1";
+            loader.style.display = "flex";
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            const user = session?.user;
+            const path = window.location.pathname;
 
-    if (user) {
-if (!window.location.pathname.startsWith("/dashboard")) {
-    window.location.href = "/dashboard";
-    return;
-}
-        if (!user.email_confirmed_at && user.app_metadata.provider !== "google") {
-            await supabaseClient.auth.signOut();
-            showToast("📩 Verify your email first");
-            document.getElementById("loginScreen").classList.remove("hidden");
-            document.getElementById("appContainer").classList.add("hidden");
-            hideLoader(); 
-            return;
+            if (user) {
+                if (!window.location.pathname.startsWith("/dashboard")) {
+                    window.location.href = "/dashboard";
+                    return;
+                }
+                if (!user.email_confirmed_at && user.app_metadata.provider !== "google") {
+                    await supabaseClient.auth.signOut();
+                    showToast("📩 Verify your email first");
+                    document.getElementById("loginScreen").classList.remove("hidden");
+                    document.getElementById("appContainer").classList.add("hidden");
+                    hideLoader();
+                    return;
+                }
+                currentUser = user;
+                if (path.startsWith("/dashboard")) {
+                    document.getElementById("loginScreen").classList.add("hidden");
+                    document.getElementById("appContainer").classList.remove("hidden");
+                    loadBooks();
+                    hideLoader();
+                } else {
+                    window.location.href = "/dashboard";
+                }
+            } else {
+                if (path.startsWith("/dashboard")) {
+                    window.location.href = "/";
+                    return;
+                }
+                document.getElementById("loginScreen").classList.remove("hidden");
+                document.getElementById("appContainer").classList.add("hidden");
+                hideLoader();
+            }
         }
-
-        currentUser = user;
-        
-        if (path.startsWith("/dashboard")) {
-    document.getElementById("loginScreen").classList.add("hidden");
-    document.getElementById("appContainer").classList.remove("hidden");
-    loadBooks();
-    hideLoader();
-        } else {
-            window.location.href = "/dashboard";
-        }
-    } else {
-        if (path.startsWith("/dashboard")) {
-            window.location.href = "/";
-            return;
-        }
-        document.getElementById("loginScreen").classList.remove("hidden");
-        document.getElementById("appContainer").classList.add("hidden");
-         hideLoader();
-    }
-    }
 
         async function login() {
-const key = "loginAttempt";
-const lastAttempt = localStorage.getItem(key);
-const now = Date.now();
-
-if (lastAttempt && now - lastAttempt < 3000) {
-    showToast("⏳ Please wait a moment...");
-    return;
-}
-            
-        const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
-
-    if (!token) {
-    return showToast("⚠️ Please verify you're human", true);
-    }
-    localStorage.setItem(key, now);
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-
-    if (error) {
-        showToast(`⚠️ ${error.message}`);
-        if (window.turnstile) turnstile.reset();
-        return;
-    }
-
-    if (!data.user.email_confirmed_at) {
-    showToast("📩 Verify your email first");
-        if (window.turnstile) turnstile.reset();
-    return;
-    }
-
-    showToast("✅ Authenticated Successfully");
-window.location.href = "/dashboard";
+            const key = "loginAttempt";
+            const lastAttempt = localStorage.getItem(key);
+            const now = Date.now();
+            if (lastAttempt && now - lastAttempt < 3000) {
+                showToast("⏳ Please wait a moment...");
+                return;
+            }
+            const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
+            if (!token) return showToast("⚠️ Please verify you're human", true);
+            localStorage.setItem(key, now);
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) {
+                showToast(`⚠️ ${error.message}`);
+                if (window.turnstile) turnstile.reset();
+                return;
+            }
+            if (!data.user.email_confirmed_at) {
+                showToast("📩 Verify your email first");
+                if (window.turnstile) turnstile.reset();
+                return;
+            }
+            showToast("✅ Authenticated Successfully");
+            window.location.href = "/dashboard";
         } 
 
         async function googleLogin() {
-    const { error } = await supabaseClient.auth.signInWithOAuth({
-        provider: "google",
-        options: {
-            redirectTo: window.location.origin + "/app"
-        }
-    });
-    if (error) showToast("❌ Google login failed");
+            const { error } = await supabaseClient.auth.signInWithOAuth({
+                provider: "google",
+                options: { redirectTo: window.location.origin + "/app" }
+            });
+            if (error) showToast("❌ Google login failed");
         }
 
         async function logout() {
-    await supabaseClient.auth.signOut();
-    currentUser = null;
-    document.getElementById("appContainer").classList.add("hidden");
-    document.getElementById("loginScreen").classList.remove("hidden");
-    showToast("👋 Logged out successfully");
+            await supabaseClient.auth.signOut();
+            currentUser = null;
+            document.getElementById("appContainer").classList.add("hidden");
+            document.getElementById("loginScreen").classList.remove("hidden");
+            showToast("👋 Logged out successfully");
         }
 
-        // --- LIBRARY ---
         async function loadBooks() {
             try {
                 const res = await fetch(`${api}/books`, {
@@ -494,344 +352,198 @@ window.location.href = "/dashboard";
             const selector = document.getElementById("bookSelector");
             
             container.innerHTML = "";
-            selector.innerHTML = '<option value="all">All Library Files</option>';
+            selector.innerHTML = '<option value="all">select a book</option>';
             document.getElementById("bookCount").innerText = allBooks.length;
 
             if (allBooks.length === 0) {
-                container.innerHTML = `<p class="text-[10px] text-slate-500 text-center mt-4">No documents indexed yet.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center mt-4">No documents indexed yet.</p>`;
                 return;
             }
 
             allBooks.forEach(book => {
                 const fileNameSafe = book.filename || book.name; 
                 if (!fileNameSafe) return; 
-                
                 const displayName = fileNameSafe.split('_').slice(1).join('_') || fileNameSafe;
-  
                 const div = document.createElement("div");
-                div.className = "group bg-white dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 p-2.5 rounded-xl flex items-center justify-between transition-all hover:border-indigo-300 dark:hover:border-indigo-500/50 shadow-sm";
+                div.className = "group bg-slate-900/60 border border-slate-700/50 p-3.5 rounded-2xl flex items-center justify-between transition-all hover:border-indigo-500/50 hover:bg-slate-800/80";
                 div.innerHTML = `
-                    <div class="flex items-center gap-2 overflow-hidden">
-                        <div class="bg-indigo-50 dark:bg-indigo-500/10 p-1.5 rounded-lg text-indigo-500 dark:text-indigo-400 shrink-0">
-                            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <div class="bg-indigo-500/10 p-1.5 rounded-lg text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-colors shrink-0">
+                            <i data-lucide="file-text" class="w-4 h-4"></i>
                         </div>
-                        <span class="text-xs truncate text-slate-700 dark:text-slate-300 font-medium">${displayName}</span>
+                        <span class="text-xs truncate text-slate-300 font-medium">${displayName}</span>
                     </div>
-                    <button onclick="deleteBook('${fileNameSafe}')" class="p-1.5 text-slate-400 hover:text-red-500 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors shrink-0" title="Delete file">
-                        <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <button onclick="deleteBook('${fileNameSafe}')" class="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors shrink-0" title="Delete file">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 `;
                 container.appendChild(div);
-
                 const opt = document.createElement("option");
                 opt.value = fileNameSafe;
                 opt.innerText = displayName;
                 selector.appendChild(opt);
             });
 
-const savedBook = localStorage.getItem("selectedBook");
-if (savedBook) selector.value = savedBook;
+            const savedBook = localStorage.getItem("selectedBook");
+            if (savedBook) selector.value = savedBook;
             lucide.createIcons();
         }
 
         async function uploadBook() {
-    if (!currentUser || !currentUser.id) return showToast("⚠️ Please login first");
-    
-    const fileInput = document.getElementById("bookFile");
-    if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
-
-    const file = fileInput.files[0];
-    const allowedTypes = [ "application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword" ];
-    const fileName = file.name.toLowerCase();
-
-if (
-    !allowedTypes.includes(file.type) &&
-    !fileName.endsWith(".pdf") &&
-    !fileName.endsWith(".doc") &&
-    !fileName.endsWith(".docx")
-) {
-    showToast("❌ Only PDF and DOCX allowed");
-    fileInput.value = ""; 
-    document.getElementById("fileNameDisplay").innerText = "Select PDF or DOCX only";
-    return;
-}
-    const progWrapper = document.getElementById("progWrapper");
-    const progBar = document.getElementById("progBar");
-    const progText = document.getElementById("progText");
-
-    let eventSource;
-
-    try {
-        progWrapper.classList.remove('hidden');
-        progBar.style.width = '0%';
-        progText.innerText = 'Uploading... 0%';
-
-        function connectSSE() {
-            eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
-
-            eventSource.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-
-                progText.innerText = `${data.step} ${data.progress}%`;
-                progBar.style.width = `${data.progress}%`;
-
-                if (data.progress >= 100) {
-                    eventSource.close();
-                    progText.innerText = "✅ Completed";
-                    progBar.classList.replace("bg-indigo-500", "bg-emerald-500");
-                    showToast("✅ Upload complete");
-                    loadBooks();
-
-                    setTimeout(() => {
-                        progWrapper.classList.add("hidden");
-                    }, 3000);
+            if (!currentUser || !currentUser.id) return showToast("⚠️ Please login first");
+            const fileInput = document.getElementById("bookFile");
+            if (!fileInput.files[0]) return showToast("⚠️ Select a file first.");
+            const file = fileInput.files[0];
+            const allowedTypes = ["application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword"];
+            const fileName = file.name.toLowerCase();
+            if (!allowedTypes.includes(file.type) && !fileName.endsWith(".pdf") && !fileName.endsWith(".doc") && !fileName.endsWith(".docx")) {
+                showToast("❌ Only PDF and DOCX allowed");
+                fileInput.value = "";
+                document.getElementById("fileNameDisplay").innerText = "Select PDF or DOCX only";
+                return;
+            }
+            const progWrapper = document.getElementById("progWrapper");
+            const progBar = document.getElementById("progBar");
+            const progText = document.getElementById("progText");
+            let eventSource;
+            try {
+                progWrapper.classList.remove('hidden');
+                progBar.style.width = '0%';
+                progText.innerText = 'Uploading... 0%';
+                function connectSSE() {
+                    eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
+                    eventSource.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        progText.innerText = `${data.step} ${data.progress}%`;
+                        progBar.style.width = `${data.progress}%`;
+                        if (data.progress >= 100) {
+                            eventSource.close();
+                            progText.innerText = "✅ Completed";
+                            progBar.classList.replace("bg-indigo-500", "bg-emerald-500");
+                            showToast("✅ Upload complete");
+                            loadBooks();
+                            setTimeout(() => progWrapper.classList.add("hidden"), 3000);
+                        }
+                    };
+                    eventSource.onerror = () => {
+                        eventSource.close();
+                        setTimeout(connectSSE, 2000);
+                    };
                 }
-            };
-
-            eventSource.onerror = () => {
-                eventSource.close();
-                setTimeout(connectSSE, 2000);
-            };
-        }
-
-        connectSSE();
-
-        const formData = new FormData();
-        formData.append("file", file);
-
-        const res = await fetch(`${api}/upload-stream`, {
-            method: "POST",
-            headers: { "x-user-id": currentUser.id },
-            body: formData
-        });
-
-        if (!res.ok) throw new Error("Upload failed");
-
-    } catch (err) {
-        if (eventSource) eventSource.close();
-        progText.innerText = "❌ Failed";
-        progBar.classList.replace("bg-indigo-500", "bg-red-500");
-        showToast("❌ Upload failed");
-    }
+                connectSSE();
+                const formData = new FormData();
+                formData.append("file", file);
+                const res = await fetch(`${api}/upload-stream`, {
+                    method: "POST",
+                    headers: { "x-user-id": currentUser.id },
+                    body: formData
+                });
+                if (!res.ok) throw new Error("Upload failed");
+            } catch (err) {
+                if (eventSource) eventSource.close();
+                progText.innerText = "❌ Failed";
+                progBar.classList.replace("bg-indigo-500", "bg-red-500");
+                showToast("❌ Upload failed");
+            }
         }
 
         async function deleteBook(name) {
-    if (!currentUser || !currentUser.id) return showToast("⚠️ Please login");
-    if (!confirm("Delete this document?")) return;
-
-    try {
-        showToast("Deleting...");
-        const res = await fetch(`${api}/delete-book/${encodeURIComponent(name)}`, {
-            method: "DELETE",
-            headers: { "x-user-id": currentUser.id }
-        });
-
-        if (!res.ok) throw new Error();
-        showToast("🗑️ Deleted successfully");
-        loadBooks();
-    } catch (e) {
-        showToast("❌ Delete failed");
-    }
+            if (!currentUser || !currentUser.id) return showToast("⚠️ Please login");
+            if (!confirm("Delete this document?")) return;
+            try {
+                showToast("Deleting...");
+                const res = await fetch(`${api}/delete-book/${encodeURIComponent(name)}`, {
+                    method: "DELETE",
+                    headers: { "x-user-id": currentUser.id }
+                });
+                if (!res.ok) throw new Error();
+                showToast("🗑️ Deleted successfully");
+                loadBooks();
+            } catch (e) { showToast("❌ Delete failed"); }
         }
 
-        // --- AI ---
         async function requestAI(type) {
-    const topic = document.getElementById("topic").value;
-    const uniqueTopic = topic + " (variation " + Date.now() + ")";
-    const resultBox = document.getElementById("result");
-
-    if (!topic) {
-        document.getElementById("topic").focus();
-        return showToast("⚠️ Enter a topic to analyze.");
-    }
-
-    // 2️⃣ Thinking States (Skeleton Loader)
-    resultBox.innerHTML = `
-    <div class="flex flex-col gap-4 w-full animate-pulse mt-4">
-        <div class="flex items-start gap-4">
-            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                 <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-400"></i>
-            </div>
-            <div class="flex-1 space-y-3 py-1">
-                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
-                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
-                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-5/6"></div>
-                <div class="h-24 bg-slate-200 dark:bg-slate-800 rounded w-full mt-4 border border-slate-100 dark:border-slate-700/50"></div>
-            </div>
-        </div>
-    </div>`;
-    lucide.createIcons();
-    
-    // Auto-scroll to bottom of chat
-    setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 50);
-
-    try {
-        const endpoint = type === 'explain' ? 'deep-explain' : type;
-
-        const res = await fetch(`${api}/${endpoint}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "x-user-id": currentUser.id
-            },
-            body: JSON.stringify({
-                topic: type === "quiz" ? uniqueTopic : topic,
-                level: document.getElementById("level").value,
-                book: document.getElementById("bookSelector").value,
-                sessionId
-            })
-        });
-
-        const data = await res.json();
-        const raw = data.explanation || data.quiz || data.notes;
-
-        if (!raw) throw new Error("Empty response");
-
-        if (type === "quiz") {
-            renderQuiz(raw);
-        } else {
-            // 1️⃣ Chat UI Styling
+            const topic = document.getElementById("topic").value;
+            const uniqueTopic = topic + " (variation " + Date.now() + ")";
+            const resultBox = document.getElementById("result");
+            if (!topic) {
+                document.getElementById("topic").focus();
+                return showToast("⚠️ Enter a topic to analyze.");
+            }
             resultBox.innerHTML = `
-            <div class="flex flex-col mb-6">
-                <div class="self-end bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-5 py-3 mb-6 max-w-[85%] shadow-md">
-                    <p class="text-sm font-medium">${topic}</p>
-                </div>
-                <div class="flex items-start gap-3 w-full">
-                    <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-500/30 flex items-center justify-center shrink-0 shadow-sm mt-1">
-                         <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
-                    </div>
-                    <div class="flex-1 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 rounded-2xl rounded-tl-sm shadow-sm markdown-content animate-fade-in text-slate-800 dark:text-slate-300">
-                        ${marked.parse(raw)}
-                    </div>
-                </div>
+            <div class="flex flex-col items-center justify-center h-full text-indigo-400">
+                <i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i>
+                <p class="font-bold tracking-widest text-xs animate-pulse">AI IS REASONING OVER YOUR DATA...</p>
             </div>`;
-        }
-
-    } catch (err) {
-        resultBox.innerHTML = `
-        <div class="flex flex-col items-center justify-center p-8 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 mt-4">
-            <i data-lucide="alert-triangle" class="w-8 h-8 mb-3"></i>
-            <p class="font-bold text-sm">Request Failed. Please try again.</p>
-        </div>`;
-    }
-    lucide.createIcons();
-    setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 100);
-        }
-
-    async function runFlashcards(event) {
-    const btn = event?.currentTarget;
-    const originalText = btn ? btn.innerHTML : '';
-
-    if (btn) {
-        btn.disabled = true;
-        btn.innerHTML = "<i data-lucide='loader-2' class='w-3.5 h-3.5 animate-spin'></i>";
-        lucide.createIcons();
-    }
-
-    const topic = document.getElementById("topic").value;
-    const resultBox = document.getElementById("result");
-
-    if (!topic) {
-        if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
-        return showToast("⚠️ Enter a topic first");
-    }
-
-    // Thinking state for flashcards
-    resultBox.innerHTML = `
-    <div class="flex items-center justify-center h-48 w-full mt-4">
-        <div class="flex gap-2">
-            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0s"></div>
-            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
-            <div class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
-        </div>
-    </div>`;
-
-    try {
-        const res = await fetch(`${api}/flashcards`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
-            body: JSON.stringify({
-                topic,
-                level: document.getElementById("level").value,
-                book: document.getElementById("bookSelector").value
-            })
-        });
-
-        const data = await res.json();
-        const raw = data.flashcards || "";
-        const lines = raw.split("\n");
-        let cards = [];
-
-        for (let i = 0; i < lines.length; i++) {
-            if (lines[i].startsWith("Q:")) {
-                const question = lines[i].replace("Q:", "").trim();
-                const nextLine = lines[i + 1] || "";
-                if (nextLine.startsWith("A:")) {
-                    const answer = nextLine.replace("A:", "").trim();
-                    cards.push({ question, answer });
-                }
+            lucide.createIcons();
+            try {
+                const endpoint = type === 'explain' ? 'deep-explain' : type;
+                const res = await fetch(`${api}/${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                    body: JSON.stringify({
+                        topic: type === "quiz" ? uniqueTopic : topic,
+                        level: document.getElementById("level").value,
+                        book: document.getElementById("bookSelector").value,
+                        sessionId
+                    })
+                });
+                const data = await res.json();
+                const raw = data.explanation || data.quiz || data.notes;
+                if (!raw) throw new Error("Empty response");
+                if (type === "quiz") renderQuiz(raw);
+                else resultBox.innerHTML = `<div class="markdown-content animate-fade-in">${marked.parse(raw)}</div>`;
+            } catch (err) {
+                resultBox.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-red-400"><i data-lucide="alert-triangle" class="w-12 h-12 mb-4"></i><p class="font-bold">Request Failed. Please try again.</p></div>`;
+                lucide.createIcons();
             }
         }
-        
-// 4️⃣ Flashcard Navigation (Swipeable horizontal layout)
-let html = `
-<div class="mb-6 w-full">
-    <div class="self-end bg-emerald-600 text-white rounded-2xl rounded-tr-sm px-5 py-3 mb-6 max-w-[85%] ml-auto shadow-md w-fit">
-        <p class="text-sm font-medium">Generate flashcards on: ${topic}</p>
-    </div>
-    <div class="flex items-center justify-between mb-4">
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-emerald-100 dark:bg-emerald-500/20 rounded-lg flex items-center justify-center">
-                <i data-lucide="layers" class="text-emerald-600 dark:text-emerald-400 w-4 h-4"></i>
-            </div>
-            <h2 class="text-lg font-bold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans']">Swipe to Study</h2>
-        </div>
-        <div class="text-[10px] bg-slate-100 dark:bg-slate-800 px-2 py-1 rounded text-slate-500 dark:text-slate-400 font-bold tracking-wider uppercase">
-            ${cards.length} Cards
-        </div>
-    </div>
 
-    <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-6 hide-scrollbar perspective-1000 w-full">
-`;
-
-cards.forEach((card, i) => {
-    html += `
-    <div class="flashcard h-56 min-w-[85vw] sm:min-w-[320px] max-w-[400px] snap-center cursor-pointer group perspective-1000 shrink-0"
-         onclick="this.classList.toggle('flipped')">
-        <div class="flashcard-inner relative w-full h-full preserve-3d shadow-xl rounded-2xl">
-            <div class="absolute inset-0 backface-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col justify-between">
-                <span class="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest bg-emerald-50 dark:bg-emerald-500/10 w-fit px-2 py-1 rounded">Question ${i+1}</span>
-                <p class="text-slate-800 dark:text-white font-semibold leading-relaxed text-sm md:text-base">${card.question}</p>
-                <div class="flex items-center gap-1 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
-                    <i data-lucide="refresh-cw" class="w-3 h-3"></i> Tap to flip
-                </div>
-            </div>
-            <div class="absolute inset-0 backface-hidden bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/50 rounded-2xl p-6 flex flex-col justify-between"
-                 style="transform: rotateY(180deg);">
-                <span class="text-[10px] font-black text-emerald-800 dark:text-emerald-100 uppercase tracking-widest w-fit px-2 py-1 rounded bg-emerald-200/50 dark:bg-emerald-500/20">Answer</span>
-                <p class="text-emerald-900 dark:text-emerald-50 text-sm leading-relaxed overflow-y-auto custom-scrollbar pr-2">${card.answer}</p>
-            </div>
-        </div>
-    </div>
-    `;
-});
-
-html += `</div></div>`;
-
-resultBox.innerHTML = html;
-lucide.createIcons();   
-
-    } catch (err) {
-        resultBox.innerHTML = "❌ Failed to generate flashcards";
-    }
-
-    if (btn) {
-        btn.disabled = false;
-        btn.innerHTML = originalText;
-        lucide.createIcons();
-    }
-    setTimeout(() => { resultBox.scrollTop = resultBox.scrollHeight; }, 100);
-    }
+        async function runFlashcards(event) {
+            const btn = event?.currentTarget;
+            if (btn) { btn.disabled = true; btn.innerHTML = "⏳ Loading..."; }
+            const topic = document.getElementById("topic").value;
+            const resultBox = document.getElementById("result");
+            if (!topic) {
+                if (btn) { btn.disabled = false; btn.innerHTML = "Flashcards"; }
+                return showToast("⚠️ Enter a topic first");
+            }
+            resultBox.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-purple-400"><i data-lucide="loader-2" class="w-12 h-12 mb-4 animate-spin"></i><p class="font-bold text-xs">Generating flashcards...</p></div>`;
+            lucide.createIcons();
+            try {
+                const res = await fetch(`${api}/flashcards`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+                    body: JSON.stringify({
+                        topic,
+                        level: document.getElementById("level").value,
+                        book: document.getElementById("bookSelector").value
+                    })
+                });
+                const data = await res.json();
+                const raw = data.flashcards || "";
+                const lines = raw.split("\n");
+                let cards = [];
+                for (let i = 0; i < lines.length; i++) {
+                    if (lines[i].startsWith("Q:")) {
+                        const question = lines[i].replace("Q:", "").trim();
+                        const nextLine = lines[i + 1] || "";
+                        if (nextLine.startsWith("A:")) {
+                            const answer = nextLine.replace("A:", "").trim();
+                            cards.push({ question, answer });
+                        }
+                    }
+                }
+                let html = `<div class="flex items-center gap-2 mb-6"><div class="w-8 h-8 bg-emerald-500/20 rounded-lg flex items-center justify-center"><i data-lucide="layers" class="text-emerald-400 w-4 h-4"></i></div><h2 class="text-xl font-bold text-white font-['Plus_Jakarta_Sans']">Neural Flashcards</h2></div><div class="grid grid-cols-1 md:grid-cols-2 gap-6 perspective-1000">`;
+                cards.forEach((card, i) => {
+                    html += `<div class="flashcard h-48 cursor-pointer group perspective-1000" onclick="this.classList.toggle('flipped')"><div class="flashcard-inner relative w-full h-full preserve-3d shadow-xl rounded-2xl"><div class="absolute inset-0 backface-hidden bg-slate-900 border border-white/10 rounded-2xl p-6 flex flex-col justify-between"><span class="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Question</span><p class="text-white font-semibold leading-relaxed">${card.question}</p><div class="text-[10px] text-slate-500 italic">Tap to flip</div></div><div class="absolute inset-0 backface-hidden bg-emerald-950/40 border border-emerald-500/50 rounded-2xl p-6 flex flex-col justify-between" style="transform: rotateY(180deg);"><span class="text-[10px] font-black text-white uppercase tracking-widest">Answer</span><p class="text-emerald-50 text-sm leading-relaxed">${card.answer}</p></div></div></div>`;
+                });
+                html += `</div>`;
+                resultBox.innerHTML = html;
+                lucide.createIcons();   
+            } catch (err) { resultBox.innerHTML = "❌ Failed to generate flashcards"; }
+            if (btn) { btn.disabled = false; btn.innerHTML = `<i data-lucide="layers" class="w-4 h-4"></i>Flashcards`; lucide.createIcons(); }
+        }
 
         function updateFileName() {
             const input = document.getElementById('bookFile');
@@ -845,260 +557,127 @@ lucide.createIcons();
             const t = document.getElementById("toast");
             t.innerHTML = msg; 
             t.classList.replace("opacity-0", "opacity-100");
-            t.classList.replace("translate-y-[-10px]", "translate-y-0"); 
+            t.classList.replace("-translate-y-2", "translate-y-0"); 
             setTimeout(() => {
                 t.classList.replace("opacity-100", "opacity-0");
-                t.classList.replace("translate-y-0", "translate-y-[-10px]");
+                t.classList.replace("translate-y-0", "-translate-y-2");
             }, 3500);
         }
 
         function hideLoader() {
-    const loader = document.getElementById("loadingScreen");
-    loader.style.opacity = "0";
-    loader.style.pointerEvents = "none";
-    setTimeout(() => { loader.style.display = "none"; }, 500);
+            const loader = document.getElementById("loadingScreen");
+            loader.style.opacity = "0";
+            loader.style.pointerEvents = "none";
+            setTimeout(() => loader.style.display = "none", 500);
         }
 
         function renderQuiz(quizText) {
-    const resultBox = document.getElementById("result");
-    const topic = document.getElementById("topic").value;
-
-    const rawQuestions = quizText.split(/##\s*Question/i).slice(1);
-    const questions = rawQuestions.slice(0, 5).filter(q => q.trim().length > 0);
-    let correctAnswers = [];
-    let rationales = [];
-    let allOptions = [];
-
-    let html = `
-    <div class="flex flex-col mb-6">
-        <div class="self-end bg-emerald-600 text-white rounded-2xl rounded-tr-sm px-5 py-3 mb-6 max-w-[85%] shadow-md">
-            <p class="text-sm font-medium">Create a quiz for: ${topic}</p>
-        </div>
-        
-        <div class="w-full bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-5 sm:p-8 rounded-2xl rounded-tl-sm shadow-sm">
-            <div class="flex items-center justify-between mb-8 group/header">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-emerald-100 dark:bg-emerald-500/10 border border-emerald-200 dark:border-emerald-500/20 rounded-xl flex items-center justify-center">
-                        <i data-lucide="help-circle" class="text-emerald-600 dark:text-emerald-400 w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white font-['Plus_Jakarta_Sans'] tracking-tight">Practice Quiz</h2>
-                    </div>
-                </div>
-                <button onclick="resetQuiz(event)" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all text-xs font-bold text-slate-600 dark:text-slate-300">
-                  <i data-lucide="refresh-cw" class="w-3 h-3"></i> Retry
-                </button>
-            </div>
-    `;
-
-questions.forEach((q, i) => {
-    html += `<div id="question-${i}" class="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700/50">`;
-    html += `<div class="mb-3"><p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider bg-emerald-100 dark:bg-emerald-500/10 w-fit px-2 py-0.5 rounded">Question ${i + 1}</p></div>`;
-
-    const lines = q.split("\n");
-    let questionText = "";
-    let options = [];
-
-    lines.forEach(line => {
-        if (!questionText && line.length > 15 && !line.match(/^[A-D]\)/)) {
-            questionText = line.replace(/\*\*/g, "").replace(/stem:/i, "").trim();
-        }
-if (/correct answer|answer|option/i.test(line)) {
-    const match = line.match(/\b([A-D])\b/);
-    if (match) correctAnswers.push(match[1].toUpperCase());
-}
-        if (line.toLowerCase().includes("rationale")) {
-    const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim();
-    if (exp) rationales.push(exp);
-        }
-        if (line.startsWith("A)") || line.startsWith("B)") || line.startsWith("C)") || line.startsWith("D)")) {
-            const letter = line.charAt(0);
-            const cleanOption = line.replace(/^[A-D]\)\s*/, "").replace(/\*\*/g, "").trim();
-            options.push({ letter, text: cleanOption });
-        }
-    });
-
-    html += `<p class="text-slate-800 dark:text-white font-medium text-sm leading-relaxed mb-4">${questionText}</p>`;
-
-    options.forEach(opt => {
-        html += `
-        <label id="q${i}-${opt.letter}" data-letter="${opt.letter}" class="flex items-center gap-3 p-3 mb-2 rounded-lg bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition-all cursor-pointer">
-            <input type="radio" name="q${i}" value="${opt.letter}" class="accent-emerald-500 w-4 h-4">
-            <span class="text-sm text-slate-700 dark:text-slate-200">${opt.text}</span>
-        </label>`;
-    });
-
-    allOptions.push(options);
-    html += `</div>`;
-});
-    
-    html += `
-            <button onclick="submitQuiz()" class="w-full mt-6 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
-                <i data-lucide="check-circle" class="w-4 h-4"></i> Submit Assessment
-            </button>
-        </div>
-    </div>`;
-
-      if (correctAnswers.length === 0) {
-    showToast("⚠️ AI format changed. Retrying...");
-    return requestAI("quiz");
-      }
-
-       correctAnswers = correctAnswers.slice(0, questions.length);
-       rationales = rationales.slice(0, questions.length);
-       allOptions = allOptions.slice(0, questions.length);
-        window.correctAnswers = correctAnswers;
-        window.rationales = rationales;
-        window.allOptions = allOptions;
-            
-    resultBox.innerHTML = html;
-      lucide.createIcons();
+            const resultBox = document.getElementById("result");
+            const rawQuestions = quizText.split(/##\s*Question/i).slice(1);
+            const questions = rawQuestions.slice(0, 5).filter(q => q.trim().length > 0);
+            let correctAnswers = []; let rationales = []; let allOptions = [];
+            let html = `<div class="flex items-center justify-between mb-8 group/header"><div class="flex items-center gap-3"><div class="w-10 h-10 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.1)]"><i data-lucide="help-circle" class="text-emerald-400 w-5 h-5"></i></div><div><h2 class="text-xl font-extrabold text-white font-['Plus_Jakarta_Sans'] tracking-tight">Practice Quiz</h2><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">Neural Assessment Phase</p></div></div><button onclick="resetQuiz(event)" class="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900/50 hover:bg-slate-800 border border-white/5 hover:border-emerald-500/30 transition-all duration-300 group shadow-lg" title="Generate new questions"><span class="text-xs font-bold text-slate-400 group-hover:text-emerald-400 transition-colors">New Session</span><i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-slate-500 group-hover:text-emerald-400 group-hover:rotate-180 transition-all duration-700 ease-in-out"></i></button></div>`;
+            questions.forEach((q, i) => {
+                html += `<div id="question-${i}" class="mb-6 p-5 rounded-2xl bg-slate-900/60 border border-white/5 shadow-lg"><div class="mb-3"><p class="text-xs text-slate-400 font-bold uppercase tracking-wider">Question ${i + 1}</p></div>`;
+                const lines = q.split("\n");
+                let questionText = ""; let options = [];
+                lines.forEach(line => {
+                    if (!questionText && line.length > 15 && !line.match(/^[A-D]\)/)) questionText = line.replace(/\*\*/g, "").replace(/stem:/i, "").trim();
+                    if (/correct answer|answer|option/i.test(line)) { const match = line.match(/\b([A-D])\b/); if (match) correctAnswers.push(match[1].toUpperCase()); }
+                    if (line.toLowerCase().includes("rationale")) { const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim(); if (exp) rationales.push(exp); }
+                    if (line.startsWith("A)") || line.startsWith("B)") || line.startsWith("C)") || line.startsWith("D)")) {
+                        const letter = line.charAt(0);
+                        const cleanOption = line.replace(/^[A-D]\)\s*/, "").replace(/\*\*/g, "").trim();
+                        options.push({ letter, text: cleanOption });
+                    }
+                });
+                html += `<p class="text-white font-semibold leading-relaxed mb-4">${questionText}</p>`;
+                options.forEach(opt => {
+                    html += `<label id="q${i}-${opt.letter}" data-letter="${opt.letter}" class="flex items-center gap-3 p-3 mb-2 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 hover:border-emerald-500/30 transition-all cursor-pointer"><input type="radio" name="q${i}" value="${opt.letter}" class="accent-emerald-500 w-5 h-5"><span class="text-sm text-slate-200">${opt.text}</span></label>`;
+                });
+                allOptions.push(options);
+                html += `</div>`;
+            });
+            html += `<button onclick="submitQuiz()" class="w-full mt-8 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-4 rounded-2xl shadow-xl shadow-emerald-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"><i data-lucide="check-circle" class="w-5 h-5 group-hover:scale-110 transition-transform"></i><span class="tracking-wide">Submit Assessment</span></button>`;
+            if (correctAnswers.length === 0) return requestAI("quiz");
+            window.correctAnswers = correctAnswers.slice(0, questions.length);
+            window.rationales = rationales.slice(0, questions.length);
+            window.allOptions = allOptions.slice(0, questions.length);
+            resultBox.innerHTML = html;
+            lucide.createIcons();
         }
 
         function submitQuiz() {
-    let score = 0;
-     if (!window.correctAnswers || window.correctAnswers.length === 0) {
-    return showToast("⚠️ Quiz not ready. Generate again.");
-     }
-            
-    const total = window.correctAnswers.length;
-    let resultHTML = "";
-
-    for (let i = 0; i < total; i++) {
-        const selected = document.querySelector(`input[name="q${i}"]:checked`);
-        const userAnswer = selected ? selected.value : null;
-        const correct = window.correctAnswers[i];
-        const options = window.allOptions[i] || [];
-
-        const correctText = options.find(opt => opt.letter === correct)?.text || "";
-        const userText = options.find(opt => opt.letter === userAnswer)?.text || "";
-        const explanation = window.rationales[i] || "";
-        
-            let fixedExplanation = explanation;
-            if (correct && explanation) {
-            fixedExplanation = explanation.replace(/correct answer is [A-D]/i, `correct answer is ${correct}`);
-         }
-
-        const isCorrect = userAnswer?.trim() === correct?.trim();
-        
-       const correctEl = document.getElementById(`q${i}-${correct}`);
-          if (correctEl) {
-             correctEl.classList.remove("bg-white", "dark:bg-slate-800");
-             correctEl.classList.add("bg-emerald-50", "dark:bg-emerald-500/20", "border-emerald-500", "ring-1", "ring-emerald-400");
-          }
-
-        if (userAnswer && userAnswer !== correct) {
-            const wrongEl = document.getElementById(`q${i}-${userAnswer}`);
-        if (wrongEl) {
-            wrongEl.classList.remove("bg-white", "dark:bg-slate-800");
-            wrongEl.classList.add("bg-red-50", "dark:bg-red-500/20", "border-red-400");
-       }
-    }
-
-         const inputs = document.querySelectorAll(`input[name="q${i}"]`);
-             inputs.forEach(input => { input.disabled = true; });
-
-        if (isCorrect) score++;
-
-        resultHTML += `
-        <div class="mb-4 p-4 rounded-xl border ${ isCorrect ? "bg-emerald-50/50 dark:bg-emerald-500/10 border-emerald-200 dark:border-emerald-500/30" : "bg-red-50/50 dark:bg-red-500/10 border-red-200 dark:border-red-500/30" }">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-bold text-slate-800 dark:text-white">Question ${i + 1}</span>
-                <span class="text-xs font-bold ${ isCorrect ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400" }">${isCorrect ? "✔ Correct" : "✖ Wrong"}</span>
-            </div>
-            ${ !isCorrect ? `<p class="text-xs text-slate-500 dark:text-slate-400 mb-1">Your Answer: ${ userAnswer ? userAnswer + " — " + userText : "Not answered" }</p>` : "" }
-            <p class="text-xs text-slate-700 dark:text-slate-300 mb-2">Correct Answer: <span class="font-semibold text-slate-900 dark:text-white">${correct} — ${correctText || "Option text missing"}</span></p>
-        ${ explanation ? `
-<div class="mt-3">
-    <button onclick="toggleExplanation(${i})" class="group flex items-center gap-1.5 px-2 py-1 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 text-xs font-medium">
-        <i id="toggle-icon-${i}" data-lucide="chevron-down" class="w-3 h-3 transition-transform"></i>
-        <span id="toggle-text-${i}">Show Explanation</span>
-    </button>
-    <div id="explanation-${i}" class="hidden mt-2 p-3 rounded-lg bg-white dark:bg-slate-900/50 border border-slate-100 dark:border-white/5 text-xs text-slate-600 dark:text-slate-400 leading-relaxed border-l-2 border-l-emerald-500">
-        ${fixedExplanation}
-    </div>
-</div>` : "" }
-        </div>`;
-    }
-
-    const percentageScore = total ? Math.round((score / total) * 100) : 0;
-
-    document.getElementById("result").innerHTML = `
-    <div class="w-full max-w-2xl mx-auto pb-8">
-        <div class="mb-6 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-center relative overflow-hidden">
-            <div class="absolute inset-0 bg-gradient-to-r from-emerald-500/10 to-transparent opacity-50"></div>
-            <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-1 relative z-10">${score} <span class="text-lg text-slate-400">/ ${total}</span></h2>
-            <p class="text-sm text-emerald-600 dark:text-emerald-400 font-bold tracking-widest uppercase relative z-10">Score: ${percentageScore}%</p>
-        </div>
-        ${resultHTML}
-        <button onclick="resetQuiz(event)" class="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3.5 rounded-xl transition-all shadow-md">
-            🔄 Start New Session
-        </button>
-    </div>`;
-    lucide.createIcons();
+            let score = 0;
+            if (!window.correctAnswers || window.correctAnswers.length === 0) return showToast("⚠️ Quiz not ready. Generate again.");
+            const total = window.correctAnswers.length;
+            let resultHTML = "";
+            for (let i = 0; i < total; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const userAnswer = selected ? selected.value : null;
+                const correct = window.correctAnswers[i];
+                const options = window.allOptions[i] || [];
+                const correctText = options.find(opt => opt.letter === correct)?.text || "";
+                const userText = options.find(opt => opt.letter === userAnswer)?.text || "";
+                const explanation = window.rationales[i] || "";
+                let fixedExplanation = explanation.replace(/correct answer is [A-D]/i, `correct answer is ${correct}`);
+                const isCorrect = userAnswer?.trim() === correct?.trim();
+                const correctEl = document.getElementById(`q${i}-${correct}`);
+                if (correctEl) { correctEl.classList.remove("bg-white/5"); correctEl.classList.add("bg-emerald-500/20", "border-emerald-500", "ring-2", "ring-emerald-400"); }
+                if (userAnswer && userAnswer !== correct) {
+                    const wrongEl = document.getElementById(`q${i}-${userAnswer}`);
+                    if (wrongEl) { wrongEl.classList.remove("bg-white/5"); wrongEl.classList.add("bg-red-500/20", "border-red-500"); }
+                }
+                const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+                inputs.forEach(input => input.disabled = true);
+                if (isCorrect) score++;
+                resultHTML += `<div class="mb-4 p-5 rounded-2xl border ${isCorrect ? "bg-emerald-500/10 border-emerald-500/30" : "bg-red-500/10 border-red-500/30"} shadow-lg"><div class="flex items-center justify-between mb-2"><span class="text-sm font-bold text-white">Question ${i+1}</span><span class="text-xs font-bold ${isCorrect ? "text-emerald-400" : "text-red-400"}">${isCorrect ? "✔ Correct" : "✖ Wrong"}</span></div>${!isCorrect ? `<p class="text-xs text-slate-400 mb-1">Your Answer: ${userAnswer ? userAnswer + " — " + userText : "Not answered"}</p>` : ""}<p class="text-xs text-slate-300 mb-2">Correct Answer: <span class="text-white font-semibold">${correct} — ${correctText || "Option text missing"}</span></p>${explanation ? `<div class="mt-4"><button onclick="toggleExplanation(${i})" class="group flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/5 border border-emerald-500/10 hover:bg-emerald-500/10 hover:border-emerald-500/30 transition-all duration-300"><i id="toggle-icon-${i}" data-lucide="chevron-down" class="w-3.5 h-3.5 text-emerald-400 transition-transform duration-300"></i><span id="toggle-text-${i}" class="text-[10px] font-black text-emerald-500/80 uppercase tracking-widest group-hover:text-emerald-400">Show Explanation</span></button><div id="explanation-${i}" class="hidden mt-3 p-4 rounded-2xl bg-slate-950/40 border border-white/5 shadow-inner transition-all duration-500 ease-in-out"><div class="flex gap-3"><div class="w-1 bg-emerald-500/30 rounded-full h-auto"></div><p class="text-xs text-slate-400 leading-relaxed font-medium">${fixedExplanation}</p></div></div></div>` : ""}</div>`;
+            }
+            const percentageScore = total ? Math.round((score / total) * 100) : 0;
+            document.getElementById("result").innerHTML = `<div class="max-w-2xl mx-auto"><div class="mb-6 p-6 rounded-2xl bg-slate-900/60 border border-white/5 shadow-xl text-center"><h2 class="text-2xl font-extrabold text-white mb-2">Score: ${score}/${total}</h2><p class="text-sm text-emerald-400 font-bold">${percentageScore}%</p></div>${resultHTML}<button onclick="resetQuiz(event)" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all">🔄 Try Again</button></div>`;
+            lucide.createIcons();
         }
-       
-      async function resetQuiz(event) {
-    const btn = event?.currentTarget;
-    const icon = btn?.querySelector("i");
-    if (icon) icon.classList.add("animate-spin");
-    await requestAI("quiz");
-    if (icon) icon.classList.remove("animate-spin");
-      }
+
+        async function resetQuiz(event) {
+            const btn = event?.currentTarget; const icon = btn?.querySelector("i"); const text = btn?.querySelector("span");
+            if (icon) icon.classList.add("animate-spin"); if (text) text.innerText = "Loading...";
+            await requestAI("quiz");
+            if (icon) icon.classList.remove("animate-spin"); if (text) text.innerText = "New Session";
+        }
 
         function toggleExplanation(i) {
-    const box = document.getElementById(`explanation-${i}`);
-    const text = document.getElementById(`toggle-text-${i}`);
-    const icon = document.getElementById(`toggle-icon-${i}`);
-    if (!box || !text) return;
-    if (box.classList.contains("hidden")) {
-        box.classList.remove("hidden");
-        text.innerText = "Hide Explanation";
-        if (icon) icon.classList.add("rotate-180");
-    } else {
-        box.classList.add("hidden");
-        text.innerText = "Show Explanation";
-        if (icon) icon.classList.remove("rotate-180");
-    }
+            const box = document.getElementById(`explanation-${i}`);
+            const text = document.getElementById(`toggle-text-${i}`);
+            const icon = document.getElementById(`toggle-icon-${i}`);
+            if (!box || !text) return;
+            if (box.classList.contains("hidden")) { box.classList.remove("hidden"); text.innerText = "Hide Explanation"; if (icon) icon.classList.add("rotate-180"); }
+            else { box.classList.add("hidden"); text.innerText = "Show Explanation"; if (icon) icon.classList.remove("rotate-180"); }
         }
 
         function togglePassword(id, btn) {
-    const input = document.getElementById(id);
-    const icon = btn.querySelector("i");
-    if (input.type === "password") {
-        input.type = "text";
-        icon.setAttribute("data-lucide", "eye-off");
-    } else {
-        input.type = "password";
-        icon.setAttribute("data-lucide", "eye");
-    }
-    lucide.createIcons();
+            const input = document.getElementById(id); const icon = btn.querySelector("i");
+            if (input.type === "password") { input.type = "text"; icon.setAttribute("data-lucide", "eye-off"); }
+            else { input.type = "password"; icon.setAttribute("data-lucide", "eye"); }
+            lucide.createIcons();
         }
 
-    async function forgotPassword() {
-    const email = document.getElementById("email").value;
-    if (!email) return showToast("⚠️ Enter your email first");
-    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + "/reset.html"
-    });
-    if (error) return showToast("❌ " + error.message);
-    showToast("📩 Reset link sent to your email");
-    }
+        async function forgotPassword() {
+            const email = document.getElementById("email").value;
+            if (!email) return showToast("⚠️ Enter your email first");
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + "/reset.html" });
+            if (error) return showToast("❌ " + error.message);
+            showToast("📩 Reset link sent to your email");
+        }
 
         (async () => {
-    await handleEmailRedirect();
-    const params = new URLSearchParams(window.location.search);
-       const email = params.get("email");
-if (email) {
-    const input = document.getElementById("email");
-    const pass = document.getElementById("password");
-    if (input) input.value = email;
-    if (pass) pass.focus();
-}
-        if (params.get("reset") === "success") showToast("✅ Password reset successful, please login");
-    if (params.get("verified")) showToast("✅ Email verified! Please login");
-    setTimeout(checkUser, 800);
-})();
+            await handleEmailRedirect();
+            const params = new URLSearchParams(window.location.search);
+            const email = params.get("email");
+            if (email) { document.getElementById("email").value = email; document.getElementById("password").focus(); }
+            if (params.get("reset") === "success") showToast("✅ Password reset successful, please login");
+            if (params.get("verified")) showToast("✅ Email verified! Please login");
+            setTimeout(checkUser, 800);
+        })();
     </script>
 </body>
 </html>
