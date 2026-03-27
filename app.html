@@ -240,7 +240,7 @@
 
             <main class="flex-1 flex flex-col h-full relative bg-transparent w-full">
                 
-                <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pb-56 sm:pb-48 w-full max-w-4xl mx-auto scroll-smooth">
+                <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pb-56 sm:pb-48 w-full max-w-4xl mx-auto scroll-smooth space-y-6">
                     <div class="h-full flex flex-col items-center justify-center text-center opacity-60">
                         <div class="bg-indigo-50 dark:bg-slate-800/50 p-5 rounded-full mb-5 border border-indigo-100 dark:border-white/5 shadow-inner">
                             <i data-lucide="message-square-dashed" class="w-10 h-10 text-indigo-500 dark:text-indigo-400"></i>
@@ -645,21 +645,30 @@ if (
         return showToast("⚠️ Enter a topic to analyze.");
     }
 
-    // 2️⃣ Thinking States (Skeleton Loader)
-    resultBox.innerHTML = `
-    <div class="flex flex-col gap-4 w-full animate-pulse mt-4">
-        <div class="flex items-start gap-4">
-            <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center shrink-0">
-                 <i data-lucide="brain-circuit" class="w-4 h-4 text-indigo-400"></i>
-            </div>
-            <div class="flex-1 space-y-3 py-1">
-                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-2/3"></div>
-                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-full"></div>
-                <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-5/6"></div>
-                <div class="h-24 bg-slate-200 dark:bg-slate-800 rounded w-full mt-4 border border-slate-100 dark:border-slate-700/50"></div>
-            </div>
-        </div>
-    </div>`;
+     // Add user message FIRST
+resultBox.innerHTML += `
+<div class="flex flex-col">
+    <div class="self-end bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-4 py-2 max-w-[80%] text-sm shadow">
+        ${topic}
+    </div>
+</div>
+`;
+
+// Add loading message
+const loadingId = "loading-" + Date.now();
+
+resultBox.innerHTML += `
+<div id="${loadingId}" class="flex items-start gap-3">
+    <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">AI</div>
+    <div class="bg-slate-900 text-slate-300 px-4 py-3 rounded-2xl max-w-[80%] text-sm animate-pulse">
+        Thinking...
+    </div>
+</div>
+`;
+
+// scroll down
+resultBox.scrollTop = resultBox.scrollHeight;
+
     lucide.createIcons();
     
     // Auto-scroll to bottom of chat
@@ -684,29 +693,24 @@ if (
 
         const data = await res.json();
         const raw = data.explanation || data.quiz || data.notes;
+        const loadingEl = document.getElementById(loadingId);
 
         if (!raw) throw new Error("Empty response");
 
         if (type === "quiz") {
-            renderQuiz(raw);
-        } else {
-            // 1️⃣ Chat UI Styling
-            resultBox.innerHTML = `
-            <div class="flex flex-col mb-6">
-                <div class="self-end bg-indigo-600 text-white rounded-2xl rounded-tr-sm px-5 py-3 mb-6 max-w-[85%] shadow-md">
-                    <p class="text-sm font-medium">${topic}</p>
-                </div>
-                <div class="flex items-start gap-3 w-full">
-                    <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 border border-indigo-200 dark:border-indigo-500/30 flex items-center justify-center shrink-0 shadow-sm mt-1">
-                         <i data-lucide="sparkles" class="w-4 h-4 text-indigo-600 dark:text-indigo-400"></i>
-                    </div>
-                    <div class="flex-1 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 rounded-2xl rounded-tl-sm shadow-sm markdown-content animate-fade-in text-slate-800 dark:text-slate-300">
-                        ${marked.parse(raw)}
-                    </div>
-                </div>
-            </div>`;
+    loadingEl.outerHTML = `<div class="text-sm text-slate-400">Rendering quiz...</div>`;
+    renderQuiz(raw);
+} else {
+    loadingEl.outerHTML = `
+    <div class="flex items-start gap-3">
+        <div class="w-8 h-8 rounded-full bg-indigo-500 flex items-center justify-center text-white text-xs">AI</div>
+        <div class="bg-slate-900 text-slate-300 px-4 py-3 rounded-2xl max-w-[80%] text-sm markdown-content">
+            ${marked.parse(raw)}
+        </div>
+    </div>
+    `;
         }
-
+        
     } catch (err) {
         resultBox.innerHTML = `
         <div class="flex flex-col items-center justify-center p-8 bg-red-50 dark:bg-red-500/10 rounded-2xl border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 mt-4">
@@ -1099,6 +1103,13 @@ if (email) {
     if (params.get("verified")) showToast("✅ Email verified! Please login");
     setTimeout(checkUser, 800);
 })();
+
+     document.getElementById("topic").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        requestAI("explain");
+    }
+});
     </script>
 </body>
 </html>
