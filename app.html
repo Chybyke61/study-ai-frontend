@@ -269,7 +269,7 @@
                         <div class="flex gap-2 overflow-x-auto hide-scrollbar max-w-full px-2">
                             <div class="flex items-center gap-1.5 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-[#444746] px-4 py-1.5 rounded-full text-xs whitespace-nowrap hover:bg-gray-50 dark:hover:bg-[#282a2c] cursor-pointer transition-colors">
                                 <i data-lucide="file-text" class="w-3.5 h-3.5 text-gray-500 dark:text-gray-400"></i>
-                                <select id="bookSelector" class="bg-transparent text-gray-700 dark:text-gray-200 font-medium appearance-none focus:outline-none cursor-pointer pr-2 max-w-[120px] sm:max-w-[200px] truncate">
+                                <select id="bookSelector" onchange="handleBookChange(this)" class="bg-transparent text-gray-700 dark:text-gray-200 font-medium appearance-none focus:outline-none cursor-pointer pr-2 max-w-[120px] sm:max-w-[200px] truncate">
                                     <option value="all">All Files</option>
                                 </select>
                             </div>
@@ -551,7 +551,15 @@ window.location.href = "/dashboard";
             });
 
 const savedBook = localStorage.getItem("selectedBook");
-if (savedBook) selector.value = savedBook;
+
+if (savedBook && [...selector.options].some(opt => opt.value === savedBook)) {
+    selector.value = savedBook;
+} else {
+    selector.value = "all";
+}
+            if (!selector.value) {
+    selector.value = "all";
+            }
             lucide.createIcons();
         }
 
@@ -1227,6 +1235,11 @@ window.addEventListener("resize", adjustChatPadding);
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("topic")?.addEventListener("input", adjustChatPadding);
 });
+
+        function handleBookChange(select) {
+    const value = select.value;
+    localStorage.setItem("selectedBook", value);
+        }
        
     </script>
 </body>
