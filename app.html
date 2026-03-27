@@ -1202,9 +1202,9 @@ window.addEventListener("focusin", () => {
 window.addEventListener("focusout", () => {
     setTimeout(adjustChatPadding, 300);
 });
-</script>
+   
 
-        <script>
+        
 function adjustChatPadding() {
     const inputBar = document.getElementById("inputBar");
     const result = document.getElementById("result");
@@ -1224,8 +1224,10 @@ window.addEventListener("load", adjustChatPadding);
 window.addEventListener("resize", adjustChatPadding);
 
 // Run after typing (input grows)
-document.getElementById("topic")?.addEventListener("input", adjustChatPadding);
-</script>
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("topic")?.addEventListener("input", adjustChatPadding);
+});
+       
     </script>
 </body>
 </html>
