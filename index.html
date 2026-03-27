@@ -69,15 +69,6 @@
             border: 1px solid rgba(255, 255, 255, 0.08); 
         }
 
-        .text-gradient {
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        /* Light & Dark Gradients */
-        .light .text-gradient { background: linear-gradient(135deg, #0f172a 0%, #475569 100%); }
-        .dark .text-gradient { background: linear-gradient(135deg, #f8fafc 0%, #94a3b8 100%); }
-
         .btn-emerald { 
             background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
             transition: all 0.3s ease;
@@ -120,9 +111,13 @@
         <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 dark:text-emerald-400 text-xs font-bold tracking-widest uppercase mb-8 shadow-sm">
             <i data-lucide="sparkles" class="w-3 h-3"></i> The Future of Learning
         </div>
-        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] text-gradient mb-6 leading-tight">
-            Turn your textbooks <br>into <span class="text-emerald-500 dark:text-emerald-400">Intelligence.</span>
-        </h1>
+        <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight font-['Plus_Jakarta_Sans'] mb-6 leading-tight">
+    <span class="bg-gradient-to-br from-slate-900 to-slate-500 dark:from-slate-50 dark:to-slate-400 bg-clip-text text-transparent">
+        Turn your textbooks <br>into
+    </span> 
+    <span class="text-emerald-500 dark:text-emerald-400">Intelligence.</span>
+</h1>
+
         <p class="text-slate-600 dark:text-slate-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
             Index your study materials and let AI generate summaries, quizzes, and instant answers. Study smarter, not harder.
         </p>
