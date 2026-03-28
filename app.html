@@ -206,7 +206,13 @@
 
         <div class="flex-1 flex flex-row w-full overflow-hidden relative pt-16">
              
-            <aside id="sidebar" class="absolute lg:relative z-40 w-72 h-full flex flex-col gap-2 p-3 bg-white dark:bg-[#131314] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 overflow-y-auto custom-scrollbar">
+            <aside id="sidebar" class="fixed top-16 left-0 z-40 w-72 
+h-[calc(100vh-4rem)] 
+flex flex-col gap-2 p-3 
+bg-white/70 dark:bg-[#131314]/70 backdrop-blur-xl
+transform -translate-x-full lg:translate-x-0 
+transition-transform duration-300 ease-in-out 
+overflow-y-auto custom-scrollbar">
                 
                 <div class="flex justify-between items-center lg:hidden mb-2 px-2">
                     <h2 class="font-medium text-slate-900 dark:text-white font-display">Menu</h2>
@@ -248,7 +254,7 @@
 
             <div id="sidebarOverlay" class="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-30 hidden lg:hidden"></div>
 
-            <main class="flex-1 flex flex-col h-full bg-white dark:bg-[#131314] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-gray-100 dark:lg:border-[#282a2c] overflow-hidden">
+            <main class="flex-1 flex flex-col h-full ml-0 lg:ml-72 bg-white dark:bg-[#131314] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-gray-100 dark:lg:border-[#282a2c] overflow-hidden">
                 
                 <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 w-full max-w-4xl mx-auto scroll-smooth">
                     <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center opacity-80">
