@@ -172,31 +172,39 @@
 
     <div id="appContainer" class="hidden flex-1 flex flex-col h-[100dvh] overflow-hidden">
         
-        <nav class="bg-white dark:bg-[#131314] px-4 sm:px-6 h-16 flex justify-between items-center shrink-0 z-50">
-            <div class="flex items-center gap-3">
-                <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1e1f20] rounded-full transition-colors">
-                    <i data-lucide="menu" class="w-5 h-5"></i>
-                </button>
-                <h1 class="text-xl font-medium tracking-tight text-slate-900 dark:text-white font-display flex items-center gap-2">
-                    <i data-lucide="brain-circuit" class="w-5 h-5 text-[#4285f4] dark:text-[#a8c7fa] hidden sm:block"></i>
-                    Study.AI
-                </h1>
-            </div>
-            
-            <div class="flex items-center gap-2">
-                <button onclick="toggleTheme()" class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#1e1f20] transition-all text-gray-600 dark:text-gray-300" title="Toggle Theme">
-                    <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
-                </button>
-                <button onclick="loadBooks()" class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#1e1f20] transition-all text-gray-600 dark:text-gray-300" title="Sync Library">
-                    <i data-lucide="refresh-cw" class="w-5 h-5"></i>
-                </button>
-                <button onclick="logout()" class="ml-2 w-8 h-8 bg-gray-200 dark:bg-[#282a2c] hover:bg-gray-300 dark:hover:bg-[#333537] text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center transition-all" title="Logout">
-                    <i data-lucide="user" class="w-4 h-4"></i>
-                </button>
-            </div>
+        <nav class="fixed top-0 left-0 w-full 
+    bg-white/70 dark:bg-[#131314]/70 
+    backdrop-blur-xl 
+    px-4 sm:px-6 h-16 
+    flex justify-between items-center 
+    z-[1000] 
+    border-b border-gray-200/50 dark:border-[#2a2a2a]/50">
+    
+    <div class="flex items-center gap-3">
+        <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-[#1e1f20] rounded-full transition-colors">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <h1 class="text-xl font-medium tracking-tight text-slate-900 dark:text-white font-display flex items-center gap-2">
+            <i data-lucide="brain-circuit" class="w-5 h-5 text-[#4285f4] dark:text-[#a8c7fa] hidden sm:block"></i>
+            Study.AI
+        </h1>
+    </div>
+    
+    <div class="flex items-center gap-2">
+        <button onclick="toggleTheme()" class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#1e1f20] transition-all text-gray-600 dark:text-gray-300" title="Toggle Theme">
+            <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
+        </button>
+        <button onclick="loadBooks()" class="p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-[#1e1f20] transition-all text-gray-600 dark:text-gray-300" title="Sync Library">
+            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+        </button>
+        <button onclick="logout()" class="ml-2 w-8 h-8 bg-gray-200 dark:bg-[#282a2c] hover:bg-gray-300 dark:hover:bg-[#333537] text-gray-700 dark:text-gray-200 rounded-full flex items-center justify-center transition-all" title="Logout">
+            <i data-lucide="user" class="w-4 h-4"></i>
+        </button>
+    </div>
         </nav>
+        
 
-        <div class="flex-1 flex flex-row w-full overflow-hidden relative">
+        <div class="flex-1 flex flex-row w-full overflow-hidden relative pt-16">
              
             <aside id="sidebar" class="absolute lg:relative z-40 w-72 h-full flex flex-col gap-2 p-3 bg-white dark:bg-[#131314] transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shrink-0 overflow-y-auto custom-scrollbar">
                 
