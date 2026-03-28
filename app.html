@@ -280,7 +280,7 @@ overflow-y-auto custom-scrollbar">
 
             <main class="flex-1 flex flex-col h-full ml-0 lg:ml-72 bg-white dark:bg-[#131314] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-gray-100 dark:lg:border-[#282a2c] overflow-hidden">
                 
-                <div id="result" class="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 w-full max-w-4xl mx-auto scroll-smooth">
+                <div id="result" class="flex-1 h-full overflow-y-auto custom-scrollbar p-4 lg:p-8 w-full max-w-4xl mx-auto scroll-smooth">
                     <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center opacity-80">
                         <div class="p-4 rounded-full mb-4 bg-gradient-to-tr from-blue-50 to-purple-50 dark:from-[#1e1f20] dark:to-[#282a2c]">
                             <i data-lucide="brain-circuit" class="w-12 h-12 text-[#4285f4] dark:text-[#a8c7fa]"></i>
@@ -1290,7 +1290,7 @@ window.addEventListener("resize", adjustChatPadding);
 
  // Auto-scroll when keyboard opens/closes
 window.addEventListener("resize", () => {
-    setTimeout(scrollToBottom, 100);
+    setTimeout(() => scrollToBottom(true), 100);
 });
 
 // Run after typing (input grows)
