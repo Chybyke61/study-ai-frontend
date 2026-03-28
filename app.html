@@ -127,7 +127,18 @@
         </div>
     </div>
 
-    <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-4">
+    <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-4 relative">
+        <button onclick="goToLanding()" 
+    class="p-2.5 rounded-full 
+    text-gray-600 dark:text-gray-300
+    hover:bg-gray-100 dark:hover:bg-[#1e1f20] 
+    hover:text-slate-900 dark:hover:text-white
+    active:scale-90 transition-all duration-200 flex items-center justify-center"
+    title="Back to Home">
+
+    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+</button>
+
         <div class="bg-white dark:bg-[#1e1f20] rounded-3xl p-10 w-full max-w-[420px] shadow-sm border border-gray-100 dark:border-[#282a2c]">
             <div class="text-center mb-8">
                 <i data-lucide="brain-circuit" class="mx-auto text-[#4285f4] dark:text-[#a8c7fa] w-10 h-10 mb-4"></i>
@@ -537,6 +548,10 @@ window.location.href = "/dashboard";
     document.getElementById("loginScreen").classList.remove("hidden");
     document.getElementById("appContainer").classList.add("hidden");
     showToast("Logged out");
+        }
+
+        function goToLanding() {
+    window.location.href = "/";
         }
 
         // --- LIBRARY ---
