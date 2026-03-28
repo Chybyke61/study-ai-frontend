@@ -779,10 +779,10 @@ if (
     resultBox.insertAdjacentHTML('beforeend', loadingHtml);
 lucide.createIcons();
 
-// 🔥 Better scroll timing
-setTimeout(() => {
-    scrollToBottom();
-}, 50);
+//Better scroll timing
+requestAnimationFrame(() => {
+    scrollToBottom(true);
+});
             
     try {
         const endpoint = type === 'explain' ? 'deep-explain' : type;
@@ -846,10 +846,7 @@ setTimeout(() => {
         resultBox.insertAdjacentHTML('beforeend', errorHtml);
     }
     lucide.createIcons();
-    setTimeout(() => { resultBox.scrollTo({
-    top: resultBox.scrollHeight,
-    behavior: "smooth"
-}); }, 100);
+   
         }
 
     async function runFlashcards(event) {
@@ -1400,8 +1397,8 @@ function submitModeRequest(event) {
     input.value = "";
 
     // Delay scroll so loader can render first
-    setTimeout(scrollToBottom, 100);
-
+    setTimeout(() => scrollToBottom(true), 50);
+    
     // Disable button
     if (sendBtn) {
         sendBtn.disabled = true;
@@ -1477,14 +1474,20 @@ function submitModeRequest(event) {
         if (overlay) overlay.classList.add('hidden');
     }
         }
-        function scrollToBottom() {
+        
+        function scrollToBottom(force = false) {
     const chat = document.getElementById("result");
     if (!chat) return;
 
-    chat.scrollTo({
-        top: chat.scrollHeight,
-        behavior: "smooth"
-    });
+    // 🔥 Force instant scroll (more reliable on mobile)
+    if (force) {
+        chat.scrollTop = chat.scrollHeight;
+    } else {
+        chat.scrollTo({
+            top: chat.scrollHeight,
+            behavior: "smooth"
+        });
+    }
         }
        
     </script>
