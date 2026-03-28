@@ -1235,7 +1235,7 @@ if (/correct answer|answer|option/i.test(line)) {
     const email = document.getElementById("email").value;
     if (!email) return showToast("Enter your email first");
     const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + "/reset.html"
+        redirectTo: window.location.origin + "/reset"
     });
     if (error) return showToast(error.message);
     showToast("Reset link sent");
