@@ -743,8 +743,8 @@ if (
         }
 
         // --- AI ---
-        async function requestAI(type) {
-    const topic = document.getElementById("topic").value;
+        async function requestAI(type, overrideTopic = null) {
+    const topic = overrideTopic || document.getElementById("topic").value;
     const uniqueTopic = topic + " (variation " + Date.now() + ")";
     const resultBox = document.getElementById("result");
 
@@ -1403,7 +1403,7 @@ function submitModeRequest(event) {
     if (currentSelectedMode === 'flashcards') {
         runFlashcards(event).finally(() => unlockUI(sendBtn));
     } else {
-        requestAI(currentSelectedMode).finally(() => unlockUI(sendBtn));
+        requestAI(currentSelectedMode, value).finally(() => unlockUI(sendBtn));
     }
 }
         function unlockUI(sendBtn) {
