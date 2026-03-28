@@ -1392,6 +1392,7 @@ function submitModeRequest(event) {
 
     // Clear input immediately
     input.value = "";
+    scrollToBottom();
 
     // Disable button
     if (sendBtn) {
@@ -1468,7 +1469,15 @@ function submitModeRequest(event) {
         if (overlay) overlay.classList.add('hidden');
     }
         }
-        
+        function scrollToBottom() {
+    const chat = document.getElementById("result");
+    if (!chat) return;
+
+    chat.scrollTo({
+        top: chat.scrollHeight,
+        behavior: "smooth"
+    });
+        }
        
     </script>
     <div id="modeMenu" 
