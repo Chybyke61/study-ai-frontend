@@ -414,6 +414,12 @@ overflow-y-auto custom-scrollbar">
 
             // Load persisted chat
             loadChatHistory();
+            document.getElementById("topic").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        submitModeRequest({ currentTarget: document.querySelector("button[onclick*='submitModeRequest']") });
+    }
+});
         });
 
         const api = "https://study-ai-tq7i.onrender.com";
@@ -1370,23 +1376,45 @@ function selectMode(value, iconName, label) {
 }
 
 // Routes the primary "Send" button to the correctly selected function
+
+let isSending = false;
+
 function submitModeRequest(event) {
+    const input = document.getElementById("topic");
+    const sendBtn = event?.currentTarget;
+
+    const value = input.value.trim();
+    if (!value) return showToast("Enter a topic");
+
+    // Prevent spam
+    if (isSending) return;
+    isSending = true;
+
+    // Clear input immediately
+    input.value = "";
+
+    // Disable button
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.classList.add("opacity-50", "cursor-not-allowed");
+    }
+
+    // Route request
     if (currentSelectedMode === 'flashcards') {
-        runFlashcards(event);
+        runFlashcards(event).finally(() => unlockUI(sendBtn));
     } else {
-        requestAI(currentSelectedMode);
+        requestAI(currentSelectedMode).finally(() => unlockUI(sendBtn));
     }
 }
+        function unlockUI(sendBtn) {
+    isSending = false;
 
-// Close the dropdown if the user clicks anywhere outside of it
-document.addEventListener('click', (event) => {
-    const btn = document.getElementById('modeBtn');
-    const menu = document.getElementById('modeMenu');
-    if (isModeMenuOpen && btn && menu && !btn.contains(event.target) && !menu.contains(event.target)) {
-        toggleModeMenu();
+    if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.classList.remove("opacity-50", "cursor-not-allowed");
     }
-});
-
+        }
+        
         function startNewChat() {
     console.log("🆕 New chat started");
 
