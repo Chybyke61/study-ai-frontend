@@ -221,6 +221,19 @@ overflow-y-auto custom-scrollbar">
                     </button>
                 </div>
 
+                <button onclick="startNewChat()"
+    class="w-full flex items-center justify-center gap-2.5 px-4 py-3 mb-6 rounded-2xl 
+    bg-[#0b57d0] dark:bg-[#a8c7fa] 
+    text-white dark:text-[#051e49] 
+    text-sm font-medium shadow-sm
+    hover:bg-[#0842a0] dark:hover:bg-[#d2e3fc] 
+    hover:shadow-md active:scale-[0.97] transition-all duration-200 group">
+
+    <i data-lucide="plus" class="w-5 h-5 transition-transform group-hover:rotate-90"></i>
+    <span>New Chat</span>
+                </button>
+                
+
                 <div class="bg-[#f0f4f9] dark:bg-[#1e1f20] rounded-3xl p-4 mb-2">
                     <h3 class="text-sm font-medium text-gray-700 dark:text-gray-200 mb-3 flex items-center gap-2 px-1">
                          <i data-lucide="plus" class="w-4 h-4"></i> Add Material
@@ -1358,6 +1371,60 @@ document.addEventListener('click', (event) => {
         toggleModeMenu();
     }
 });
+
+        function startNewChat() {
+    console.log("🆕 New chat started");
+
+    const result = document.getElementById("result");
+    if (result) {
+        result.innerHTML = `
+        <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center py-20 px-4">
+            <div class="p-6 rounded-3xl mb-6 bg-gray-50 dark:bg-[#1e1f20] border border-gray-100 dark:border-[#2a2a2a] shadow-sm animate-in fade-in zoom-in duration-500">
+                <i data-lucide="brain-circuit" class="w-12 h-12 text-[#4285f4] dark:text-[#a8c7fa]"></i>
+            </div>
+            <h4 class="text-3xl font-medium tracking-tight text-slate-900 dark:text-white mb-3">
+                Hello, <span class="text-[#4285f4] dark:text-[#a8c7fa]">how can I help?</span>
+            </h4>
+            <p class="max-w-md mx-auto text-base text-gray-500 dark:text-gray-400 leading-relaxed">
+                Choose a mode below, select your document, and let's start learning together.
+            </p>
+        </div>`;
+    }
+
+    const input = document.getElementById("topic");
+    if (input) {
+        input.value = "";
+        input.focus();
+    }
+
+    // 🔥 Reset mode logic
+    currentSelectedMode = 'explain';
+
+    const modeLabel = document.getElementById("modeLabel");
+    if (modeLabel) modeLabel.innerText = "Explain";
+
+    const iconEl = document.getElementById('modeIcon');
+    if (iconEl) {
+        const newIcon = document.createElement('i');
+        newIcon.id = 'modeIcon';
+        newIcon.setAttribute('data-lucide', 'brain-circuit');
+        newIcon.className = 'w-3.5 h-3.5 text-[#4285f4] dark:text-[#a8c7fa]';
+        iconEl.parentNode.replaceChild(newIcon, iconEl);
+    }
+
+    localStorage.removeItem("studyai_chat_history");
+
+    lucide.createIcons();
+
+    // 🔥 Safe mobile sidebar close
+    if (window.innerWidth < 1024) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (sidebar) sidebar.classList.add('-translate-x-full');
+        if (overlay) overlay.classList.add('hidden');
+    }
+        }
         
        
     </script>
