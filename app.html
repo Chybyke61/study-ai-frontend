@@ -777,12 +777,13 @@ if (
     </div>`;
     
     resultBox.insertAdjacentHTML('beforeend', loadingHtml);
-    lucide.createIcons();
-    resultBox.scrollTo({
-    top: resultBox.scrollHeight,
-    behavior: "smooth"
-});
+lucide.createIcons();
 
+// 🔥 Better scroll timing
+setTimeout(() => {
+    scrollToBottom();
+}, 50);
+            
     try {
         const endpoint = type === 'explain' ? 'deep-explain' : type;
 
@@ -1290,6 +1291,11 @@ window.addEventListener("load", adjustChatPadding);
 // Run on resize (VERY IMPORTANT for mobile)
 window.addEventListener("resize", adjustChatPadding);
 
+ // Auto-scroll when keyboard opens/closes
+window.addEventListener("resize", () => {
+    setTimeout(scrollToBottom, 100);
+});
+
 // Run after typing (input grows)
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("topic")?.addEventListener("input", adjustChatPadding);
@@ -1392,7 +1398,9 @@ function submitModeRequest(event) {
 
     // Clear input immediately
     input.value = "";
-    scrollToBottom();
+
+    // Delay scroll so loader can render first
+    setTimeout(scrollToBottom, 100);
 
     // Disable button
     if (sendBtn) {
