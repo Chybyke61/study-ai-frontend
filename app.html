@@ -290,7 +290,7 @@
                                 <div class="flex gap-1 overflow-x-auto hide-scrollbar">
                                     <div class="flex justify-between items-center mt-2 px-2 pb-1 relative">
     
-    <div class="flex gap-1 overflow-visible relative">
+    <div class="flex gap-1">
         
         <button id="modeBtn" onclick="toggleModeMenu(event)" type="button"
             class="flex items-center gap-2 px-4 py-1.5 rounded-full 
@@ -303,38 +303,9 @@
             <i id="modeChevron" data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60 transition-transform duration-200"></i>
         </button>
 
-        <div id="modeMenu" 
-            class="absolute bottom-10 left-0 w-44 
-            bg-white dark:bg-[#1e1f20] 
-            border border-gray-200 dark:border-[#2a2a2a] 
-            rounded-2xl shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] dark:shadow-none
-            opacity-0 scale-95 pointer-events-none 
-            transition-all duration-200 origin-bottom-left z-50">
+        
 
-            <div class="p-1.5 space-y-0.5 flex flex-col">
-
-                <button onclick="selectMode('explain','brain-circuit','Explain')" 
-                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
-                    <i data-lucide="brain-circuit" class="w-4 h-4 text-[#4285f4] dark:text-[#a8c7fa]"></i> Explain
-                </button>
-
-                <button onclick="selectMode('quiz','help-circle','Quiz')" 
-                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
-                    <i data-lucide="help-circle" class="w-4 h-4 text-[#ea4335] dark:text-[#f28b82]"></i> Quiz
-                </button>
-
-                <button onclick="selectMode('notes','align-left','Notes')" 
-                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
-                    <i data-lucide="align-left" class="w-4 h-4 text-[#fbbc04] dark:text-[#fde293]"></i> Notes
-                </button>
-
-                <button onclick="selectMode('flashcards','layers','Flashcards')" 
-                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
-                    <i data-lucide="layers" class="w-4 h-4 text-[#9b72cb] dark:text-[#d7bcfb]"></i> Flashcards
-                </button>
-
-            </div>
-        </div>
+            
     </div>
     
     <button onclick="submitModeRequest(event)" class="ml-2 w-10 h-10 bg-[#0b57d0] dark:bg-[#a8c7fa] hover:bg-[#0842a0] dark:hover:bg-[#8ab4f8] text-white dark:text-[#051e49] rounded-full flex items-center justify-center transition-all active:scale-95 shadow-sm shrink-0">
@@ -1282,7 +1253,7 @@ document.addEventListener("DOMContentLoaded", () => {
         let currentSelectedMode = 'explain';
 let isModeMenuOpen = false;
 
-function toggleModeMenu(e) {
+/*function toggleModeMenu(e) {
     if (e) e.stopPropagation();
     const menu = document.getElementById('modeMenu');
     const chevron = document.getElementById('modeChevron');
@@ -1296,6 +1267,39 @@ function toggleModeMenu(e) {
         menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
         menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
         if (chevron) chevron.classList.remove('rotate-180');
+    }
+}*/
+
+function toggleModeMenu(e) {
+    if (e) e.stopPropagation();
+
+    const menu = document.getElementById("modeMenu");
+    const btn = document.getElementById("modeBtn");
+    const chevron = document.getElementById("modeChevron");
+
+    const rect = btn.getBoundingClientRect();
+
+    const menuHeight = 180;
+    const spaceAbove = rect.top;
+
+    if (spaceAbove < menuHeight) {
+        menu.style.top = (rect.bottom + 8) + "px";
+    } else {
+        menu.style.top = (rect.top - menuHeight - 8) + "px";
+    }
+
+    menu.style.left = rect.left + "px";
+
+    isModeMenuOpen = !isModeMenuOpen;
+
+    if (isModeMenuOpen) {
+        menu.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+        menu.classList.add("opacity-100", "scale-100", "pointer-events-auto");
+        if (chevron) chevron.classList.add("rotate-180");
+    } else {
+        menu.classList.add("opacity-0", "scale-95", "pointer-events-none");
+        menu.classList.remove("opacity-100", "scale-100", "pointer-events-auto");
+        if (chevron) chevron.classList.remove("rotate-180");
     }
 }
 
@@ -1341,5 +1345,36 @@ document.addEventListener('click', (event) => {
         
        
     </script>
+    <div id="modeMenu" 
+            class="fixed z-[9999] w-44 
+            bg-white dark:bg-[#1e1f20] 
+            border border-gray-200 dark:border-[#2a2a2a] 
+            rounded-2xl shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] dark:shadow-none
+            opacity-0 scale-95 pointer-events-none 
+            transition-all duration-200 origin-bottom-left z-50">
+    <div class="p-1.5 space-y-0.5 flex flex-col">
+
+                <button onclick="selectMode('explain','brain-circuit','Explain')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
+                    <i data-lucide="brain-circuit" class="w-4 h-4 text-[#4285f4] dark:text-[#a8c7fa]"></i> Explain
+                </button>
+
+                <button onclick="selectMode('quiz','help-circle','Quiz')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-[#ea4335] dark:text-[#f28b82]"></i> Quiz
+                </button>
+
+                <button onclick="selectMode('notes','align-left','Notes')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
+                    <i data-lucide="align-left" class="w-4 h-4 text-[#fbbc04] dark:text-[#fde293]"></i> Notes
+                </button>
+
+                <button onclick="selectMode('flashcards','layers','Flashcards')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-[#282a2c] transition-colors">
+                    <i data-lucide="layers" class="w-4 h-4 text-[#9b72cb] dark:text-[#d7bcfb]"></i> Flashcards
+                </button>
+
+            </div>
+</div>
 </body>
 </html>
