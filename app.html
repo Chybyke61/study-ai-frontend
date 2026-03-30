@@ -405,6 +405,7 @@ overflow-y-auto custom-scrollbar">
 
             // Load persisted chat
             loadChatHistory();
+            renderChatList();
             document.getElementById("topic").addEventListener("keydown", function(e) {
                 if (e.key === "Enter") {
                     e.preventDefault();
