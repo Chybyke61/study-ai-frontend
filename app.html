@@ -1,0 +1,1504 @@
+<!DOCTYPE html>
+<html lang="en" class="dark"> <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study.AI | Premium Learning Copilot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    
+    <script>
+        // Check local storage for theme preference before page loads to prevent flashing
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        }
+        
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            darkBg: '#0f172a', /* Slate 900 */
+                            darkSurface: '#1e293b', /* Slate 800 */
+                            lightBg: '#ffffff',
+                            lightSurface: '#f8fafc', /* Slate 50 */
+                            primary: '#818cf8', /* Indigo 400 */
+                            primaryDark: '#4f46e5', /* Indigo 600 */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif;
+            background-attachment: fixed;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        /* Brand Dark Mode Background */
+        .dark body {
+            background-color: #0f172a; 
+            color: #e2e8f0;
+        }
+        
+        /* Brand Light Mode Background */
+        body {
+            background-color: #ffffff;
+            color: #0f172a;
+        }
+
+        .glass-card { 
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .dark .glass-card {
+            background: #1e293b; 
+            border: none; 
+        }
+        .glass-card {
+            background: #f8fafc;
+            border: none;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Chat UI Markdown Styling - Brand Style */
+        .markdown-content h1, .markdown-content h2 { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin-top: 1.5rem; 
+            padding-bottom: 0.5rem; 
+            font-weight: 600;
+        }
+        .dark .markdown-content h1, .dark .markdown-content h2 { color: #f8fafc; }
+        .markdown-content h1, .markdown-content h2 { color: #0f172a; }
+        
+        .dark .markdown-content p, .dark .markdown-content ul { color: #cbd5e1; }
+        .markdown-content p, .markdown-content ul { color: #334155; margin-bottom: 1rem; line-height: 1.6; font-size: 1rem; }
+        .markdown-content ul { list-style: disc; padding-left: 1.5rem; }
+        
+        .dark .markdown-content code { background: #334155; color: #818cf8; padding: 0.2rem 0.4rem; border-radius: 6px; font-family: monospace; }
+        .markdown-content code { background: #e0e7ff; color: #4f46e5; padding: 0.2rem 0.4rem; border-radius: 6px; font-family: monospace; }
+
+        /* ===== FLASHCARD 3D SYSTEM ===== */
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+        .flashcard-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
+        .flashcard.flipped .flashcard-inner { transform: rotateY(180deg); }
+        
+        /* Sparkle gradient text for AI */
+        .brand-text {
+            background: -webkit-linear-gradient(45deg, #6366f1, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+
+   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+</head>
+<body class="min-h-[100dvh] flex flex-col transition-colors duration-300">
+
+    <div id="loadingScreen" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white dark:bg-[#0f172a] transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+            <div class="relative flex items-center justify-center w-16 h-16 mb-6">
+                <i data-lucide="brain-circuit" class="w-10 h-10 text-[#6366f1] dark:text-[#818cf8] animate-pulse"></i>
+            </div>
+            <h2 class="text-2xl font-medium tracking-tight text-slate-900 dark:text-white mb-4 font-display">Study.AI</h2>
+            <div class="flex items-center gap-2 mb-4">
+                <div class="w-1.5 h-1.5 rounded-full bg-[#6366f1] dark:bg-[#818cf8] animate-bounce" style="animation-delay: 0s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-[#ec4899] animate-bounce" style="animation-delay: 0.15s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-bounce" style="animation-delay: 0.3s;"></div>
+            </div>
+            <p class="text-xs font-medium text-slate-500 dark:text-slate-400">Loading workspace...</p>
+        </div>
+    </div>
+
+    <div id="loginScreen" class="hidden min-h-screen flex items-center justify-center p-4 relative">
+        <button onclick="goToLanding()" 
+    class="p-2.5 rounded-full 
+    text-slate-600 dark:text-slate-300
+    hover:bg-slate-100 dark:hover:bg-[#1e293b] 
+    hover:text-slate-900 dark:hover:text-white
+    active:scale-90 transition-all duration-200 flex items-center justify-center"
+    title="Back to Home">
+
+    <i data-lucide="arrow-left" class="w-5 h-5"></i>
+</button>
+
+        <div class="bg-white dark:bg-[#1e293b] rounded-3xl p-10 w-full max-w-[420px] shadow-sm border border-slate-100 dark:border-[#334155]">
+            <div class="text-center mb-8">
+                <i data-lucide="brain-circuit" class="mx-auto text-[#6366f1] dark:text-[#818cf8] w-10 h-10 mb-4"></i>
+                <h2 class="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white mb-2 font-display">Sign in</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">to continue to Study.AI</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <input id="email" type="email" placeholder="Email address" class="w-full px-5 py-3.5 rounded-xl bg-transparent border border-slate-300 dark:border-[#475569] text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-[#4f46e5] dark:focus:border-[#818cf8] focus:ring-1 focus:ring-[#4f46e5] dark:focus:ring-[#818cf8] transition-all text-sm">
+                </div>
+                <div class="relative">
+                    <input id="password" type="password" placeholder="Password" class="w-full px-5 py-3.5 rounded-xl bg-transparent border border-slate-300 dark:border-[#475569] text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:border-[#4f46e5] dark:focus:border-[#818cf8] focus:ring-1 focus:ring-[#4f46e5] dark:focus:ring-[#818cf8] transition-all text-sm">
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                        <i data-lucide="eye" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                
+                <div class="flex justify-end">
+                    <p onclick="forgotPassword()" class="text-xs text-[#4f46e5] dark:text-[#818cf8] font-medium cursor-pointer hover:underline transition-colors">Forgot password?</p>
+                </div>
+                
+                <div class="mt-4 p-4 rounded-xl flex flex-col items-center justify-center">
+                    <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="auto" data-appearance="always" data-compact="false"></div>
+                </div>
+
+                <div class="pt-4 flex flex-col gap-3">
+                    <button onclick="login()" class="w-full bg-[#4f46e5] dark:bg-[#6366f1] hover:bg-[#4338ca] dark:hover:bg-[#4f46e5] text-white font-medium py-3 rounded-full transition-all active:scale-95 text-sm shadow-sm">Next</button>
+                    
+                    <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-transparent border border-slate-300 dark:border-[#475569] hover:bg-slate-50 dark:hover:bg-[#334155] text-slate-700 dark:text-white font-medium py-3 rounded-full transition-all active:scale-95 gap-3 group text-sm">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4">
+                        <span>Continue with Google</span>
+                    </button>
+
+                    <a href="/signup" class="w-full text-center text-[#4f46e5] dark:text-[#818cf8] hover:underline font-medium py-2 transition-all text-sm mt-2">
+                        Create account
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="appContainer" class="hidden flex-1 flex flex-col h-[100dvh] overflow-hidden">
+        
+        <nav class="fixed top-0 left-0 w-full 
+    bg-white/70 dark:bg-[#0f172a]/70 
+    backdrop-blur-xl 
+    px-4 sm:px-6 h-16 
+    flex justify-between items-center 
+    z-[1000] 
+    border-b border-slate-200/50 dark:border-[#1e293b]/50">
+    
+    <div class="flex items-center gap-3">
+        <button id="mobileMenuBtn" class="lg:hidden p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1e293b] rounded-full transition-colors">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+        </button>
+        <h1 class="text-xl font-semibold tracking-tight text-slate-900 dark:text-white font-display flex items-center gap-2">
+            <i data-lucide="brain-circuit" class="w-5 h-5 text-[#4f46e5] dark:text-[#818cf8] hidden sm:block"></i>
+            Study.AI
+        </h1>
+    </div>
+    
+    <div class="flex items-center gap-2">
+        <button onclick="toggleTheme()" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-all text-slate-600 dark:text-slate-300" title="Toggle Theme">
+            <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
+        </button>
+        <button onclick="loadBooks()" class="p-2.5 rounded-full hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-all text-slate-600 dark:text-slate-300" title="Sync Library">
+            <i data-lucide="refresh-cw" class="w-5 h-5"></i>
+        </button>
+        <button onclick="logout()" class="ml-2 w-8 h-8 bg-slate-200 dark:bg-[#334155] hover:bg-slate-300 dark:hover:bg-[#475569] text-slate-700 dark:text-slate-200 rounded-full flex items-center justify-center transition-all" title="Logout">
+            <i data-lucide="user" class="w-4 h-4"></i>
+        </button>
+    </div>
+        </nav>
+        
+
+        <div class="flex-1 flex flex-row w-full overflow-hidden relative pt-16">
+             
+            <aside id="sidebar" class="fixed top-16 left-0 z-40 w-72 
+h-[calc(100vh-4rem)] 
+flex flex-col gap-2 p-3 
+bg-white/70 dark:bg-[#0f172a]/70 backdrop-blur-xl
+transform -translate-x-full lg:translate-x-0 
+transition-transform duration-300 ease-in-out 
+overflow-y-auto custom-scrollbar">
+                
+                <div class="flex justify-between items-center lg:hidden mb-2 px-2">
+                    <h2 class="font-semibold text-slate-900 dark:text-white font-display">Menu</h2>
+                    <button id="closeSidebarBtn" class="p-2 rounded-full hover:bg-slate-100 dark:hover:bg-[#1e293b] text-slate-600 dark:text-slate-300">
+                        <i data-lucide="x" class="w-5 h-5"></i>
+                    </button>
+                </div>
+
+                <button onclick="startNewChat()"
+    class="w-full flex items-center justify-center gap-2.5 px-4 py-3 mb-6 rounded-2xl 
+    bg-[#4f46e5] dark:bg-[#6366f1] 
+    text-white 
+    text-sm font-medium shadow-sm
+    hover:bg-[#4338ca] dark:hover:bg-[#4f46e5] 
+    hover:shadow-md active:scale-[0.97] transition-all duration-200 group">
+
+    <i data-lucide="plus" class="w-5 h-5 transition-transform group-hover:rotate-90"></i>
+    <span>New Chat</span>
+                </button>
+                
+
+                <div class="bg-[#f8fafc] dark:bg-[#1e293b] rounded-3xl p-4 mb-2">
+                    <h3 class="text-sm font-medium text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2 px-1">
+                         <i data-lucide="plus" class="w-4 h-4"></i> Add Material
+                    </h3>
+                    <input type="file" id="bookFile" class="hidden" accept=".pdf,.doc,.docx" onchange="updateFileName()">
+                    <label for="bookFile" class="flex flex-col items-center justify-center w-full h-16 border border-dashed border-slate-300 dark:border-[#475569] rounded-2xl cursor-pointer hover:bg-white/50 dark:hover:bg-white/5 transition-all group">
+                        <span id="fileNameDisplay" class="text-xs text-slate-500 dark:text-slate-400 px-4 text-center truncate w-full">Select PDF/DOCX</span>
+                    </label>
+                    <button onclick="uploadBook()" class="w-full mt-2 bg-white dark:bg-[#334155] hover:bg-slate-50 dark:hover:bg-[#475569] text-slate-800 dark:text-slate-200 font-medium py-2 rounded-2xl transition-all text-xs border border-slate-200 dark:border-[#475569]">
+                        Index
+                    </button>
+                    
+                    <div id="progWrapper" class="hidden mt-3 p-2">
+                        <div class="flex justify-between text-[10px] font-medium text-slate-500 dark:text-slate-400 mb-1">
+                            <span id="progText">Initializing... 0%</span>
+                        </div>
+                        <div class="w-full bg-slate-200 dark:bg-[#475569] h-1 rounded-full overflow-hidden">
+                            <div id="progBar" class="bg-[#4f46e5] dark:bg-[#818cf8] h-full w-0 transition-all duration-300"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 flex flex-col overflow-hidden px-1">
+                    <div class="flex justify-between items-center mb-2 px-3 pt-2">
+                        <h3 class="text-sm font-medium text-slate-700 dark:text-slate-200">Recent</h3>
+                        <span id="bookCount" class="text-xs text-slate-500">0</span>
+                    </div>
+                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-1"></div>
+                </div>
+            </aside>
+
+            <div id="sidebarOverlay" class="fixed inset-0 bg-black/20 dark:bg-black/40 backdrop-blur-sm z-30 hidden lg:hidden"></div>
+
+            <main class="flex-1 flex flex-col h-full ml-0 lg:ml-72 bg-white dark:bg-[#0f172a] w-full lg:rounded-tl-3xl lg:border-t lg:border-l lg:border-slate-100 dark:lg:border-[#1e293b] overflow-hidden">
+                
+                <div id="result" class="flex-1 h-full overflow-y-auto custom-scrollbar p-4 lg:p-8 w-full max-w-4xl mx-auto scroll-smooth">
+                    <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center opacity-80">
+                        <div class="p-4 rounded-full mb-4 bg-indigo-50 dark:bg-[#1e293b]">
+                            <i data-lucide="brain-circuit" class="w-12 h-12 text-[#4f46e5] dark:text-[#818cf8]"></i>
+                        </div>
+                        <h4 class="text-2xl font-semibold font-display text-slate-900 dark:text-white brand-text">Hello, how can I help?</h4>
+                        <p class="mt-2 text-sm text-slate-500 dark:text-slate-400">Select a document and start learning.</p>
+                    </div>
+                </div>
+
+                <div id="inputBar" class="fixed bottom-0 left-0 w-full z-50 px-4 pb-4 pt-2 bg-transparent pointer-events-none">
+
+                
+                    <div class="max-w-3xl mx-auto w-full pointer-events-auto">
+
+    <div class="flex flex-col gap-3 relative 
+    rounded-3xl 
+    bg-white/80 dark:bg-[#1e293b]/80 
+    backdrop-blur-xl 
+    border border-slate-200 dark:border-[#334155] 
+    shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.2)] 
+    p-3">
+
+        <div class="flex flex-col gap-3">
+
+    <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar max-w-full px-1">
+
+        <button id="modeBtn" onclick="toggleModeMenu(event)" type="button"
+            class="flex items-center gap-2 px-4 py-1.5 rounded-full 
+            bg-white dark:bg-[#334155] hover:bg-slate-50 dark:hover:bg-[#475569]
+            border border-slate-200 dark:border-[#475569] 
+            text-xs font-medium text-slate-700 dark:text-slate-200 transition-colors shadow-sm shrink-0">
+
+            <i id="modeIcon" data-lucide="brain-circuit" class="w-3.5 h-3.5 text-[#4f46e5] dark:text-[#818cf8]"></i>
+            <span id="modeLabel">Explain</span>
+            <i id="modeChevron" data-lucide="chevron-down" class="w-3.5 h-3.5 opacity-60 transition-transform duration-200"></i>
+        </button>
+
+        <div class="flex items-center gap-1.5 bg-white dark:bg-[#334155] border border-slate-200 dark:border-[#475569] px-4 py-1.5 rounded-full text-xs shrink-0 hover:bg-slate-50 dark:hover:bg-[#475569] cursor-pointer transition-colors shadow-sm">
+            <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400"></i>
+            <select id="bookSelector" onchange="handleBookChange(this)"
+                class="bg-transparent text-slate-700 dark:text-slate-200 font-medium appearance-none focus:outline-none cursor-pointer pr-2 max-w-[120px] sm:max-w-[200px] truncate">
+                <option value="all">All Files</option>
+            </select>
+        </div>
+
+        <div class="flex items-center gap-1.5 bg-white dark:bg-[#334155] border border-slate-200 dark:border-[#475569] px-4 py-1.5 rounded-full text-xs shrink-0 hover:bg-slate-50 dark:hover:bg-[#475569] cursor-pointer transition-colors shadow-sm">
+            <i data-lucide="graduation-cap" class="w-3.5 h-3.5 text-slate-500 dark:text-slate-400"></i>
+            <select id="level"
+                class="bg-transparent text-slate-700 dark:text-slate-200 font-medium appearance-none focus:outline-none cursor-pointer pr-2">
+                <option value="University">University</option>
+                <option value="Secondary">Secondary</option>
+                <option value="Primary">Primary</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="flex items-center gap-2 bg-[#f8fafc] dark:bg-[#0f172a] rounded-3xl p-2 focus-within:ring-1 focus-within:ring-slate-300 dark:focus-within:ring-[#475569] transition-shadow border border-transparent dark:border-[#334155]">
+
+        <input id="topic" type="text"
+            placeholder="Select text to analyze"
+            autocomplete="off"
+            class="flex-1 bg-transparent border-none py-2 px-4 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-0 text-[15px]">
+
+        <button onclick="submitModeRequest(event)"
+            class="w-10 h-10 bg-[#4f46e5] dark:bg-[#6366f1] hover:bg-[#4338ca] dark:hover:bg-[#4f46e5] text-white rounded-full flex items-center justify-center transition-all active:scale-95 shadow-sm shrink-0">
+            <i data-lucide="send" class="w-4 h-4"></i>
+        </button>
+
+    </div>
+
+        </div>
+    
+                        
+                        
+                        </div>
+                        <p class="text-center text-[10px] text-slate-400 dark:text-slate-500 mt-1">Powered by Study.AI • Learn smarter, faster, and better.</p>
+                    </div>
+                    </div>
+                </div>
+                
+            </main>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-[#334155] text-white px-5 py-3 rounded-md shadow-lg opacity-0 transition-opacity duration-300 z-[200] font-medium text-sm pointer-events-none flex items-center gap-2"></div>
+
+    <script>
+        // 6️⃣ Toggle Dark and Light Mode Logic
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                icon.setAttribute('data-lucide', 'moon');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                icon.setAttribute('data-lucide', 'sun');
+            }
+            lucide.createIcons();
+        }
+
+        // Initialize theme icon on load
+        document.addEventListener('DOMContentLoaded', () => {
+            const icon = document.getElementById('themeIcon');
+            if(icon) {
+                if (document.documentElement.classList.contains('dark')) {
+                    icon.setAttribute('data-lucide', 'sun');
+                } else {
+                    icon.setAttribute('data-lucide', 'moon');
+                }
+            }
+            
+            // Mobile Sidebar Toggle Logic
+            const mobileBtn = document.getElementById('mobileMenuBtn');
+            const closeBtn = document.getElementById('closeSidebarBtn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+
+            function toggleSidebar() {
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            }
+
+            if(mobileBtn) mobileBtn.addEventListener('click', toggleSidebar);
+            if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
+            if(overlay) overlay.addEventListener('click', toggleSidebar);
+
+            // Load persisted chat
+            loadChatHistory();
+            document.getElementById("topic").addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        submitModeRequest({ currentTarget: document.querySelector("button[onclick*='submitModeRequest']") });
+    }
+});
+        });
+
+        const api = "https://study-ai-tq7i.onrender.com";
+        const supabaseUrl = "https://hffbjtbahfwudigywzzx.supabase.co";
+        const supabaseKey = "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5";
+
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+        supabaseClient.auth.onAuthStateChange((event, session) => {
+    if (session?.user) {
+        checkUser(); // re-run when session is ready
+    }
+});
+        let currentUser = null;
+        let allBooks = [];
+        const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
+        localStorage.setItem("studyai_session", sessionId);
+
+        lucide.createIcons();
+
+        async function handleEmailRedirect() {
+    const hash = window.location.hash;
+    const isGoogle = hash.includes("provider_token");
+
+    if (!hash || !hash.includes("access_token")) return;
+
+    const { data } = await supabaseClient.auth.getSession();
+    const provider = data?.session?.user?.app_metadata?.provider;
+
+    if (isGoogle) {
+        window.location.replace("/dashboard");
+    } else {
+        await supabaseClient.auth.signOut();
+        window.location.replace("/?verified=1");
+    }
+        }
+
+        // --- AUTH ---
+    async function checkUser() {
+        const loader = document.getElementById("loadingScreen");
+loader.style.opacity = "1";
+loader.style.display = "flex";
+    const { data: { session } } = await supabaseClient.auth.getSession();
+const user = session?.user;
+    const path = window.location.pathname;
+
+    if (user) {
+if (!window.location.pathname.startsWith("/dashboard")) {
+    window.location.href = "/dashboard";
+    return;
+}
+        if (!user.email_confirmed_at && user.app_metadata.provider !== "google") {
+            await supabaseClient.auth.signOut();
+            showToast("Verify your email first");
+            document.getElementById("loginScreen").classList.remove("hidden");
+            document.getElementById("appContainer").classList.add("hidden");
+            hideLoader(); 
+            return;
+        }
+
+        currentUser = user;
+        
+        if (path.startsWith("/dashboard")) {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("appContainer").classList.remove("hidden");
+    loadBooks();
+    hideLoader();
+        } else {
+            window.location.href = "/dashboard";
+        }
+    } else {
+        if (path.startsWith("/dashboard")) {
+            window.location.href = "/";
+            return;
+        }
+        document.getElementById("loginScreen").classList.remove("hidden");
+        document.getElementById("appContainer").classList.add("hidden");
+         hideLoader();
+    }
+    }
+
+        async function login() {
+const key = "loginAttempt";
+const lastAttempt = localStorage.getItem(key);
+const now = Date.now();
+
+if (lastAttempt && now - lastAttempt < 3000) {
+    showToast("Please wait a moment...");
+    return;
+}
+            
+        const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
+
+    if (!token) {
+    return showToast("Please verify you're human", true);
+    }
+    localStorage.setItem(key, now);
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+        showToast(error.message);
+        if (window.turnstile) turnstile.reset();
+        return;
+    }
+
+    if (!data.user.email_confirmed_at) {
+    showToast("Verify your email first");
+        if (window.turnstile) turnstile.reset();
+    return;
+    }
+
+    showToast("Authenticated");
+window.location.href = "/dashboard";
+        } 
+
+        async function googleLogin() {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+            redirectTo: window.location.origin + "/app"
+        }
+    });
+    if (error) showToast("Google login failed");
+        }
+
+        async function logout() {
+    await supabaseClient.auth.signOut();
+    currentUser = null;
+    localStorage.removeItem("studyai_chat_history"); // Optional: clear history on logout
+    document.getElementById("loginScreen").classList.remove("hidden");
+    document.getElementById("appContainer").classList.add("hidden");
+    showToast("Logged out");
+        }
+
+        function goToLanding() {
+    window.location.href = "/";
+        }
+
+        // --- LIBRARY ---
+        async function loadBooks() {
+            try {
+                const res = await fetch(`${api}/books`, {
+                    headers: { "x-user-id": currentUser.id }
+                });
+                allBooks = await res.json();
+                renderBooks();
+            } catch (err) { console.error("Error loading books:", err); }
+        }
+
+        function renderBooks() {
+            const container = document.getElementById("books");
+            const selector = document.getElementById("bookSelector");
+            
+            container.innerHTML = "";
+            selector.innerHTML = '<option value="all">All Files</option>';
+            document.getElementById("bookCount").innerText = allBooks.length;
+
+            if (allBooks.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 text-center mt-4">No documents</p>`;
+                return;
+            }
+
+            allBooks.forEach(book => {
+                const fileNameSafe = book.filename || book.name; 
+                if (!fileNameSafe) return; 
+                
+                const displayName = fileNameSafe.split('_').slice(1).join('_') || fileNameSafe;
+  
+                const div = document.createElement("div");
+                div.className = "group px-3 py-2.5 rounded-2xl flex items-center justify-between hover:bg-slate-100 dark:hover:bg-[#1e293b] transition-colors cursor-pointer";
+                div.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                        <span class="text-sm truncate text-slate-700 dark:text-slate-200">${displayName}</span>
+                    </div>
+                    <button onclick="deleteBook('${fileNameSafe}')" class="p-1.5 text-slate-400 hover:text-red-500 rounded-full transition-colors opacity-0 group-hover:opacity-100 shrink-0" title="Delete file">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                `;
+                container.appendChild(div);
+
+                const opt = document.createElement("option");
+                opt.value = fileNameSafe;
+                opt.innerText = displayName;
+                selector.appendChild(opt);
+            });
+
+const savedBook = localStorage.getItem("selectedBook");
+
+if (savedBook && [...selector.options].some(opt => opt.value === savedBook)) {
+    selector.value = savedBook;
+} else {
+    selector.value = "all";
+}
+            if (!selector.value) {
+    selector.value = "all";
+            }
+            lucide.createIcons();
+        }
+
+        async function uploadBook() {
+    if (!currentUser || !currentUser.id) return showToast("Please login first");
+    
+    const fileInput = document.getElementById("bookFile");
+    if (!fileInput.files[0]) return showToast("Select a file first.");
+
+    const file = fileInput.files[0];
+    const allowedTypes = [ "application/pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document", "application/msword" ];
+    const fileName = file.name.toLowerCase();
+
+if (
+    !allowedTypes.includes(file.type) &&
+    !fileName.endsWith(".pdf") &&
+    !fileName.endsWith(".doc") &&
+    !fileName.endsWith(".docx")
+) {
+    showToast("Only PDF and DOCX allowed");
+    fileInput.value = ""; 
+    document.getElementById("fileNameDisplay").innerText = "Select PDF or DOCX";
+    return;
+}
+    const progWrapper = document.getElementById("progWrapper");
+    const progBar = document.getElementById("progBar");
+    const progText = document.getElementById("progText");
+
+    let eventSource;
+
+    try {
+        progWrapper.classList.remove('hidden');
+        progBar.style.width = '0%';
+        progText.innerText = 'Uploading... 0%';
+
+        function connectSSE() {
+            eventSource = new EventSource(`${api}/progress?userId=${currentUser.id}`);
+
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+
+                progText.innerText = `${data.step} ${data.progress}%`;
+                progBar.style.width = `${data.progress}%`;
+
+                if (data.progress >= 100) {
+                    eventSource.close();
+                    progText.innerText = "Completed";
+                    progBar.classList.replace("bg-[#4f46e5]", "bg-green-500");
+                    showToast("Upload complete");
+                    loadBooks();
+
+                    setTimeout(() => {
+                        progWrapper.classList.add("hidden");
+                    }, 3000);
+                }
+            };
+
+            eventSource.onerror = () => {
+                eventSource.close();
+                setTimeout(connectSSE, 2000);
+            };
+        }
+
+        connectSSE();
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        const res = await fetch(`${api}/upload-stream`, {
+            method: "POST",
+            headers: { "x-user-id": currentUser.id },
+            body: formData
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+    } catch (err) {
+        if (eventSource) eventSource.close();
+        progText.innerText = "Failed";
+        progBar.classList.replace("bg-[#4f46e5]", "bg-red-500");
+        showToast("Upload failed");
+    }
+        }
+
+        async function deleteBook(name) {
+    if (!currentUser || !currentUser.id) return showToast("Please login");
+    if (!confirm("Delete this document?")) return;
+
+    try {
+        showToast("Deleting...");
+        const res = await fetch(`${api}/delete-book/${encodeURIComponent(name)}`, {
+            method: "DELETE",
+            headers: { "x-user-id": currentUser.id }
+        });
+
+        if (!res.ok) throw new Error();
+        showToast("Deleted successfully");
+        loadBooks();
+    } catch (e) {
+        showToast("Delete failed");
+    }
+        }
+
+        // --- PERSISTENCE HELPERS ---
+        function saveToChatHistory(htmlSnippet) {
+            let history = localStorage.getItem("studyai_chat_history") || "";
+            history += htmlSnippet;
+            localStorage.setItem("studyai_chat_history", history);
+        }
+
+        function loadChatHistory() {
+            const history = localStorage.getItem("studyai_chat_history");
+            const resultBox = document.getElementById("result");
+            if (history) {
+                resultBox.innerHTML = history;
+                lucide.createIcons();
+                scrollToBottom(true);
+            }
+        }
+
+        // --- AI ---
+        async function requestAI(type, overrideTopic = null) {
+    const topic = overrideTopic || document.getElementById("topic").value;
+    const uniqueTopic = topic + " (variation " + Date.now() + ")";
+    const resultBox = document.getElementById("result");
+
+    if (!topic) {
+        document.getElementById("topic").focus();
+        return showToast("Enter a topic to analyze.");
+    }
+
+    // Remove welcome placeholder if it exists
+    const welcome = document.getElementById("welcomePlaceholder");
+    if(welcome) welcome.remove();
+
+    // Append loading skeleton instead of overwriting
+    const loaderId = "loader-" + Date.now();
+    const loadingHtml = `
+    <div id="${loaderId}" class="flex flex-col mb-6">
+        <div class="self-end bg-[#f8fafc] dark:bg-[#334155] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-6 max-w-[85%] ml-auto">
+            <p class="text-[15px]">${topic}</p>
+        </div>
+        <div class="flex items-start gap-4 w-full animate-pulse mt-2">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+                 <i data-lucide="brain-circuit" class="w-6 h-6 text-[#818cf8]"></i>
+            </div>
+            <div class="flex-1 space-y-4 py-1 max-w-2xl">
+                <div class="h-4 bg-slate-200 dark:bg-[#334155] rounded-full w-3/4"></div>
+                <div class="h-4 bg-slate-200 dark:bg-[#334155] rounded-full w-full"></div>
+                <div class="h-4 bg-slate-200 dark:bg-[#334155] rounded-full w-5/6"></div>
+            </div>
+        </div>
+    </div>`;
+    
+    resultBox.insertAdjacentHTML('beforeend', loadingHtml);
+    lucide.createIcons();
+
+    //Better scroll timing
+    requestAnimationFrame(() => {
+        scrollToBottom(true);
+    });
+            
+    try {
+        const endpoint = type === 'explain' ? 'deep-explain' : type;
+
+        const res = await fetch(`${api}/${endpoint}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "x-user-id": currentUser.id
+            },
+            body: JSON.stringify({
+                topic: type === "quiz" ? uniqueTopic : topic,
+                level: document.getElementById("level").value,
+                book: document.getElementById("bookSelector").value,
+                sessionId
+            })
+        });
+
+        const data = await res.json();
+        const raw = data.explanation || data.quiz || data.notes;
+
+        if (!raw) throw new Error("Empty response");
+
+        // Remove the loader
+        document.getElementById(loaderId)?.remove();
+
+        if (type === "quiz") {
+            renderQuiz(raw);
+        } else {
+            const responseHtml = `
+            <div class="flex flex-col mb-8">
+                <div class="self-end bg-[#f8fafc] dark:bg-[#334155] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%] ml-auto">
+                    <p class="text-[15px]">${topic}</p>
+                </div>
+                <div class="flex items-start gap-4 w-full max-w-4xl">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
+                         <i data-lucide="brain-circuit" class="w-6 h-6 text-[#4f46e5] dark:text-[#818cf8]"></i>
+                    </div>
+                    <div class="flex-1 markdown-content text-slate-800 dark:text-slate-200 animate-fade-in text-[15px]">
+                        ${marked.parse(raw)}
+                    </div>
+                </div>
+            </div>`;
+            resultBox.insertAdjacentHTML('beforeend', responseHtml);
+            saveToChatHistory(responseHtml);
+            
+            // Force scroll after text loads
+            requestAnimationFrame(() => {
+                scrollToBottom(true);
+            });
+        }
+
+    } catch (err) {
+        document.getElementById(loaderId)?.remove();
+        const errorHtml = `
+        <div class="flex flex-col mb-6">
+             <div class="flex items-start gap-4 w-full">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
+                     <i data-lucide="brain-circuit" class="w-6 h-6 text-red-500"></i>
+                </div>
+                <div class="flex-1 text-red-600 dark:text-red-400 mt-1">
+                    Request failed. Please try again.
+                </div>
+            </div>
+        </div>`;
+        resultBox.insertAdjacentHTML('beforeend', errorHtml);
+        scrollToBottom(true);
+    }
+    lucide.createIcons();
+   
+        }
+
+    async function runFlashcards(event) {
+    const btn = event?.currentTarget;
+    const originalText = btn ? btn.innerHTML : '';
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = "<i data-lucide='loader-2' class='w-4 h-4 animate-spin text-slate-400'></i>";
+        lucide.createIcons();
+    }
+
+    const topic = document.getElementById("topic").value;
+    const resultBox = document.getElementById("result");
+
+    if (!topic) {
+        if (btn) { btn.disabled = false; btn.innerHTML = originalText; }
+        return showToast("Enter a topic first");
+    }
+
+    // Remove welcome placeholder if it exists
+    const welcome = document.getElementById("welcomePlaceholder");
+    if(welcome) welcome.remove();
+
+    const loaderId = "loader-" + Date.now();
+    const loadingHtml = `
+    <div id="${loaderId}" class="flex flex-col mb-6">
+        <div class="self-end bg-[#f8fafc] dark:bg-[#334155] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-6 max-w-[85%] ml-auto">
+            <p class="text-[15px]">Flashcards: ${topic}</p>
+        </div>
+        <div class="flex items-start gap-4 w-full animate-pulse mt-2">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0">
+                 <i data-lucide="brain-circuit" class="w-6 h-6 text-[#818cf8]"></i>
+            </div>
+            <div class="flex gap-2 mt-2">
+                <div class="w-2 h-2 bg-[#6366f1] rounded-full animate-bounce" style="animation-delay: 0s"></div>
+                <div class="w-2 h-2 bg-[#ec4899] rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                <div class="w-2 h-2 bg-[#8b5cf6] rounded-full animate-bounce" style="animation-delay: 0.4s"></div>
+            </div>
+        </div>
+    </div>`;
+    
+    resultBox.insertAdjacentHTML('beforeend', loadingHtml);
+    scrollToBottom(true);
+
+    try {
+        const res = await fetch(`${api}/flashcards`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "x-user-id": currentUser.id },
+            body: JSON.stringify({
+                topic,
+                level: document.getElementById("level").value,
+                book: document.getElementById("bookSelector").value
+            })
+        });
+
+        const data = await res.json();
+        const raw = data.flashcards || "";
+        const lines = raw.split("\n");
+        let cards = [];
+
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].startsWith("Q:")) {
+                const question = lines[i].replace("Q:", "").trim();
+                const nextLine = lines[i + 1] || "";
+                if (nextLine.startsWith("A:")) {
+                    const answer = nextLine.replace("A:", "").trim();
+                    cards.push({ question, answer });
+                }
+            }
+        }
+        
+        document.getElementById(loaderId)?.remove();
+
+let html = `
+<div class="mb-8 w-full">
+    <div class="self-end bg-[#f8fafc] dark:bg-[#334155] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%] ml-auto w-fit">
+        <p class="text-[15px]">Flashcards: ${topic}</p>
+    </div>
+    
+    <div class="flex items-start gap-4 w-full mb-4">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
+            <i data-lucide="brain-circuit" class="w-6 h-6 text-[#4f46e5] dark:text-[#818cf8]"></i>
+        </div>
+        <div class="flex-1 w-full">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-semibold text-slate-900 dark:text-white font-display">Here are your flashcards</h2>
+                <span class="text-xs text-slate-500">${cards.length} Cards</span>
+            </div>
+
+            <div class="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-4 hide-scrollbar perspective-1000 w-full">
+`;
+
+cards.forEach((card, i) => {
+    html += `
+    <div class="flashcard h-64 min-w-[85vw] sm:min-w-[320px] max-w-[400px] snap-center cursor-pointer group perspective-1000 shrink-0"
+         onclick="this.classList.toggle('flipped')">
+        <div class="flashcard-inner relative w-full h-full preserve-3d shadow-sm rounded-3xl">
+            <div class="absolute inset-0 backface-hidden bg-white dark:bg-[#1e293b] border border-slate-200 dark:border-[#334155] rounded-3xl p-6 flex flex-col justify-between">
+                <span class="text-xs font-medium text-slate-500">Question ${i+1}</span>
+                <p class="text-slate-800 dark:text-white font-medium text-[15px] md:text-base">${card.question}</p>
+                <div class="flex items-center gap-1 text-xs text-slate-400">
+                    <i data-lucide="rotate-cw" class="w-3 h-3"></i> Tap to flip
+                </div>
+            </div>
+            <div class="absolute inset-0 backface-hidden bg-[#f8fafc] dark:bg-[#334155] border border-slate-200 dark:border-[#475569] rounded-3xl p-6 flex flex-col justify-between"
+                 style="transform: rotateY(180deg);">
+                <span class="text-xs font-medium text-[#4f46e5] dark:text-[#818cf8]">Answer</span>
+                <p class="text-slate-800 dark:text-slate-200 text-[15px] overflow-y-auto custom-scrollbar pr-2">${card.answer}</p>
+            </div>
+        </div>
+    </div>
+    `;
+});
+
+html += `</div></div></div></div>`;
+
+resultBox.insertAdjacentHTML('beforeend', html);
+saveToChatHistory(html);
+lucide.createIcons();   
+
+    } catch (err) {
+        document.getElementById(loaderId)?.remove();
+        resultBox.insertAdjacentHTML('beforeend', "Failed to generate flashcards");
+    }
+
+    if (btn) {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+        lucide.createIcons();
+    }
+    
+    // Explicit call to scroll after rendering
+    setTimeout(() => { scrollToBottom(true); }, 100);
+    }
+
+        function updateFileName() {
+            const input = document.getElementById('bookFile');
+            if (input.files[0]) {
+                const name = input.files[0].name;
+                document.getElementById('fileNameDisplay').innerText = name.length > 20 ? name.substring(0, 17) + '...' : name;
+            }
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.innerHTML = msg; 
+            t.classList.replace("opacity-0", "opacity-100");
+            setTimeout(() => {
+                t.classList.replace("opacity-100", "opacity-0");
+            }, 3000);
+        }
+
+        function hideLoader() {
+    const loader = document.getElementById("loadingScreen");
+    loader.style.opacity = "0";
+    loader.style.pointerEvents = "none";
+    setTimeout(() => { loader.style.display = "none"; }, 500);
+        }
+
+        function renderQuiz(quizText) {
+    const resultBox = document.getElementById("result");
+    const topic = document.getElementById("topic").value;
+
+    const rawQuestions = quizText.split(/##\s*Question/i).slice(1);
+    const questions = rawQuestions.slice(0, 5).filter(q => q.trim().length > 0);
+    let correctAnswers = [];
+    let rationales = [];
+    let allOptions = [];
+
+    let html = `
+    <div class="flex flex-col mb-8">
+        <div class="self-end bg-[#f8fafc] dark:bg-[#334155] text-slate-900 dark:text-white rounded-3xl px-5 py-3 mb-8 max-w-[85%] ml-auto">
+            <p class="text-[15px]">Create a quiz: ${topic}</p>
+        </div>
+        
+        <div class="flex items-start gap-4 w-full">
+            <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
+                <i data-lucide="brain-circuit" class="w-6 h-6 text-[#4f46e5] dark:text-[#818cf8]"></i>
+            </div>
+            <div class="flex-1 w-full max-w-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-semibold text-slate-900 dark:text-white font-display">Practice Quiz</h2>
+                </div>
+    `;
+
+questions.forEach((q, i) => {
+    html += `<div id="question-${i}" class="mb-8">`;
+    html += `<div class="mb-2"><p class="text-xs text-slate-500 font-medium">Question ${i + 1}</p></div>`;
+
+    const lines = q.split("\n");
+    let questionText = "";
+    let options = [];
+
+    lines.forEach(line => {
+        if (!questionText && line.length > 15 && !line.match(/^[A-D]\)/)) {
+            questionText = line.replace(/\*\*/g, "").replace(/stem:/i, "").trim();
+        }
+if (/correct answer|answer|option/i.test(line)) {
+    const match = line.match(/\b([A-D])\b/);
+    if (match) correctAnswers.push(match[1].toUpperCase());
+}
+        if (line.toLowerCase().includes("rationale")) {
+    const exp = line.replace(/.*Academic Rationale:\s*/i, "").trim();
+    if (exp) rationales.push(exp);
+        }
+        if (line.startsWith("A)") || line.startsWith("B)") || line.startsWith("C)") || line.startsWith("D)")) {
+            const letter = line.charAt(0);
+            const cleanOption = line.replace(/^[A-D]\)\s*/, "").replace(/\*\*/g, "").trim();
+            options.push({ letter, text: cleanOption });
+        }
+    });
+
+    html += `<p class="text-slate-900 dark:text-white text-[15px] mb-4 leading-relaxed">${questionText}</p>`;
+
+    options.forEach(opt => {
+        html += `
+        <label id="q${i}-${opt.letter}" data-letter="${opt.letter}" class="flex items-center gap-3 px-4 py-3 mb-2 rounded-2xl bg-white dark:bg-[#1e293b] hover:bg-slate-50 dark:hover:bg-[#334155] border border-slate-200 dark:border-[#475569] transition-all cursor-pointer">
+            <input type="radio" name="q${i}" value="${opt.letter}" class="accent-[#4f46e5] dark:accent-[#818cf8] w-4 h-4">
+            <span class="text-[15px] text-slate-800 dark:text-slate-200">${opt.text}</span>
+        </label>`;
+    });
+
+    allOptions.push(options);
+    html += `</div>`;
+});
+    
+    html += `
+                <button onclick="submitQuiz()" class="mt-4 px-6 py-2.5 bg-[#4f46e5] dark:bg-[#6366f1] hover:bg-[#4338ca] dark:hover:bg-[#4f46e5] text-white font-medium rounded-full transition-all active:scale-95 text-sm">
+                    Submit Answers
+                </button>
+            </div>
+        </div>
+    </div>`;
+
+      if (correctAnswers.length === 0) {
+    showToast("Retrying...");
+    return requestAI("quiz");
+      }
+
+       correctAnswers = correctAnswers.slice(0, questions.length);
+       rationales = rationales.slice(0, questions.length);
+       allOptions = allOptions.slice(0, questions.length);
+        window.correctAnswers = correctAnswers;
+        window.rationales = rationales;
+        window.allOptions = allOptions;
+            
+    resultBox.insertAdjacentHTML('beforeend', html);
+    saveToChatHistory(html);
+      lucide.createIcons();
+      scrollToBottom(true);
+        }
+
+        function submitQuiz() {
+    let score = 0;
+     if (!window.correctAnswers || window.correctAnswers.length === 0) {
+    return showToast("Quiz not ready.");
+     }
+            
+    const total = window.correctAnswers.length;
+    let resultHTML = "";
+
+    for (let i = 0; i < total; i++) {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const userAnswer = selected ? selected.value : null;
+        const correct = window.correctAnswers[i];
+        const options = window.allOptions[i] || [];
+
+        const correctText = options.find(opt => opt.letter === correct)?.text || "";
+        const userText = options.find(opt => opt.letter === userAnswer)?.text || "";
+        const explanation = window.rationales[i] || "";
+        
+            let fixedExplanation = explanation;
+            if (correct && explanation) {
+            fixedExplanation = explanation.replace(/correct answer is [A-D]/i, `correct answer is ${correct}`);
+         }
+
+        const isCorrect = userAnswer?.trim() === correct?.trim();
+        
+       const correctEl = document.getElementById(`q${i}-${correct}`);
+          if (correctEl) {
+             correctEl.classList.remove("bg-white", "dark:bg-[#1e293b]", "border-slate-200", "dark:border-[#475569]");
+             correctEl.classList.add("bg-green-50", "dark:bg-green-900/20", "border-green-500");
+          }
+
+        if (userAnswer && userAnswer !== correct) {
+            const wrongEl = document.getElementById(`q${i}-${userAnswer}`);
+        if (wrongEl) {
+            wrongEl.classList.remove("bg-white", "dark:bg-[#1e293b]", "border-slate-200", "dark:border-[#475569]");
+            wrongEl.classList.add("bg-red-50", "dark:bg-red-900/20", "border-red-400");
+       }
+    }
+
+         const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+             inputs.forEach(input => { input.disabled = true; });
+
+        if (isCorrect) score++;
+
+        resultHTML += `
+        <div class="mb-6 p-5 rounded-3xl border ${ isCorrect ? "bg-green-50/50 dark:bg-green-900/10 border-green-200 dark:border-green-800" : "bg-red-50/50 dark:bg-red-900/10 border-red-200 dark:border-red-800" }">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-[15px] font-medium text-slate-900 dark:text-white">Question ${i + 1}</span>
+                <span class="text-sm font-medium ${ isCorrect ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400" }">${isCorrect ? "Correct" : "Incorrect"}</span>
+            </div>
+            ${ !isCorrect ? `<p class="text-sm text-slate-600 dark:text-slate-400 mb-2">Your Answer: ${ userAnswer ? userAnswer + " - " + userText : "Not answered" }</p>` : "" }
+            <p class="text-sm text-slate-800 dark:text-slate-200 mb-3">Correct Answer: <span class="font-medium">${correct} - ${correctText || "Missing"}</span></p>
+        ${ explanation ? `
+<div class="mt-2">
+    <button onclick="toggleExplanation(${i})" class="flex items-center gap-1.5 text-[#4f46e5] dark:text-[#818cf8] hover:underline text-sm font-medium">
+        <i id="toggle-icon-${i}" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+        <span id="toggle-text-${i}">Show Explanation</span>
+    </button>
+    <div id="explanation-${i}" class="hidden mt-3 text-[15px] text-slate-700 dark:text-slate-300 leading-relaxed pl-4 border-l-2 border-[#4f46e5] dark:border-[#818cf8]">
+        ${fixedExplanation}
+    </div>
+</div>` : "" }
+        </div>`;
+    }
+
+    const percentageScore = total ? Math.round((score / total) * 100) : 0;
+
+    const resultSummaryHtml = `
+    <div class="flex items-start gap-4 w-full max-w-3xl mx-auto pb-8">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1">
+            <i data-lucide="brain-circuit" class="w-6 h-6 text-[#4f46e5] dark:text-[#818cf8]"></i>
+        </div>
+        <div class="flex-1 w-full">
+            <div class="mb-6 px-6 py-8 rounded-3xl bg-[#f8fafc] dark:bg-[#1e293b] text-center border border-slate-100 dark:border-[#334155]">
+                <h2 class="text-4xl font-display text-slate-900 dark:text-white mb-2">${score} <span class="text-xl text-slate-500">/ ${total}</span></h2>
+                <p class="text-[15px] text-slate-600 dark:text-slate-400 font-medium">Score: ${percentageScore}%</p>
+            </div>
+            ${resultHTML}
+        </div>
+    </div>`;
+
+    document.getElementById("result").insertAdjacentHTML('beforeend', resultSummaryHtml);
+    saveToChatHistory(resultSummaryHtml);
+    lucide.createIcons();
+    scrollToBottom(true);
+        }
+       
+      async function resetQuiz(event) {
+    const btn = event?.currentTarget;
+    const icon = btn?.querySelector("i");
+    if (icon) icon.classList.add("animate-spin");
+    await requestAI("quiz");
+    if (icon) icon.classList.remove("animate-spin");
+      }
+
+        function toggleExplanation(i) {
+    const box = document.getElementById(`explanation-${i}`);
+    const text = document.getElementById(`toggle-text-${i}`);
+    const icon = document.getElementById(`toggle-icon-${i}`);
+    if (!box || !text) return;
+    if (box.classList.contains("hidden")) {
+        box.classList.remove("hidden");
+        text.innerText = "Hide Explanation";
+        if (icon) icon.classList.add("rotate-180");
+    } else {
+        box.classList.add("hidden");
+        text.innerText = "Show Explanation";
+        if (icon) icon.classList.remove("rotate-180");
+    }
+        }
+
+        function togglePassword(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector("i");
+    if (input.type === "password") {
+        input.type = "text";
+        icon.setAttribute("data-lucide", "eye-off");
+    } else {
+        input.type = "password";
+        icon.setAttribute("data-lucide", "eye");
+    }
+    lucide.createIcons();
+        }
+
+    async function forgotPassword() {
+    const email = document.getElementById("email").value;
+    if (!email) return showToast("Enter your email first");
+    const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + "/reset"
+    });
+    if (error) return showToast(error.message);
+    showToast("Reset link sent");
+    }
+
+        (async () => {
+    await handleEmailRedirect();
+    const params = new URLSearchParams(window.location.search);
+       const email = params.get("email");
+if (email) {
+    const input = document.getElementById("email");
+    const pass = document.getElementById("password");
+    if (input) input.value = email;
+    if (pass) pass.focus();
+}
+        if (params.get("reset") === "success") showToast("Password reset successful");
+    if (params.get("verified")) showToast("Email verified!");
+    setTimeout(checkUser, 800);
+})();
+        
+window.addEventListener("focusin", () => {
+    setTimeout(adjustChatPadding, 300);
+});
+
+window.addEventListener("focusout", () => {
+    setTimeout(adjustChatPadding, 300);
+});
+   
+
+        
+function adjustChatPadding() {
+    const inputBar = document.getElementById("inputBar");
+    const result = document.getElementById("result");
+
+    if (!inputBar || !result) return;
+
+    const height = inputBar.offsetHeight;
+
+    // Add dynamic spacing
+    result.style.paddingBottom = (height + 20) + "px";
+}
+
+// Run on load
+window.addEventListener("load", adjustChatPadding);
+
+// Run on resize (VERY IMPORTANT for mobile)
+window.addEventListener("resize", adjustChatPadding);
+
+ // Auto-scroll when keyboard opens/closes
+window.addEventListener("resize", () => {
+    setTimeout(() => scrollToBottom(true), 100);
+});
+
+// Run after typing (input grows)
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("topic")?.addEventListener("input", adjustChatPadding);
+});
+
+        function handleBookChange(select) {
+    const value = select.value;
+    localStorage.setItem("selectedBook", value);
+        }
+
+        let currentSelectedMode = 'explain';
+let isModeMenuOpen = false;
+
+
+function toggleModeMenu(e) {
+    if (e) e.stopPropagation();
+
+    const menu = document.getElementById("modeMenu");
+    const btn = document.getElementById("modeBtn");
+    const chevron = document.getElementById("modeChevron");
+
+    const rect = btn.getBoundingClientRect();
+
+    const menuHeight = 180;
+    const spaceAbove = rect.top;
+
+    if (spaceAbove < menuHeight) {
+        menu.style.top = (rect.bottom + 8) + "px";
+    } else {
+        menu.style.top = (rect.top - menuHeight - 8) + "px";
+    }
+
+    menu.style.left = rect.left + "px";
+
+    isModeMenuOpen = !isModeMenuOpen;
+
+    if (isModeMenuOpen) {
+        menu.classList.remove("opacity-0", "scale-95", "pointer-events-none");
+        menu.classList.add("opacity-100", "scale-100", "pointer-events-auto");
+        if (chevron) chevron.classList.add("rotate-180");
+    } else {
+        menu.classList.add("opacity-0", "scale-95", "pointer-events-none");
+        menu.classList.remove("opacity-100", "scale-100", "pointer-events-auto");
+        if (chevron) chevron.classList.remove("rotate-180");
+    }
+}
+
+function selectMode(value, iconName, label) {
+    currentSelectedMode = value;
+    document.getElementById('modeLabel').innerText = label;
+    
+    // Replace icon and update its colors dynamically based on the mode
+    const iconEl = document.getElementById('modeIcon');
+    const newIcon = document.createElement('i');
+    newIcon.id = 'modeIcon';
+    newIcon.setAttribute('data-lucide', iconName);
+    
+    let colorClasses = "text-[#4f46e5] dark:text-[#818cf8]";
+    if (value === 'quiz') colorClasses = "text-[#ea4335] dark:text-[#f28b82]";
+    if (value === 'notes') colorClasses = "text-[#f59e0b] dark:text-[#fcd34d]";
+    if (value === 'flashcards') colorClasses = "text-[#8b5cf6] dark:text-[#c4b5fd]";
+    
+    newIcon.className = `w-3.5 h-3.5 ${colorClasses}`;
+    iconEl.parentNode.replaceChild(newIcon, iconEl);
+    
+    lucide.createIcons();
+    toggleModeMenu();
+}
+
+// Routes the primary "Send" button to the correctly selected function
+
+let isSending = false;
+
+function submitModeRequest(event) {
+    const input = document.getElementById("topic");
+    const sendBtn = event?.currentTarget;
+
+    const value = input.value.trim();
+    if (!value) return showToast("Enter a topic");
+
+    // Prevent spam
+    if (isSending) return;
+    isSending = true;
+
+    // Clear input immediately
+    input.value = "";
+
+    // Force scroll immediately when send is hit
+    scrollToBottom(true);
+    // Delay secondary scroll so loader can render first
+    setTimeout(() => scrollToBottom(true), 50);
+    
+    // Disable button
+    if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.classList.add("opacity-50", "cursor-not-allowed");
+    }
+
+    // Route request
+    if (currentSelectedMode === 'flashcards') {
+        runFlashcards(event).finally(() => unlockUI(sendBtn));
+    } else {
+        requestAI(currentSelectedMode, value).finally(() => unlockUI(sendBtn));
+    }
+}
+        function unlockUI(sendBtn) {
+    isSending = false;
+
+    if (sendBtn) {
+        sendBtn.disabled = false;
+        sendBtn.classList.remove("opacity-50", "cursor-not-allowed");
+    }
+        }
+        
+        function startNewChat() {
+    console.log("🆕 New chat started");
+
+    const result = document.getElementById("result");
+    if (result) {
+        result.innerHTML = `
+        <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center py-20 px-4">
+            <div class="p-6 rounded-3xl mb-6 bg-slate-50 dark:bg-[#1e293b] border border-slate-100 dark:border-[#334155] shadow-sm animate-in fade-in zoom-in duration-500">
+                <i data-lucide="brain-circuit" class="w-12 h-12 text-[#4f46e5] dark:text-[#818cf8]"></i>
+            </div>
+            <h4 class="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white mb-3 font-display">
+                Hello, <span class="text-[#4f46e5] dark:text-[#818cf8]">how can I help?</span>
+            </h4>
+            <p class="max-w-md mx-auto text-base text-slate-500 dark:text-slate-400 leading-relaxed">
+                Choose a mode below, select your document, and let's start learning together.
+            </p>
+        </div>`;
+    }
+
+    const input = document.getElementById("topic");
+    if (input) {
+        input.value = "";
+        input.focus();
+    }
+
+    // 🔥 Reset mode logic
+    currentSelectedMode = 'explain';
+
+    const modeLabel = document.getElementById("modeLabel");
+    if (modeLabel) modeLabel.innerText = "Explain";
+
+    const iconEl = document.getElementById('modeIcon');
+    if (iconEl) {
+        const newIcon = document.createElement('i');
+        newIcon.id = 'modeIcon';
+        newIcon.setAttribute('data-lucide', 'brain-circuit');
+        newIcon.className = 'w-3.5 h-3.5 text-[#4f46e5] dark:text-[#818cf8]';
+        iconEl.parentNode.replaceChild(newIcon, iconEl);
+    }
+
+    localStorage.removeItem("studyai_chat_history");
+
+    lucide.createIcons();
+
+    // 🔥 Safe mobile sidebar close
+    if (window.innerWidth < 1024) {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+
+        if (sidebar) sidebar.classList.add('-translate-x-full');
+        if (overlay) overlay.classList.add('hidden');
+    }
+        }
+        
+        // Highly reliable scroll function enforcing smooth scrolling to the very end
+        function scrollToBottom(force = false) {
+    const chat = document.getElementById("result");
+    if (!chat) return;
+
+    if (force) {
+        chat.scrollTop = chat.scrollHeight;
+    } else {
+        chat.scrollTo({
+            top: chat.scrollHeight,
+            behavior: "smooth"
+        });
+    }
+        }
+       
+    </script>
+    <div id="modeMenu" 
+            class="fixed z-[9999] w-44 
+            bg-white dark:bg-[#1e293b] 
+            border border-slate-200 dark:border-[#334155] 
+            rounded-2xl shadow-[0_-5px_20px_-5px_rgba(0,0,0,0.1)] dark:shadow-none
+            opacity-0 scale-95 pointer-events-none 
+            transition-all duration-200 origin-bottom-left z-50">
+    <div class="p-1.5 space-y-0.5 flex flex-col">
+
+                <button onclick="selectMode('explain','brain-circuit','Explain')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors">
+                    <i data-lucide="brain-circuit" class="w-4 h-4 text-[#4f46e5] dark:text-[#818cf8]"></i> Explain
+                </button>
+
+                <button onclick="selectMode('quiz','help-circle','Quiz')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors">
+                    <i data-lucide="help-circle" class="w-4 h-4 text-[#ea4335] dark:text-[#f28b82]"></i> Quiz
+                </button>
+
+                <button onclick="selectMode('notes','align-left','Notes')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors">
+                    <i data-lucide="align-left" class="w-4 h-4 text-[#f59e0b] dark:text-[#fcd34d]"></i> Notes
+                </button>
+
+                <button onclick="selectMode('flashcards','layers','Flashcards')" 
+                    class="w-full flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#334155] transition-colors">
+                    <i data-lucide="layers" class="w-4 h-4 text-[#8b5cf6] dark:text-[#c4b5fd]"></i> Flashcards
+                </button>
+
+            </div>
+</div>
+</body>
+</html>
