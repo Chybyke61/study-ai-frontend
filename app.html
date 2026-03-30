@@ -1506,24 +1506,52 @@ titles[currentChatId] = text
     Object.keys(chats).reverse().forEach(id => {
         const div = document.createElement("div");
 
-        div.className = `
-        px-3 py-2 rounded-xl cursor-pointer text-sm
-        hover:bg-gray-100 dark:hover:bg-[#1e1f20]
-        ${id === currentChatId ? "bg-gray-200 dark:bg-[#2a2a2a]" : ""}
-        `;
+div.className = `
+group flex items-center justify-between
+px-3 py-2.5 rounded-xl cursor-pointer text-sm
+transition-all duration-200
+hover:bg-white dark:hover:bg-[#18181b]
+border border-transparent
+${id === currentChatId 
+    ? "bg-white dark:bg-[#18181b] border-zinc-200 dark:border-[#27272a] shadow-sm" 
+    : ""}
+`;
 
-        const titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
+// LEFT SIDE (TITLE)
+const titleSpan = document.createElement("span");
+titleSpan.className = "truncate flex-1 text-zinc-700 dark:text-zinc-200 font-medium";
 
-        const title = titles[id] || "New Chat";
+const title = titles[id] || "New Chat";
+titleSpan.innerText = title.length > 35 
+    ? title.slice(0, 35) + "..." 
+    : title;
 
-        div.innerText = title.length > 35 
-           ? title.slice(0, 35) + "..." 
-         : title;
-        
-        div.onclick = () => loadChat(id);
+// DELETE BUTTON
+const deleteBtn = document.createElement("button");
+deleteBtn.innerHTML = `<i data-lucide="trash-2" class="w-4 h-4"></i>`;
+deleteBtn.className = `
+p-1.5 rounded-lg 
+text-zinc-400 hover:text-red-500 
+hover:bg-red-50 dark:hover:bg-red-900/20
+opacity-0 group-hover:opacity-100
+transition-all
+`;
 
-        container.appendChild(div);
+// DELETE FUNCTION
+deleteBtn.onclick = (e) => {
+    e.stopPropagation();
+    deleteChat(id);
+};
+
+// CLICK TO LOAD CHAT
+div.onclick = () => loadChat(id);
+
+// APPEND
+div.appendChild(titleSpan);
+div.appendChild(deleteBtn);
+container.appendChild(div);
     });
+                lucide.createIcons();
             }
 
             function loadChat(id) {
@@ -1533,6 +1561,33 @@ titles[currentChatId] = text
     loadChatHistory();
     renderChatList();
             }
+
+        function deleteChat(id) {
+    if (!confirm("Delete this chat?")) return;
+
+    let chats = JSON.parse(localStorage.getItem("studyai_chats") || "{}");
+    let titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
+
+    delete chats[id];
+    delete titles[id];
+
+    localStorage.setItem("studyai_chats", JSON.stringify(chats));
+    localStorage.setItem("studyai_titles", JSON.stringify(titles));
+
+    // If deleting current chat → reset
+    if (id === currentChatId) {
+        currentChatId = null;
+        localStorage.removeItem("current_chat_id");
+
+        const result = document.getElementById("result");
+        result.innerHTML = `
+        <div id="welcomePlaceholder" class="h-full flex flex-col items-center justify-center text-center opacity-90">
+            <h4 class="text-xl text-zinc-500">Chat deleted</h4>
+        </div>`;
+    }
+
+    renderChatList();
+        }
        
     </script>
     <div id="modeMenu" 
