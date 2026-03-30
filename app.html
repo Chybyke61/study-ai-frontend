@@ -1134,11 +1134,11 @@ overflow-y-auto custom-scrollbar">
                     <p class="text-sm text-zinc-900 dark:text-zinc-100 font-medium mb-4">Correct Answer: <span class="font-bold">${correct} - ${correctText || "Missing"}</span></p>
                 ${ explanation ? `
         <div class="mt-2 pt-4 border-t ${ isCorrect ? "border-emerald-200/50 dark:border-emerald-800/50" : "border-rose-200/50 dark:border-rose-800/50" }">
-            <button onclick="toggleExplanation(${i})" class="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white text-sm font-bold transition-colors">
-                <i id="toggle-icon-${i}" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
-                <span id="toggle-text-${i}">Show Explanation</span>
+            <button onclick="toggleExplanation('${quizId}', ${i})" class="flex items-center gap-1.5 text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white text-sm font-bold transition-colors">
+                <i id="${quizId}-toggle-icon-${i}" data-lucide="chevron-down" class="w-4 h-4 transition-transform"></i>
+                <span id="${quizId}-toggle-text-${i}">Show Explanation</span>
             </button>
-            <div id="explanation-${i}" class="hidden mt-3 text-[14px] text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">
+            <div id="${quizId}-explanation-${i}" class="hidden mt-3 text-[14px] text-zinc-600 dark:text-zinc-400 leading-relaxed font-medium">
                 ${fixedExplanation}
             </div>
         </div>` : "" }
@@ -1174,22 +1174,38 @@ overflow-y-auto custom-scrollbar">
             if (icon) icon.classList.remove("animate-spin");
       }
 
-        function toggleExplanation(i) {
-            const box = document.getElementById(`explanation-${i}`);
-            const text = document.getElementById(`toggle-text-${i}`);
-            const icon = document.getElementById(`toggle-icon-${i}`);
-            if (!box || !text) return;
-            if (box.classList.contains("hidden")) {
-                box.classList.remove("hidden");
-                text.innerText = "Hide Explanation";
-                if (icon) icon.classList.add("rotate-180");
-            } else {
-                box.classList.add("hidden");
-                text.innerText = "Show Explanation";
-                if (icon) icon.classList.remove("rotate-180");
-            }
-        }
+        function toggleExplanation(quizId, i) {
+    const currentBox = document.getElementById(`${quizId}-explanation-${i}`);
+    const currentText = document.getElementById(`${quizId}-toggle-text-${i}`);
+    const currentIcon = document.getElementById(`${quizId}-toggle-icon-${i}`);
 
+    if (!currentBox || !currentText) return;
+
+    const isOpening = currentBox.classList.contains("hidden");
+
+    // CLOSE ALL explanations in THIS quiz
+    const allBoxes = document.querySelectorAll(`[id^="${quizId}-explanation-"]`);
+    
+    allBoxes.forEach(box => {
+        const index = box.id.split("-").pop();
+
+        const text = document.getElementById(`${quizId}-toggle-text-${index}`);
+        const icon = document.getElementById(`${quizId}-toggle-icon-${index}`);
+
+      //  box.classList.add("hidden");
+        box.style.maxHeight = "0px";
+        if (text) text.innerText = "Show Explanation";
+        if (icon) icon.classList.remove("rotate-180");
+    });
+
+    // OPEN ONLY the clicked one
+    if (isOpening) {
+        currentBox.classList.remove("hidden");
+        currentText.innerText = "Hide Explanation";
+        if (currentIcon) currentIcon.classList.add("rotate-180");
+    }
+        }
+        
         function togglePassword(id, btn) {
             const input = document.getElementById(id);
             const icon = btn.querySelector("i");
