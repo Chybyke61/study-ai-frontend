@@ -264,12 +264,26 @@ overflow-y-auto custom-scrollbar">
                 </div>
 
                 <div class="flex-1 flex flex-col overflow-hidden px-1 mt-4">
-                    <div class="flex justify-between items-center mb-3 px-2">
-                        <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Recent</h3>
-                        <span id="bookCount" class="text-xs font-medium text-zinc-400">0</span>
-                    </div>
-                    <div id="chatList" class="mb-3 space-y-1"></div>
-                    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-1"></div>
+                    <!-- CHAT HISTORY -->
+<div class="mb-4 px-2">
+    <h3 class="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 mb-2">
+        Chat History
+    </h3>
+    <div id="chatList" class="space-y-1"></div>
+</div>
+
+<!-- LIBRARY -->
+<div class="flex-1 flex flex-col px-2 mt-3">
+    <div class="flex justify-between items-center mb-2">
+        <h3 class="text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">
+            Library
+        </h3>
+        <span id="bookCount" class="text-[11px] text-zinc-400">0</span>
+    </div>
+
+    <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-1"></div>
+    
+</div>
                 </div>
             </aside>
 
