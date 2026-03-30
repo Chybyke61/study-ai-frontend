@@ -1174,7 +1174,7 @@ overflow-y-auto custom-scrollbar">
             if (icon) icon.classList.remove("animate-spin");
       }
 
-        function toggleExplanation(quizId, i) {
+    /*    function toggleExplanation(quizId, i) {
     const currentBox = document.getElementById(`${quizId}-explanation-${i}`);
     const currentText = document.getElementById(`${quizId}-toggle-text-${i}`);
     const currentIcon = document.getElementById(`${quizId}-toggle-icon-${i}`);
@@ -1203,6 +1203,24 @@ overflow-y-auto custom-scrollbar">
         currentBox.classList.remove("hidden");
         currentText.innerText = "Hide Explanation";
         if (currentIcon) currentIcon.classList.add("rotate-180");
+    }
+        }*/
+
+        function toggleExplanation(quizId, i) {
+    const box = document.getElementById(`${quizId}-explanation-${i}`);
+    const text = document.getElementById(`${quizId}-toggle-text-${i}`);
+    const icon = document.getElementById(`${quizId}-toggle-icon-${i}`);
+
+    if (!box || !text) return;
+
+    if (box.classList.contains("hidden")) {
+        box.classList.remove("hidden");
+        text.innerText = "Hide Explanation";
+        if (icon) icon.classList.add("rotate-180");
+    } else {
+        box.classList.add("hidden");
+        text.innerText = "Show Explanation";
+        if (icon) icon.classList.remove("rotate-180");
     }
         }
         
