@@ -401,6 +401,12 @@ overflow-y-auto custom-scrollbar">
                     icon.setAttribute('data-lucide', 'moon');
                 }
             }
+
+            // Ensure a chat exists
+            if (!currentChatId) {
+                  currentChatId = "chat_" + Date.now();
+                  localStorage.setItem("current_chat_id", currentChatId);
+                  }
             
             // Mobile Sidebar Toggle Logic
             const mobileBtn = document.getElementById('mobileMenuBtn');
@@ -1427,9 +1433,9 @@ titles[currentChatId] = text
             currentChatId = "chat_" + Date.now();
 
             // Force fresh title creation
-           let titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
+         /*  let titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
            delete titles[currentChatId];
-           localStorage.setItem("studyai_titles", JSON.stringify(titles));
+           localStorage.setItem("studyai_titles", JSON.stringify(titles));*/
             
             localStorage.setItem("current_chat_id", currentChatId);
             const result = document.getElementById("result");
