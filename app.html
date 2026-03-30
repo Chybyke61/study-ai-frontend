@@ -740,7 +740,7 @@ overflow-y-auto custom-scrollbar">
         const tempDiv = document.createElement("div");
 tempDiv.innerHTML = htmlSnippet;
 
-const text = tempDiv.innerText || "New Chat";
+const text = tempDiv.innerText.trim() || "New Chat";
 
 titles[currentChatId] = text
     .slice(0, 40)
@@ -1411,6 +1411,12 @@ titles[currentChatId] = text
         function startNewChat() {
             console.log("New chat started");
             currentChatId = "chat_" + Date.now();
+
+            // Force fresh title creation
+           let titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
+           delete titles[currentChatId];
+           localStorage.setItem("studyai_titles", JSON.stringify(titles));
+            
             localStorage.setItem("current_chat_id", currentChatId);
             const result = document.getElementById("result");
             if (result) {
