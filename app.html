@@ -982,6 +982,12 @@ overflow-y-auto custom-scrollbar">
         }
 
         function renderQuiz(quizText) {
+            window.correctAnswers = [];
+            window.rationales = [];
+            window.allOptions = [];
+ 
+            const quizId = "quiz-" + Date.now();
+            window.currentQuizId = quizId;
             const resultBox = document.getElementById("result");
             const topic = document.getElementById("topic").value;
 
@@ -1038,8 +1044,8 @@ overflow-y-auto custom-scrollbar">
 
             options.forEach(opt => {
                 html += `
-                <label id="q${i}-${opt.letter}" data-letter="${opt.letter}" class="flex items-center gap-3 px-4 py-3.5 mb-2 rounded-xl bg-zinc-50 dark:bg-[#09090b] hover:bg-zinc-100 dark:hover:bg-[#27272a] border border-zinc-200 dark:border-[#3f3f46] transition-all cursor-pointer font-medium">
-                    <input type="radio" name="q${i}" value="${opt.letter}" class="accent-[#ec4899] w-4 h-4">
+                <label id="${quizId}-q${i}-${opt.letter}" data-letter="${opt.letter}" class="flex items-center gap-3 px-4 py-3.5 mb-2 rounded-xl bg-zinc-50 dark:bg-[#09090b] hover:bg-zinc-100 dark:hover:bg-[#27272a] border border-zinc-200 dark:border-[#3f3f46] transition-all cursor-pointer font-medium">
+                    <input type="radio" name="${quizId}-q${i}" value="${opt.letter}" class="accent-[#ec4899] w-4 h-4">
                     <span class="text-[15px] text-zinc-800 dark:text-zinc-200">${opt.text}</span>
                 </label>`;
             });
@@ -1083,7 +1089,7 @@ overflow-y-auto custom-scrollbar">
             let resultHTML = "";
 
             for (let i = 0; i < total; i++) {
-                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                const selected = document.querySelector(`input[name="${window.currentQuizId}-q${i}"]:checked`)
                 const userAnswer = selected ? selected.value : null;
                 const correct = window.correctAnswers[i];
                 const options = window.allOptions[i] || [];
@@ -1099,21 +1105,21 @@ overflow-y-auto custom-scrollbar">
 
                 const isCorrect = userAnswer?.trim() === correct?.trim();
                 
-               const correctEl = document.getElementById(`q${i}-${correct}`);
+               const correctEl = document.getElementById(`${window.currentQuizId}-q${i}-${correct}`)
                   if (correctEl) {
                      correctEl.classList.remove("bg-zinc-50", "dark:bg-[#09090b]", "border-zinc-200", "dark:border-[#3f3f46]");
                      correctEl.classList.add("bg-emerald-50", "dark:bg-emerald-900/20", "border-emerald-500");
                   }
 
                 if (userAnswer && userAnswer !== correct) {
-                    const wrongEl = document.getElementById(`q${i}-${userAnswer}`);
+                    const wrongEl = document.getElementById(`${window.currentQuizId}-q${i}-${userAnswer}`)
                 if (wrongEl) {
                     wrongEl.classList.remove("bg-zinc-50", "dark:bg-[#09090b]", "border-zinc-200", "dark:border-[#3f3f46]");
                     wrongEl.classList.add("bg-rose-50", "dark:bg-rose-900/20", "border-rose-400");
                }
             }
 
-                 const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+                 const inputs = document.querySelectorAll(`input[name="${window.currentQuizId}-q${i}"]`)
                      inputs.forEach(input => { input.disabled = true; });
 
                 if (isCorrect) score++;
