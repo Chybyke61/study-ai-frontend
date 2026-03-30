@@ -268,6 +268,7 @@ overflow-y-auto custom-scrollbar">
                         <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500">Recent</h3>
                         <span id="bookCount" class="text-xs font-medium text-zinc-400">0</span>
                     </div>
+                    <div id="chatList" class="mb-3 space-y-1"></div>
                     <div id="books" class="flex-1 overflow-y-auto custom-scrollbar space-y-1"></div>
                 </div>
             </aside>
@@ -423,6 +424,7 @@ overflow-y-auto custom-scrollbar">
             }
         });
         let currentUser = null;
+        let currentChatId = localStorage.getItem("current_chat_id") || null;
         let allBooks = [];
         const sessionId = localStorage.getItem("studyai_session") || crypto.randomUUID();
         localStorage.setItem("studyai_session", sessionId);
@@ -715,19 +717,43 @@ overflow-y-auto custom-scrollbar">
         }
 
         // --- PERSISTENCE HELPERS ---
-        function saveToChatHistory(htmlSnippet) {
+      /*  function saveToChatHistory(htmlSnippet) {
             let history = localStorage.getItem("studyai_chat_history") || "";
             history += htmlSnippet;
             localStorage.setItem("studyai_chat_history", history);
+        }*/
+        function saveToChatHistory(htmlSnippet) {
+    let chats = JSON.parse(localStorage.getItem("studyai_chats") || "{}");
+
+    if (!currentChatId) {
+        currentChatId = "chat_" + Date.now();
+        localStorage.setItem("current_chat_id", currentChatId);
+    }
+
+    chats[currentChatId] = (chats[currentChatId] || "") + htmlSnippet;
+
+    localStorage.setItem("studyai_chats", JSON.stringify(chats));
+
+    renderChatList(); // 🔥 update sidebar
         }
 
-        function loadChatHistory() {
+       /* function loadChatHistory() {
             const history = localStorage.getItem("studyai_chat_history");
             const resultBox = document.getElementById("result");
             if (history) {
                 resultBox.innerHTML = history;
                 lucide.createIcons();
             }
+        }*/
+
+        function loadChatHistory() {
+    const chats = JSON.parse(localStorage.getItem("studyai_chats") || "{}");
+    const resultBox = document.getElementById("result");
+
+    if (currentChatId && chats[currentChatId]) {
+        resultBox.innerHTML = chats[currentChatId];
+        lucide.createIcons();
+    }
         }
 
         // --- AI ---
@@ -1367,6 +1393,9 @@ overflow-y-auto custom-scrollbar">
         }
         
         function startNewChat() {
+            console.log("New chat started");
+            currentChatId = "chat_" + Date.now();
+            localStorage.setItem("current_chat_id", currentChatId);
             const result = document.getElementById("result");
             if (result) {
                 result.innerHTML = `
@@ -1429,6 +1458,39 @@ overflow-y-auto custom-scrollbar">
                 observer.observe(chatContainer, { childList: true, subtree: true });
             }
         });
+
+            function renderChatList() {
+    const container = document.getElementById("chatList");
+    if (!container) return;
+
+    const chats = JSON.parse(localStorage.getItem("studyai_chats") || "{}");
+
+    container.innerHTML = "";
+
+    Object.keys(chats).reverse().forEach(id => {
+        const div = document.createElement("div");
+
+        div.className = `
+        px-3 py-2 rounded-xl cursor-pointer text-sm
+        hover:bg-gray-100 dark:hover:bg-[#1e1f20]
+        ${id === currentChatId ? "bg-gray-200 dark:bg-[#2a2a2a]" : ""}
+        `;
+
+        div.innerText = "Chat " + id.split("_")[1].slice(-4);
+
+        div.onclick = () => loadChat(id);
+
+        container.appendChild(div);
+    });
+            }
+
+            function loadChat(id) {
+    currentChatId = id;
+    localStorage.setItem("current_chat_id", id);
+
+    loadChatHistory();
+    renderChatList();
+            }
        
     </script>
     <div id="modeMenu" 
