@@ -302,7 +302,7 @@ transition-transform duration-300 ease-in-out">
                     </div>
                 </div>
 
-                <div id="inputBar" class="fixed bottom-0 left-0 w-full z-50 px-4 pb-6 pt-2 bg-transparent pointer-events-none">
+                <div id="inputBar" class="sticky bottom-0 left-0 w-full z-50 px-4 pb-6 pt-2 bg-transparent pointer-events-none">
 
                     <div class="max-w-3xl mx-auto w-full pointer-events-auto">
 
@@ -1323,16 +1323,18 @@ titles[currentChatId] = text
         });
    
         function adjustChatPadding() {
-            const inputBar = document.getElementById("inputBar");
-            const result = document.getElementById("result");
+    const inputBar = document.getElementById("inputBar");
+    const result = document.getElementById("result");
 
-            if (!inputBar || !result) return;
+    if (!inputBar || !result) return;
 
-            const height = inputBar.offsetHeight;
-            result.style.paddingBottom = (height + 20) + "px";
+    const rect = inputBar.getBoundingClientRect();
+    const height = rect.height;
+
+    result.style.paddingBottom = (height + 30) + "px";
         }
-
         window.addEventListener("load", adjustChatPadding);
+        setTimeout(adjustChatPadding, 500);
         window.addEventListener("resize", adjustChatPadding);
 
         document.addEventListener("DOMContentLoaded", () => {
