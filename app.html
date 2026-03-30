@@ -723,20 +723,33 @@ overflow-y-auto custom-scrollbar">
             history += htmlSnippet;
             localStorage.setItem("studyai_chat_history", history);
         }*/
-        function saveToChatHistory(htmlSnippet) {
+     function saveToChatHistory(htmlSnippet) {
     let chats = JSON.parse(localStorage.getItem("studyai_chats") || "{}");
+    let titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
 
     if (!currentChatId) {
         currentChatId = "chat_" + Date.now();
         localStorage.setItem("current_chat_id", currentChatId);
     }
 
+    // Save chat content
     chats[currentChatId] = (chats[currentChatId] || "") + htmlSnippet;
 
-    localStorage.setItem("studyai_chats", JSON.stringify(chats));
+    // CREATE TITLE (only if not exists)
+    if (!titles[currentChatId]) {
+        const topicInput = document.getElementById("topic")?.value || "New Chat";
 
-    renderChatList(); // 🔥 update sidebar
-        }
+        titles[currentChatId] = topicInput
+            .slice(0, 40) // limit length
+            .replace(/\n/g, " ")
+            .trim();
+    }
+
+    localStorage.setItem("studyai_chats", JSON.stringify(chats));
+    localStorage.setItem("studyai_titles", JSON.stringify(titles));
+
+    renderChatList();
+     }
 
        /* function loadChatHistory() {
             const history = localStorage.getItem("studyai_chat_history");
@@ -1477,8 +1490,14 @@ overflow-y-auto custom-scrollbar">
         ${id === currentChatId ? "bg-gray-200 dark:bg-[#2a2a2a]" : ""}
         `;
 
-        div.innerText = "Chat " + id.split("_")[1].slice(-4);
+        const titles = JSON.parse(localStorage.getItem("studyai_titles") || "{}");
 
+        const title = titles[id] || "New Chat";
+
+        div.innerText = title.length > 35 
+           ? title.slice(0, 35) + "..." 
+         : title;
+        
         div.onclick = () => loadChat(id);
 
         container.appendChild(div);
