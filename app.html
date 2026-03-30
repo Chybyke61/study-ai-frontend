@@ -828,7 +828,7 @@ overflow-y-auto custom-scrollbar">
             lucide.createIcons();
         }
 
-    async function runFlashcards(event) {
+    async function runFlashcards(event, overrideTopic = null) {
         const btn = event?.currentTarget;
         const originalText = btn ? btn.innerHTML : '';
 
@@ -838,7 +838,7 @@ overflow-y-auto custom-scrollbar">
             lucide.createIcons();
         }
 
-        const topic = document.getElementById("topic").value;
+        const topic = overrideTopic || document.getElementById("topic").value;
         const resultBox = document.getElementById("result");
 
         if (!topic) {
@@ -1329,7 +1329,7 @@ overflow-y-auto custom-scrollbar">
             }
 
             if (currentSelectedMode === 'flashcards') {
-                runFlashcards(event).finally(() => unlockUI(sendBtn));
+    runFlashcards(event, value).finally(() => unlockUI(sendBtn));
             } else {
                 requestAI(currentSelectedMode, value).finally(() => unlockUI(sendBtn));
             }
