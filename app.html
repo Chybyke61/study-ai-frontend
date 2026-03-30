@@ -737,14 +737,16 @@ overflow-y-auto custom-scrollbar">
 
     // CREATE TITLE (only if not exists)
     if (!titles[currentChatId]) {
-        const topicInput = document.getElementById("topic")?.value || "New Chat";
+        const tempDiv = document.createElement("div");
+tempDiv.innerHTML = htmlSnippet;
 
-        titles[currentChatId] = topicInput
-            .slice(0, 40) // limit length
-            .replace(/\n/g, " ")
-            .trim();
-    }
+const text = tempDiv.innerText || "New Chat";
 
+titles[currentChatId] = text
+    .slice(0, 40)
+    .replace(/\n/g, " ")
+    .trim();
+    }  
     localStorage.setItem("studyai_chats", JSON.stringify(chats));
     localStorage.setItem("studyai_titles", JSON.stringify(titles));
 
