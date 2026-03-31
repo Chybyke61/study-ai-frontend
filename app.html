@@ -969,7 +969,7 @@ titles[currentChatId] = text
                         </div>
                     </div>`;
                     resultBox.insertAdjacentHTML('beforeend', responseHtml);
-                    const container = document.querySelector('[id^="stream-"]:last-of-type');
+                /*    const container = document.querySelector('[id^="stream-"]:last-of-type');
 
 const textChunks = raw.split(/(\s+)/); // plain text first
 
@@ -991,7 +991,7 @@ function typeWriter() {
     }
 }
 
-typeWriter();
+typeWriter();*/
                     saveToChatHistory(responseHtml);
                 }
 
