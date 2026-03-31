@@ -916,6 +916,7 @@ titles[currentChatId] = text
                          <i data-lucide="brain-circuit" class="w-5 h-5 text-[#06b6d4]"></i>
                     </div>
                     <div class="flex-1 space-y-4 py-1 max-w-2xl">
+                        <p class="text-sm text-zinc-500">Study.AI is thinking...</p>
                         <div class="h-3 bg-zinc-200 dark:bg-[#27272a] rounded-full w-3/4"></div>
                         <div class="h-3 bg-zinc-200 dark:bg-[#27272a] rounded-full w-full"></div>
                         <div class="h-3 bg-zinc-200 dark:bg-[#27272a] rounded-full w-5/6"></div>
@@ -954,7 +955,7 @@ titles[currentChatId] = text
                     renderQuiz(raw);
                 } else {
                     const responseHtml = `
-                    <div class="flex flex-col mb-12">
+                    <div class="chat-block flex flex-col gap-2 mb-10">
                         <div class="self-end bg-zinc-100 dark:bg-[#27272a] text-zinc-900 dark:text-white rounded-2xl px-5 py-3 mb-8 max-w-[85%] ml-auto border border-zinc-200 dark:border-[#3f3f46]">
                             <p class="text-[15px] font-medium">${topic}</p>
                         </div>
@@ -962,12 +963,27 @@ titles[currentChatId] = text
                             <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#06b6d4] to-[#8b5cf6] flex items-center justify-center shrink-0 mt-1 shadow-sm text-white">
                                  <i data-lucide="brain-circuit" class="w-4 h-4"></i>
                             </div>
-                            <div class="flex-1 markdown-content text-zinc-800 dark:text-zinc-200 animate-fade-in text-[15px]">
-                                <div id="stream-${Date.now()}" class="flex-1 markdown-content text-[15px]"></div>
-                            </div>
+                               <div id="stream-${Date.now()}" 
+                                class="flex-1 markdown-content text-zinc-800 dark:text-zinc-200 text-[15px] animate-[fadeIn_.3s_ease-in-out]">
+                           </div>
                         </div>
                     </div>`;
                     resultBox.insertAdjacentHTML('beforeend', responseHtml);
+                    const container = document.querySelector('[id^="stream-"]:last-of-type');
+
+const formatted = marked.parse(raw.trim(), { breaks: true, gfm: true });
+
+let i = 0;
+function typeWriter() {
+    if (i < formatted.length) {
+        container.innerHTML += formatted.charAt(i);
+        i++;
+        resultBox.scrollTop = resultBox.scrollHeight;
+        setTimeout(typeWriter, 2);
+    }
+}
+
+typeWriter();
                     saveToChatHistory(responseHtml);
                 }
 
@@ -984,25 +1000,10 @@ titles[currentChatId] = text
                         </div>
                     </div>
                 </div>`;
-                resultBox.insertAdjacentHTML('beforeend', errorHtml);
+                resultBox.insertAdjacentHTML('beforeend', errorHtml);      
+         }
          
-            }
-            const container = document.querySelector('[id^="stream-"]:last-of-type');
-
-const formatted = marked.parse(raw.trim(), { breaks: true, gfm: true });
-
-let i = 0;
-function typeWriter() {
-    if (i < formatted.length) {
-        container.innerHTML += formatted.charAt(i);
-        i++;
-        resultBox.scrollTop = resultBox.scrollHeight;
-        setTimeout(typeWriter, 2);
-    }
-}
-
-typeWriter();
-            lucide.createIcons();
+           lucide.createIcons();
             setTimeout(() => {
     resultBox.scrollTop = resultBox.scrollHeight;
 }, 50);
