@@ -184,6 +184,11 @@
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
         }
+        
+        @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 
    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -963,7 +968,7 @@ titles[currentChatId] = text
                             <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#06b6d4] to-[#8b5cf6] flex items-center justify-center shrink-0 mt-1 shadow-sm text-white">
                                  <i data-lucide="brain-circuit" class="w-4 h-4"></i>
                             </div>
-                            <div class="flex-1 markdown-content text-zinc-800 dark:text-zinc-200 animate-fade-in text-[15px]">
+                            <div class="flex-1 markdown-content text-zinc-800 dark:text-zinc-200 text-[15px] animate-[fadeIn_.3s_ease-in-out]"
                                 ${marked.parse(raw.trim(), {
                                      breaks: true,
                                        gfm: true
