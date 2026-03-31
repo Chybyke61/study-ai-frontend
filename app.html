@@ -963,10 +963,7 @@ titles[currentChatId] = text
                                  <i data-lucide="brain-circuit" class="w-4 h-4"></i>
                             </div>
                             <div class="flex-1 markdown-content text-zinc-800 dark:text-zinc-200 animate-fade-in text-[15px]">
-                                ${marked.parse(raw.trim(), {
-                                     breaks: true,
-                                       gfm: true
-                                 })}
+                                <div id="stream-${Date.now()}" class="flex-1 markdown-content text-[15px]"></div>
                             </div>
                         </div>
                     </div>`;
@@ -988,8 +985,27 @@ titles[currentChatId] = text
                     </div>
                 </div>`;
                 resultBox.insertAdjacentHTML('beforeend', errorHtml);
+         
             }
+            const container = document.querySelector('[id^="stream-"]:last-of-type');
+
+const formatted = marked.parse(raw.trim(), { breaks: true, gfm: true });
+
+let i = 0;
+function typeWriter() {
+    if (i < formatted.length) {
+        container.innerHTML += formatted.charAt(i);
+        i++;
+        resultBox.scrollTop = resultBox.scrollHeight;
+        setTimeout(typeWriter, 2);
+    }
+}
+
+typeWriter();
             lucide.createIcons();
+            setTimeout(() => {
+    resultBox.scrollTop = resultBox.scrollHeight;
+}, 50);
         }
 
     async function runFlashcards(event, overrideTopic = null) {
