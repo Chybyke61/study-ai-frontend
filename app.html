@@ -418,7 +418,18 @@ transition-transform duration-300 ease-in-out">
             function toggleSidebar() {
                 sidebar.classList.toggle('-translate-x-full');
                 overlay.classList.toggle('hidden');
-            }
+           
+
+            const inputBar = document.getElementById("inputBar");
+
+if (sidebar.classList.contains("-translate-x-full")) {
+    // Sidebar CLOSED → show input
+    inputBar.style.display = "block";
+} else {
+    // Sidebar OPEN → hide input
+    inputBar.style.display = "none";
+}
+        } 
 
             if(mobileBtn) mobileBtn.addEventListener('click', toggleSidebar);
             if(closeBtn) closeBtn.addEventListener('click', toggleSidebar);
