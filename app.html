@@ -971,15 +971,23 @@ titles[currentChatId] = text
                     resultBox.insertAdjacentHTML('beforeend', responseHtml);
                     const container = document.querySelector('[id^="stream-"]:last-of-type');
 
-const formatted = marked.parse(raw.trim(), { breaks: true, gfm: true });
+const textChunks = raw.split(/(\s+)/); // plain text first
 
+let tempText = "";
 let i = 0;
+
 function typeWriter() {
-    if (i < formatted.length) {
-        container.innerHTML += formatted.charAt(i);
+    if (i < textChunks.length) {
+        tempText += textChunks[i];
+        container.innerText = tempText; // ✅ no HTML break
         i++;
+
         resultBox.scrollTop = resultBox.scrollHeight;
-        setTimeout(typeWriter, 2);
+
+        setTimeout(typeWriter, 10);
+    } else {
+        // ✅ Final render with formatting
+        container.innerHTML = marked.parse(tempText, { breaks: true, gfm: true });
     }
 }
 
