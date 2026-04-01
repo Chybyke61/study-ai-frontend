@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Join Study.AI | Create Account</title>
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -20,19 +20,20 @@
             theme: {
                 extend: {
                     colors: {
-                        gemini: {
-                            darkBg: '#131314',
-                            darkSurface: '#1e1f20',
-                            lightBg: '#ffffff',
-                            lightSurface: '#f0f4f9',
-                            brand: '#a8c7fa',
-                            userLight: '#f0f4f9',
-                            userDark: '#333537'
+                        brand: {
+                            cyan: '#06b6d4',     /* Vibrant Cyan */
+                            violet: '#8b5cf6',   /* Deep Violet */
+                            darkBg: '#09090b',   /* Zinc 950 */
+                            darkSurface: '#18181b', /* Zinc 900 */
+                            darkBorder: '#27272a',  /* Zinc 800 */
+                            lightBg: '#fafafa',  /* Zinc 50 */
+                            lightSurface: '#ffffff', /* White */
+                            lightBorder: '#e4e4e7', /* Zinc 200 */
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        display: ['Google Sans', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
                     }
                 }
             }
@@ -46,16 +47,23 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
         
-        /* Gemini Dark Mode Background */
+        /* Premium Gradient Backgrounds */
         .dark body {
-            background-color: #131314; 
-            color: #e3e3e3;
+            background: radial-gradient(circle at top right, #18181b, #09090b 40%);
+            color: #e4e4e7;
+            min-height: 100vh;
         }
         
-        /* Gemini Light Mode Background */
         body {
-            background-color: #ffffff;
-            color: #1f1f1f;
+            background: radial-gradient(circle at top right, #f4f4f5, #fafafa 40%);
+            color: #09090b;
+            min-height: 100vh;
+        }
+
+        /* Glassmorphism helpers */
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
 
         /* Fix for Lucide icons once rendered as SVG */
@@ -63,102 +71,108 @@
     </style>
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
+<body class="min-h-[100dvh] flex items-center justify-center p-4 transition-colors duration-300">
 
-    <div id="globalLoader" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white dark:bg-[#131314] transition-opacity duration-700">
+    <div id="globalLoader" class="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-white dark:bg-[#09090b] transition-opacity duration-700">
         <div class="flex flex-col items-center">
             <div class="relative flex items-center justify-center w-16 h-16 mb-6">
-                <i data-lucide="brain-circuit" class="w-10 h-10 text-[#4285f4] dark:text-[#a8c7fa] animate-pulse"></i>
+                <i data-lucide="brain-circuit" class="w-10 h-10 text-[#06b6d4] animate-pulse"></i>
             </div>
-            <h2 class="text-2xl font-medium tracking-tight text-slate-900 dark:text-white mb-4 font-display">Study.AI</h2>
+            <h2 class="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-4 font-display">Study.AI</h2>
             <div class="flex items-center gap-2 mb-4">
-                <div class="w-1.5 h-1.5 rounded-full bg-[#4285f4] dark:bg-[#a8c7fa] animate-bounce" style="animation-delay: 0s;"></div>
-                <div class="w-1.5 h-1.5 rounded-full bg-[#d96570] animate-bounce" style="animation-delay: 0.15s;"></div>
-                <div class="w-1.5 h-1.5 rounded-full bg-[#9b72cb] animate-bounce" style="animation-delay: 0.3s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-[#06b6d4] animate-bounce" style="animation-delay: 0s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-[#8b5cf6] animate-bounce" style="animation-delay: 0.15s;"></div>
+                <div class="w-1.5 h-1.5 rounded-full bg-[#ec4899] animate-bounce" style="animation-delay: 0.3s;"></div>
             </div>
-            <p class="text-xs font-medium text-gray-500 dark:text-gray-400">Initializing Workspace...</p>
+            <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400">Initializing Workspace...</p>
         </div>
     </div>
 
     <div class="absolute top-6 right-6 z-50">
-        <button onclick="toggleTheme()" class="p-2.5 rounded-full bg-white dark:bg-[#1e1f20] hover:bg-gray-100 dark:hover:bg-[#282a2c] border border-gray-200 dark:border-[#444746] transition-all text-gray-600 dark:text-gray-300 shadow-sm" title="Toggle Theme">
+        <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-white dark:bg-[#18181b] hover:bg-zinc-100 dark:hover:bg-[#27272a] border border-zinc-200 dark:border-[#27272a] transition-all text-zinc-600 dark:text-zinc-300 shadow-sm" title="Toggle Theme">
             <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
         </button>
     </div>
 
-    <div class="bg-white dark:bg-[#1e1f20] rounded-3xl p-8 sm:p-10 w-full max-w-[420px] shadow-sm border border-gray-100 dark:border-[#282a2c]">
+    <div class="glass-panel bg-white/80 dark:bg-[#18181b]/80 rounded-3xl p-8 sm:p-10 w-full max-w-[420px] shadow-xl border border-zinc-200/50 dark:border-[#27272a]/50">
         <div class="text-center mb-8">
-            <i data-lucide="brain-circuit" class="mx-auto text-[#4285f4] dark:text-[#a8c7fa] w-10 h-10 mb-4"></i>
-            <h2 class="text-2xl font-medium tracking-tight text-slate-900 dark:text-white mb-2 font-display">Create Account</h2>
-            <p class="text-slate-500 dark:text-gray-400 text-sm">Join the future of document intelligence</p>
+            <div class="w-16 h-16 mx-auto bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 dark:from-cyan-500/20 dark:to-violet-500/20 rounded-2xl flex items-center justify-center mb-4">
+                <i data-lucide="brain-circuit" class="text-[#06b6d4] w-8 h-8"></i>
+            </div>
+            <h2 class="text-2xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-2 font-display">Create Account</h2>
+            <p class="text-zinc-500 dark:text-zinc-400 text-sm">Join the future of document intelligence</p>
         </div>
 
         <div class="space-y-4">
             <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 ml-1 mb-1.5">Email Address</label>
-                <input id="email" type="email" placeholder="student@example.com" class="w-full px-5 py-3.5 rounded-xl bg-transparent border border-gray-300 dark:border-[#444746] text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-[#0b57d0] dark:focus:border-[#a8c7fa] focus:ring-1 focus:ring-[#0b57d0] dark:focus:ring-[#a8c7fa] transition-all text-sm">
+                <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 ml-1 mb-1.5">Email Address</label>
+                <input id="email" type="email" placeholder="student@example.com" class="w-full px-5 py-3.5 rounded-xl bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-[#06b6d4] dark:focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] transition-all text-sm">
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 ml-1 mb-1.5">Password</label>
+                <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 ml-1 mb-1.5">Password</label>
                 <div class="relative">
-                    <input id="password" type="password" placeholder="Min. 8 characters" class="w-full px-5 py-3.5 rounded-xl bg-transparent border border-gray-300 dark:border-[#444746] text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-[#0b57d0] dark:focus:border-[#a8c7fa] focus:ring-1 focus:ring-[#0b57d0] dark:focus:ring-[#a8c7fa] transition-all text-sm pr-12">
-                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                    <input id="password" type="password" placeholder="Min. 8 characters" class="w-full px-5 py-3.5 rounded-xl bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-[#06b6d4] dark:focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] transition-all text-sm pr-12">
+                    <button type="button" onclick="togglePassword('password', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">
                         <i data-lucide="eye" class="w-5 h-5"></i>
                     </button>
                 </div>
                 
                 <div id="passwordRules" class="mt-3 ml-1 space-y-2">
-                    <div id="rule-length" class="flex items-center gap-2 text-[11px] font-medium text-gray-500 dark:text-gray-400 transition-all duration-300">
-                        <i data-lucide="circle" class="w-3 h-3 text-gray-300 dark:text-[#444746]"></i>
+                    <div id="rule-length" class="flex items-center gap-2 text-[11px] font-medium text-zinc-500 dark:text-zinc-400 transition-all duration-300">
+                        <i data-lucide="circle" class="w-3 h-3 text-zinc-300 dark:text-[#27272a]"></i>
                         <span>8+ characters</span>
                     </div>
-                    <div id="rule-letter" class="flex items-center gap-2 text-[11px] font-medium text-gray-500 dark:text-gray-400 transition-all duration-300">
-                        <i data-lucide="circle" class="w-3 h-3 text-gray-300 dark:text-[#444746]"></i>
+                    <div id="rule-letter" class="flex items-center gap-2 text-[11px] font-medium text-zinc-500 dark:text-zinc-400 transition-all duration-300">
+                        <i data-lucide="circle" class="w-3 h-3 text-zinc-300 dark:text-[#27272a]"></i>
                         <span>At least one letter</span>
                     </div>
-                    <div id="rule-number" class="flex items-center gap-2 text-[11px] font-medium text-gray-500 dark:text-gray-400 transition-all duration-300">
-                        <i data-lucide="circle" class="w-3 h-3 text-gray-300 dark:text-[#444746]"></i>
+                    <div id="rule-number" class="flex items-center gap-2 text-[11px] font-medium text-zinc-500 dark:text-zinc-400 transition-all duration-300">
+                        <i data-lucide="circle" class="w-3 h-3 text-zinc-300 dark:text-[#27272a]"></i>
                         <span>At least one number</span>
                     </div>
-                    <div id="rule-symbol" class="flex items-center gap-2 text-[11px] font-medium text-gray-500 dark:text-gray-400 transition-all duration-300">
-                        <i data-lucide="circle" class="w-3 h-3 text-gray-300 dark:text-[#444746]"></i>
+                    <div id="rule-symbol" class="flex items-center gap-2 text-[11px] font-medium text-zinc-500 dark:text-zinc-400 transition-all duration-300">
+                        <i data-lucide="circle" class="w-3 h-3 text-zinc-300 dark:text-[#27272a]"></i>
                         <span>Special symbol (@$!%*#?&)</span>
                     </div>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 ml-1 mb-1.5">Confirm Password</label>
+                <label class="block text-xs font-medium text-zinc-700 dark:text-zinc-300 ml-1 mb-1.5">Confirm Password</label>
                 <div class="relative">
-                    <input id="confirmPassword" type="password" placeholder="Repeat password" class="w-full px-5 py-3.5 rounded-xl bg-transparent border border-gray-300 dark:border-[#444746] text-slate-900 dark:text-white placeholder-gray-500 focus:outline-none focus:border-[#0b57d0] dark:focus:border-[#a8c7fa] focus:ring-1 focus:ring-[#0b57d0] dark:focus:ring-[#a8c7fa] transition-all text-sm pr-12">
-                    <button type="button" onclick="togglePassword('confirmPassword', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                    <input id="confirmPassword" type="password" placeholder="Repeat password" class="w-full px-5 py-3.5 rounded-xl bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] text-zinc-900 dark:text-white placeholder-zinc-400 focus:outline-none focus:border-[#06b6d4] dark:focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] transition-all text-sm pr-12">
+                    <button type="button" onclick="togglePassword('confirmPassword', this)" class="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 transition-colors">
                         <i data-lucide="eye" class="w-5 h-5"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="mt-4 p-4 rounded-xl flex flex-col items-center justify-center bg-gray-50 dark:bg-transparent">
+            <div class="flex justify-end">
+                <p onclick="forgotPassword()" class="text-xs text-[#06b6d4] font-medium cursor-pointer hover:underline transition-colors">Forgot password?</p>
+            </div>
+
+            <div class="mt-4 p-4 rounded-xl flex flex-col items-center justify-center bg-zinc-50 dark:bg-transparent">
                 <div class="cf-turnstile" data-sitekey="0x4AAAAAACuLeZ39cRRtBKwI" data-theme="auto" data-appearance="always" data-compact="false"></div>
             </div>
 
             <div class="pt-4 flex flex-col gap-3">
-                <button id="signupBtn" onclick="signup()" class="w-full bg-[#0b57d0] dark:bg-[#a8c7fa] hover:bg-[#0842a0] dark:hover:bg-[#8ab4f8] text-white dark:text-[#051e49] font-medium py-3 rounded-full transition-all active:scale-95 text-sm">INITIALIZE ACCOUNT</button>
+                <button id="signupBtn" onclick="signup()" class="w-full bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 text-white font-medium py-3 rounded-xl transition-all active:scale-95 text-sm shadow-md">INITIALIZE ACCOUNT</button>
                 
-                <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-transparent border border-gray-300 dark:border-[#444746] hover:bg-gray-50 dark:hover:bg-[#282a2c] text-slate-700 dark:text-white font-medium py-3 rounded-full transition-all active:scale-95 gap-3 group text-sm">
+                <button onclick="googleLogin()" class="w-full flex items-center justify-center bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] hover:bg-zinc-50 dark:hover:bg-[#27272a] text-zinc-700 dark:text-white font-medium py-3 rounded-xl transition-all active:scale-95 gap-3 group text-sm shadow-sm">
                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-4 h-4">
                     <span>Continue with Google</span>
                 </button>
             </div>
 
-            <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
+            <p class="text-center text-sm text-zinc-500 dark:text-zinc-400 mt-6">
                 Already have access? 
-                <a href="/app" class="text-[#0b57d0] dark:text-[#a8c7fa] hover:underline font-medium transition-colors">Sign in</a>
+                <a href="/app" class="text-[#8b5cf6] hover:underline font-medium transition-colors">Sign in</a>
             </p>
         </div>
     </div>
 
-    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-[#333537] text-white px-5 py-3 rounded-md shadow-lg opacity-0 transition-opacity duration-300 z-[200] font-medium text-sm pointer-events-none flex items-center gap-2"></div>
+    <div id="toast" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 px-6 py-3 rounded-xl shadow-xl opacity-0 transition-opacity duration-300 z-[200] font-semibold text-sm pointer-events-none flex items-center gap-2 border border-zinc-800 dark:border-zinc-200"></div>
 
     <script>
         // Supabase Initialization
@@ -199,7 +213,7 @@
         // Toast logic
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
-            toast.innerHTML = isError ? `<i data-lucide="alert-circle" class="w-4 h-4 text-red-400"></i> ${message}` : `<i data-lucide="check-circle" class="w-4 h-4 text-[#a8c7fa]"></i> ${message}`;
+            toast.innerHTML = isError ? `<i data-lucide="alert-circle" class="w-4 h-4 text-red-500"></i> ${message}` : `<i data-lucide="check-circle" class="w-4 h-4 text-[#06b6d4]"></i> ${message}`;
             lucide.createIcons();
             toast.style.opacity = '1';
             setTimeout(() => { toast.style.opacity = '0'; }, 3000);
@@ -236,12 +250,12 @@
                 const el = document.getElementById(`rule-${key}`);
                 const icon = el.querySelector("i");
                 if (testFn(val)) {
-                    el.classList.replace("text-gray-500", "text-[#0b57d0]");
-                    el.classList.replace("dark:text-gray-400", "dark:text-[#a8c7fa]");
+                    el.classList.replace("text-zinc-500", "text-[#06b6d4]");
+                    el.classList.replace("dark:text-zinc-400", "dark:text-[#06b6d4]");
                     icon.setAttribute("data-lucide", "check-circle-2");
                 } else {
-                    el.classList.replace("text-[#0b57d0]", "text-gray-500");
-                    el.classList.replace("dark:text-[#a8c7fa]", "dark:text-gray-400");
+                    el.classList.replace("text-[#06b6d4]", "text-zinc-500");
+                    el.classList.replace("dark:text-[#06b6d4]", "dark:text-zinc-400");
                     icon.setAttribute("data-lucide", "circle");
                     allValid = false;
                 }
@@ -306,6 +320,16 @@
             });
 
             if (error) showToast("❌ Google login failed", true);
+        }
+
+        async function forgotPassword() {
+            const email = document.getElementById("email").value;
+            if (!email) return showToast("Enter your email first", true);
+            const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+                redirectTo: window.location.origin + "/reset"
+            });
+            if (error) return showToast(error.message, true);
+            showToast("Reset link sent");
         }
 
         // Loader
