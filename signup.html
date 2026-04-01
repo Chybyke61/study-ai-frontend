@@ -231,29 +231,36 @@
             symbol: (val) => /[@$!%*#?&]/.test(val)
         };
 
-        function updateRules() {
-            const val = document.getElementById("password").value;
-            let allValid = true;
-
-            for (const [key, testFn] of Object.entries(rules)) {
-                const el = document.getElementById(`rule-${key}`);
-                const icon = el.querySelector("i");
-                if (testFn(val)) {
-                    el.classList.replace("text-gray-500", "text-[#0b57d0]");
-                    el.classList.replace("dark:text-gray-400", "dark:text-[#a8c7fa]");
-                    icon.setAttribute("data-lucide", "check-circle-2");
-                } else {
-                    el.classList.replace("text-[#0b57d0]", "text-gray-500");
-                    el.classList.replace("dark:text-[#a8c7fa]", "dark:text-gray-400");
-                    icon.setAttribute("data-lucide", "circle");
-                    allValid = false;
-                }
-            }
-            lucide.createIcons();
-            return allValid;
-        }
-
         
+        function updateRules() {
+    const val = document.getElementById("password").value;
+
+    const checks = {
+        length: val.length >= 8,
+        letter: /[a-zA-Z]/.test(val),
+        number: /\d/.test(val),
+        symbol: /[@$!%*#?&]/.test(val)
+    };
+
+    for (const key in checks) {
+        const el = document.getElementById(`rule-${key}`);
+        const icon = el.querySelector("i");
+
+        if (checks[key]) {
+            el.classList.add("text-[#0b57d0]", "dark:text-[#a8c7fa]");
+            el.classList.remove("text-gray-500", "dark:text-gray-400");
+
+            icon.setAttribute("data-lucide", "check-circle-2");
+        } else {
+            el.classList.remove("text-[#0b57d0]", "dark:text-[#a8c7fa]");
+            el.classList.add("text-gray-500", "dark:text-gray-400");
+
+            icon.setAttribute("data-lucide", "circle");
+        }
+    }
+
+    lucide.createIcons();
+        }
 
         function checkPassword(val) {
             return Object.values(rules).every(fn => fn(val));
@@ -263,7 +270,7 @@
         async function signup() {
             const btn = document.getElementById("signupBtn");
             const email = document.getElementById("email").value;
-            const password = passwordInput.value;
+            const password = document.getElementById("password").value;
             const confirm = document.getElementById("confirmPassword").value;
             const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
