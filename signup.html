@@ -261,10 +261,10 @@ confirmInput.addEventListener("input", function () {
             const confirm = document.getElementById("confirmPassword").value;
             const token = document.querySelector('[name="cf-turnstile-response"]')?.value;
 
-            if (!token) return showToast("⚠️ Complete captcha", true);
-            if (!email || !password) return showToast("⚠️ Fill all fields", true);
-            if (password !== confirm) return showToast("⚠️ Passwords don't match", true);
-            if (!checkPassword(password)) return showToast("⚠️ Use a stronger password", true);
+            if (!token) return showToast("Complete captcha", true);
+            if (!email || !password) return showToast("Fill all fields", true);
+            if (password !== confirm) return showToast("Passwords don't match", true);
+            if (!checkPassword(password)) return showToast("Use a stronger password", true);
 
             btn.disabled = true;
             btn.innerText = "INITIALIZING...";
