@@ -9,7 +9,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
     <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48.png">
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64.png">
-    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script>
         (function() {
@@ -31,19 +31,20 @@
             theme: {
                 extend: {
                     colors: {
-                        gemini: {
-                            darkBg: '#131314',
-                            darkSurface: '#1e1f20',
-                            lightBg: '#ffffff',
-                            lightSurface: '#f0f4f9',
-                            brand: '#a8c7fa',
-                            userLight: '#f0f4f9',
-                            userDark: '#333537'
+                        brand: {
+                            cyan: '#06b6d4',     /* Vibrant Cyan */
+                            violet: '#8b5cf6',   /* Deep Violet */
+                            darkBg: '#09090b',   /* Zinc 950 */
+                            darkSurface: '#18181b', /* Zinc 900 */
+                            darkBorder: '#27272a',  /* Zinc 800 */
+                            lightBg: '#fafafa',  /* Zinc 50 */
+                            lightSurface: '#ffffff', /* White */
+                            lightBorder: '#e4e4e7', /* Zinc 200 */
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        display: ['Google Sans', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
                     }
                 }
             }
@@ -53,49 +54,36 @@
     <style>
         body { 
             font-family: 'Inter', sans-serif;
+            background-attachment: fixed;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* Light Mode Body */
         .light body, body {
-            background-color: #ffffff;
-            color: #1f1f1f;
+            background: radial-gradient(circle at top right, #f4f4f5, #fafafa 40%);
+            color: #09090b;
+            min-height: 100vh;
         }
 
         /* Dark Mode Body */
         .dark body {
-            background-color: #131314; 
-            color: #e3e3e3;
+            background: radial-gradient(circle at top right, #18181b, #09090b 40%);
+            color: #e4e4e7;
+            min-height: 100vh;
         }
 
-        /* Light Mode Glass Card */
-        .light .glass-card, .glass-card {
-            background: #f0f4f9; 
-            border: 1px solid #e5e7eb; 
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        /* Premium Glass Panel */
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             transition: background-color 0.3s ease, border-color 0.3s ease;
         }
 
-        /* Dark Mode Glass Card */
-        .dark .glass-card { 
-            background: #1e1f20; 
-            border: 1px solid #282a2c; 
-        }
-
-        .btn-brand { 
-            background: #0b57d0; 
-            transition: all 0.3s ease;
-        }
-        .dark .btn-brand {
-            background: #a8c7fa;
-            color: #051e49;
-        }
-        .btn-brand:hover { 
-            transform: translateY(-2px); 
-            box-shadow: 0 4px 12px rgba(11, 87, 208, 0.3); 
-        }
-        .dark .btn-brand:hover {
-            box-shadow: 0 4px 12px rgba(168, 199, 250, 0.3); 
+        /* Sparkle gradient text for AI */
+        .signature-text {
+            background: -webkit-linear-gradient(45deg, #06b6d4, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         @keyframes pulse-slow {
@@ -105,88 +93,81 @@
         .animate-pulse-slow {
             animation: pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-
-        /* Sparkle gradient text for AI */
-        .gemini-text {
-            background: -webkit-linear-gradient(45deg, #4285f4, #d96570, #9b72cb);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <nav class="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
+    <nav class="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto z-50 relative">
         <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-[#f0f4f9] dark:bg-[#1e1f20] border border-gray-200 dark:border-[#282a2c] rounded-xl flex items-center justify-center shadow-sm">
-                <i data-lucide="brain-circuit" class="text-[#4285f4] dark:text-[#a8c7fa] w-6 h-6"></i>
+            <div class="w-10 h-10 bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 dark:from-cyan-500/20 dark:to-violet-500/20 border border-zinc-200/50 dark:border-[#27272a]/50 rounded-xl flex items-center justify-center shadow-sm">
+                <i data-lucide="brain-circuit" class="text-[#06b6d4] w-6 h-6"></i>
             </div>
-            <span class="text-xl font-medium tracking-tight font-display text-slate-900 dark:text-white">Study.AI</span>
+            <span class="text-xl font-semibold tracking-tight font-display text-zinc-900 dark:text-white">Study.AI</span>
         </div>
         <div class="flex items-center gap-6">
-            <a href="/app" class="text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium transition-colors text-sm">Sign In</a>
-            <a href="/signup" class="btn-brand px-6 py-2.5 rounded-xl text-sm font-medium shadow-sm text-white dark:text-[#051e49]">Get Started</a>
+            <a href="/app" class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white font-medium transition-colors text-sm">Sign In</a>
+            <a href="/signup" class="bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 px-6 py-2.5 rounded-xl text-sm font-medium shadow-md text-white transition-all active:scale-95">Get Started</a>
             
-            <button id="theme-toggle" class="p-2 rounded-xl bg-gray-100 dark:bg-[#1e1f20] text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#282a2c] transition-colors border border-transparent dark:border-[#282a2c]">
+            <button id="theme-toggle" class="p-2.5 rounded-xl bg-white dark:bg-[#18181b] text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-[#27272a] transition-all border border-zinc-200 dark:border-[#27272a] shadow-sm">
                 <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
                 <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
             </button>
         </div>
     </nav>
 
-    <header class="max-w-7xl mx-auto px-8 pt-20 pb-32 text-center">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#f0f4f9] dark:bg-[#1e1f20] border border-gray-200 dark:border-[#282a2c] text-[#0b57d0] dark:text-[#a8c7fa] text-xs font-medium tracking-widest uppercase mb-8 shadow-sm">
-            <i data-lucide="sparkles" class="w-3 h-3 text-[#d96570]"></i> The Future of Learning
+    <header class="max-w-7xl mx-auto px-8 pt-20 pb-32 text-center relative z-10">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] text-[#06b6d4] text-xs font-semibold tracking-widest uppercase mb-8 shadow-sm">
+            <i data-lucide="sparkles" class="w-3 h-3 text-[#ec4899]"></i> The Future of Learning
         </div>
-        <h1 class="text-5xl md:text-7xl font-medium tracking-tight font-display mb-6 leading-tight">
-            <span class="text-slate-900 dark:text-white">Turn your textbooks <br>into</span> 
-            <span class="gemini-text font-bold">Intelligence.</span>
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight font-display mb-6 leading-tight">
+            <span class="text-zinc-900 dark:text-white">Turn your textbooks <br>into</span> 
+            <span class="signature-text font-bold">Intelligence.</span>
         </h1>
 
-        <p class="text-slate-600 dark:text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+        <p class="text-zinc-600 dark:text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
             Index your study materials and let AI generate summaries, quizzes, and instant answers. Study smarter, not harder.
         </p>
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/signup" class="w-full sm:w-auto btn-brand px-10 py-5 rounded-2xl text-lg font-medium shadow-sm text-white dark:text-[#051e49]">Start for Free</a>
-            <a href="/how-it-works" class="w-full sm:w-auto glass-card px-10 py-5 rounded-2xl text-lg font-medium hover:bg-gray-100 dark:hover:bg-[#282a2c] text-slate-900 dark:text-white transition-colors flex items-center justify-center gap-2 border border-gray-200 dark:border-[#282a2c]">
-                How it works <i data-lucide="arrow-down" class="w-5 h-5 text-gray-500 dark:text-gray-400"></i>
+            <a href="/signup" class="w-full sm:w-auto bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 px-10 py-5 rounded-2xl text-lg font-semibold shadow-md text-white transition-all active:scale-95">Start for Free</a>
+            <a href="/how-it-works" class="w-full sm:w-auto glass-panel bg-white/80 dark:bg-[#18181b]/80 px-10 py-5 rounded-2xl text-lg font-semibold hover:bg-zinc-50 dark:hover:bg-[#27272a] text-zinc-900 dark:text-white transition-all flex items-center justify-center gap-2 border border-zinc-200 dark:border-[#27272a] shadow-sm">
+                How it works <i data-lucide="arrow-down" class="w-5 h-5 text-zinc-500 dark:text-zinc-400"></i>
             </a>
         </div>
     </header>
 
-    <section class="max-w-7xl mx-auto px-8 pb-32">
+    <section class="max-w-7xl mx-auto px-8 pb-32 relative z-10">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-card p-8 rounded-[2rem] hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                <div class="w-12 h-12 bg-blue-50 dark:bg-[#1e1f20] border border-blue-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i data-lucide="file-text" class="text-[#4285f4] dark:text-[#a8c7fa] w-6 h-6"></i>
+            <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-zinc-200/60 dark:border-[#27272a]/60">
+                <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="file-text" class="text-[#06b6d4] w-6 h-6"></i>
                 </div>
-                <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">Smart Indexing</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Upload any textbook or document. Our RAG engine indexes every detail for instant retrieval.</p>
+                <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">Smart Indexing</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Upload any textbook or document. Our RAG engine indexes every detail for instant retrieval.</p>
             </div>
 
-            <div class="glass-card p-8 rounded-[2rem] hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                <div class="w-12 h-12 bg-purple-50 dark:bg-[#1e1f20] border border-purple-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i data-lucide="layout-list" class="text-[#9b72cb] dark:text-[#d7bcfb] w-6 h-6"></i>
+            <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-zinc-200/60 dark:border-[#27272a]/60">
+                <div class="w-12 h-12 bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="layout-list" class="text-[#8b5cf6] w-6 h-6"></i>
                 </div>
-                <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">AI Summaries</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Condense 500-page chapters into high-fidelity study notes and key concepts in seconds.</p>
+                <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">AI Summaries</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Condense 500-page chapters into high-fidelity study notes and key concepts in seconds.</p>
             </div>
 
-            <div class="glass-card p-8 rounded-[2rem] hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                <div class="w-12 h-12 bg-red-50 dark:bg-[#1e1f20] border border-red-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                    <i data-lucide="help-circle" class="text-[#ea4335] dark:text-[#f28b82] w-6 h-6"></i>
+            <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-zinc-200/60 dark:border-[#27272a]/60">
+                <div class="w-12 h-12 bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                    <i data-lucide="help-circle" class="text-[#ec4899] w-6 h-6"></i>
                 </div>
                 
-                <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">Instant Quizzes</h3>
-                <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
+                <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">Instant Quizzes</h3>
+                <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed mb-4 font-medium">
                     Automatically generate practice quizzes and study materials based on your specific curriculum.
                 </p>
 
                 <div class="pt-2">
-                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-blue-50 dark:bg-[#1e1f20] border border-blue-100 dark:border-[#282a2c] text-[#0b57d0] dark:text-[#a8c7fa] text-[10px] font-medium uppercase tracking-[0.2em] animate-pulse-slow">
+                    <span class="inline-flex items-center px-3 py-1.5 rounded-full bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-900/30 text-[#06b6d4] text-[10px] font-bold uppercase tracking-[0.2em] animate-pulse-slow">
                         <span class="relative flex h-2 w-2 mr-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4285f4] opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#4285f4]"></span>
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#06b6d4] opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-[#06b6d4]"></span>
                         </span>
                         Flashcards coming soon
                     </span>
@@ -195,34 +176,34 @@
         </div>
     </section>
 
-    <section id="how-it-works" class="max-w-5xl mx-auto px-8 pb-40 scroll-mt-24">
+    <section id="how-it-works" class="max-w-5xl mx-auto px-8 pb-40 scroll-mt-24 relative z-10">
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-medium font-display mb-4 text-slate-900 dark:text-white">How Study.AI Works</h2>
-            <p class="text-gray-600 dark:text-gray-400 font-medium">Three simple steps to transform your raw study materials into an interactive learning engine.</p>
+            <h2 class="text-3xl md:text-4xl font-bold font-display mb-4 text-zinc-900 dark:text-white">How Study.AI Works</h2>
+            <p class="text-zinc-600 dark:text-zinc-400 font-medium">Three simple steps to transform your raw study materials into an interactive learning engine.</p>
         </div>
 
-        <div class="glass-card p-8 md:p-12 rounded-[2.5rem] shadow-sm relative overflow-hidden">
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-blue-50/50 to-transparent dark:from-[#282a2c]/20 pointer-events-none"></div>
+        <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 md:p-12 rounded-[2.5rem] shadow-[0_8px_30px_rgb(0,0,0,0.08)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.3)] border border-zinc-200/60 dark:border-[#27272a]/60 relative overflow-hidden">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-gradient-to-b from-cyan-50/50 to-transparent dark:from-[#27272a]/20 pointer-events-none"></div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
                 <div class="flex flex-col items-center text-center relative">
-                    <div class="w-16 h-16 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-[#282a2c] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#4285f4] dark:text-[#a8c7fa] shadow-sm">1</div>
-                    <h4 class="text-lg font-medium font-display text-slate-900 dark:text-white mb-2">Upload</h4>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Upload your PDF textbooks, lecture slides, or class notes securely to the platform.</p>
-                    <div class="hidden md:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-[#4285f4]/30 to-transparent"></div>
+                    <div class="w-16 h-16 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#06b6d4] shadow-sm">1</div>
+                    <h4 class="text-lg font-semibold font-display text-zinc-900 dark:text-white mb-2">Upload</h4>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Upload your PDF textbooks, lecture slides, or class notes securely to the platform.</p>
+                    <div class="hidden md:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-[#06b6d4]/30 to-transparent"></div>
                 </div>
 
                 <div class="flex flex-col items-center text-center relative">
-                    <div class="w-16 h-16 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-[#282a2c] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#d96570] shadow-sm">2</div>
-                    <h4 class="text-lg font-medium font-display text-slate-900 dark:text-white mb-2">Analyze</h4>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Our AI indexes the content, reading and understanding your specific curriculum context.</p>
-                    <div class="hidden md:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-[#d96570]/30 to-transparent"></div>
+                    <div class="w-16 h-16 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#8b5cf6] shadow-sm">2</div>
+                    <h4 class="text-lg font-semibold font-display text-zinc-900 dark:text-white mb-2">Analyze</h4>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Our AI indexes the content, reading and understanding your specific curriculum context.</p>
+                    <div class="hidden md:block absolute top-8 left-[60%] w-[80%] h-[2px] bg-gradient-to-r from-[#8b5cf6]/30 to-transparent"></div>
                 </div>
 
                 <div class="flex flex-col items-center text-center relative">
-                    <div class="w-16 h-16 bg-white dark:bg-[#1e1f20] border border-gray-200 dark:border-[#282a2c] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#9b72cb] shadow-sm">3</div>
-                    <h4 class="text-lg font-medium font-display text-slate-900 dark:text-white mb-2">Learn</h4>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Chat with your documents, extract core summaries, and generate instant practice quizzes.</p>
+                    <div class="w-16 h-16 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#ec4899] shadow-sm">3</div>
+                    <h4 class="text-lg font-semibold font-display text-zinc-900 dark:text-white mb-2">Learn</h4>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Chat with your documents, extract core summaries, and generate instant practice quizzes.</p>
                 </div>
             </div>
         </div>
@@ -230,86 +211,86 @@
 
     <section id="roadmap" class="relative max-w-7xl mx-auto px-8 pb-32 overflow-hidden">
         
-        <div class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-[#4285f4]/5 rounded-full blur-[120px] pointer-events-none"></div>
-        <div class="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-[#9b72cb]/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/2 left-0 -translate-y-1/2 w-96 h-96 bg-[#06b6d4]/5 rounded-full blur-[120px] pointer-events-none"></div>
+        <div class="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-[#8b5cf6]/5 rounded-full blur-[120px] pointer-events-none"></div>
 
         <div class="relative z-10">
             <div class="text-center mb-16">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gray-100 dark:bg-[#1e1f20] border border-gray-200 dark:border-[#282a2c] text-[#0b57d0] dark:text-[#a8c7fa] text-[10px] font-medium uppercase tracking-widest mb-4">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] text-[#8b5cf6] text-[10px] font-bold uppercase tracking-widest mb-4 shadow-sm">
                     Upcoming Features
                 </div>
-                <h2 class="text-3xl md:text-5xl font-medium font-display text-slate-900 dark:text-white mb-4">
-                    🚀 Expanding <span class="gemini-text font-bold">Study.AI</span>
+                <h2 class="text-3xl md:text-5xl font-bold font-display text-zinc-900 dark:text-white mb-4">
+                    🚀 Expanding <span class="signature-text font-bold">Study.AI</span>
                 </h2>
-                <p class="text-gray-600 dark:text-gray-400 font-medium max-w-2xl mx-auto">
+                <p class="text-zinc-600 dark:text-zinc-400 font-medium max-w-2xl mx-auto">
                     We are building the future of academic intelligence with these powerful new tools.
                 </p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-                <div class="glass-card p-8 rounded-[2rem] hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                    <div class="w-12 h-12 bg-orange-50 dark:bg-[#1e1f20] border border-orange-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i data-lucide="presentation" class="text-orange-500 dark:text-orange-400 w-6 h-6"></i>
+                <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-sm border border-zinc-200/60 dark:border-[#27272a]/60">
+                    <div class="w-12 h-12 bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                        <i data-lucide="presentation" class="text-orange-500 w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">PPTX Support</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Extract structured knowledge and visual context from your PowerPoint lecture slides instantly.</p>
+                    <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">PPTX Support</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Extract structured knowledge and visual context from your PowerPoint lecture slides instantly.</p>
                 </div>
 
-                <div class="glass-card p-8 rounded-[2rem] hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                    <div class="w-12 h-12 bg-blue-50 dark:bg-[#1e1f20] border border-blue-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i data-lucide="scan-text" class="text-[#4285f4] dark:text-[#a8c7fa] w-6 h-6"></i>
+                <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-sm border border-zinc-200/60 dark:border-[#27272a]/60">
+                    <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                        <i data-lucide="scan-text" class="text-[#06b6d4] w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">Intelligent OCR</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Turn images, scanned PDFs, and handwritten notes into interactive digital study materials.</p>
+                    <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">Intelligent OCR</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Turn images, scanned PDFs, and handwritten notes into interactive digital study materials.</p>
                 </div>
 
-                <div class="glass-card p-8 rounded-[2rem] hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                    <div class="w-12 h-12 bg-purple-50 dark:bg-[#1e1f20] border border-purple-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i data-lucide="zap" class="text-[#9b72cb] dark:text-[#d7bcfb] w-6 h-6"></i>
+                <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-sm border border-zinc-200/60 dark:border-[#27272a]/60">
+                    <div class="w-12 h-12 bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                        <i data-lucide="zap" class="text-[#8b5cf6] w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">Smart Summaries</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Condense massive chapters into high-fidelity notes without losing critical academic details.</p>
+                    <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">Smart Summaries</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Condense massive chapters into high-fidelity notes without losing critical academic details.</p>
                 </div>
 
-                <div class="glass-card p-8 rounded-[2rem] border-dashed hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                    <div class="w-12 h-12 bg-red-50 dark:bg-[#1e1f20] border border-red-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i data-lucide="layers" class="text-[#d96570] dark:text-[#f28b82] w-6 h-6"></i>
+                <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] border-dashed hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-sm border-2 border-zinc-200/60 dark:border-[#27272a]/60">
+                    <div class="w-12 h-12 bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                        <i data-lucide="layers" class="text-[#ec4899] w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">Flashcards AI</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Automated spaced-repetition cards generated directly from your documents for better recall.</p>
+                    <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">Flashcards AI</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Automated spaced-repetition cards generated directly from your documents for better recall.</p>
                 </div>
 
-                <div class="glass-card p-8 rounded-[2rem] border-dashed hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                    <div class="w-12 h-12 bg-blue-50 dark:bg-[#1e1f20] border border-blue-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i data-lucide="library" class="text-[#0b57d0] dark:text-[#a8c7fa] w-6 h-6"></i>
+                <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] border-dashed hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-sm border-2 border-zinc-200/60 dark:border-[#27272a]/60">
+                    <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                        <i data-lucide="library" class="text-[#06b6d4] w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">Multi-Doc Analysis</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Connect multiple sources to compare theories and extract insights across your entire library.</p>
+                    <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">Multi-Doc Analysis</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Connect multiple sources to compare theories and extract insights across your entire library.</p>
                 </div>
 
-                <div class="glass-card p-8 rounded-[2rem] border-dashed hover:border-gray-300 dark:hover:border-[#444746] transition-all group shadow-sm">
-                    <div class="w-12 h-12 bg-green-50 dark:bg-[#1e1f20] border border-green-100 dark:border-[#282a2c] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                        <i data-lucide="calendar" class="text-green-600 dark:text-green-400 w-6 h-6"></i>
+                <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2rem] border-dashed hover:border-zinc-300 dark:hover:border-[#3f3f46] transition-all group shadow-sm border-2 border-zinc-200/60 dark:border-[#27272a]/60">
+                    <div class="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-900/30 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-sm">
+                        <i data-lucide="calendar" class="text-emerald-500 w-6 h-6"></i>
                     </div>
-                    <h3 class="text-xl font-medium mb-3 font-display text-slate-900 dark:text-white">AI Study Planner</h3>
-                    <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">Dynamic schedules that adapt to your progress and exam dates to keep you on track.</p>
+                    <h3 class="text-xl font-semibold mb-3 font-display text-zinc-900 dark:text-white">AI Study Planner</h3>
+                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Dynamic schedules that adapt to your progress and exam dates to keep you on track.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer class="border-t border-gray-200 dark:border-[#282a2c]">
+    <footer class="border-t border-zinc-200 dark:border-[#27272a] relative z-10 bg-transparent">
         <div class="max-w-7xl mx-auto px-8 py-8 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-2">
-                <i data-lucide="brain-circuit" class="text-[#4285f4] dark:text-[#a8c7fa] w-5 h-5"></i>
-                <span class="font-medium font-display text-slate-900 dark:text-white">Study.AI</span>
+                <i data-lucide="brain-circuit" class="text-[#06b6d4] w-5 h-5"></i>
+                <span class="font-semibold font-display text-zinc-900 dark:text-white">Study.AI</span>
             </div>
 
-            <div class="text-gray-500 dark:text-gray-400 text-sm font-medium flex gap-4">
+            <div class="text-zinc-500 dark:text-zinc-400 text-sm font-medium flex gap-4">
                 <span>© 2026 Study.AI.</span>
-                <a href="/terms" class="hover:text-[#0b57d0] dark:hover:text-[#a8c7fa] transition-colors">Terms</a>
-                <a href="/privacy" class="hover:text-[#0b57d0] dark:hover:text-[#a8c7fa] transition-colors">Privacy</a>
+                <a href="/terms" class="hover:text-[#06b6d4] transition-colors">Terms</a>
+                <a href="/privacy" class="hover:text-[#06b6d4] transition-colors">Privacy</a>
             </div>
         </div>
     </footer>
