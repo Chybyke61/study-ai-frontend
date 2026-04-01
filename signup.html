@@ -173,6 +173,23 @@
         document.addEventListener('DOMContentLoaded', () => {
             const passwordInput = document.getElementById("password");
             passwordInput.addEventListener("input", updateRules);
+
+            const confirmInput = document.getElementById("confirmPassword");
+
+confirmInput.addEventListener("input", function () {
+    const password = document.getElementById("password").value;
+    const confirm = this.value;
+
+    if (confirm === "") {
+        this.classList.remove("border-red-500", "border-green-500");
+    } else if (confirm === password) {
+        this.classList.add("border-green-500");
+        this.classList.remove("border-red-500");
+    } else {
+        this.classList.add("border-red-500");
+        this.classList.remove("border-green-500");
+    }
+});
             
             // Initial theme icon sync
             const icon = document.getElementById('themeIcon');
