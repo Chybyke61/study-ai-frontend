@@ -3,17 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study.AI | Advanced Academic Intelligence</title>
+    <title>Study.AI | The Future of Academic Intelligence</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script>
         (function() {
             const theme = localStorage.getItem('theme') || 'light';
-            if (theme === 'dark') {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.add('light');
-            }
+            document.documentElement.classList.toggle('dark', theme === 'dark');
         })();
     </script>
 
@@ -29,12 +25,8 @@
                         brand: {
                             cyan: '#06b6d4',
                             violet: '#8b5cf6',
-                            darkBg: '#09090b',
-                            darkSurface: '#18181b',
-                            darkBorder: '#27272a',
-                            lightBg: '#fafafa',
-                            lightSurface: '#ffffff',
-                            lightBorder: '#e4e4e7',
+                            zincDark: '#09090b',
+                            zincSurface: '#18181b',
                         }
                     },
                     fontFamily: {
@@ -47,146 +39,160 @@
     </script>
 
     <style>
-        body { 
-            font-family: 'Inter', sans-serif;
-            background-attachment: fixed;
-            transition: background-color 0.3s ease, color 0.3s ease;
+        .bento-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0,0,0,0.05);
         }
-        .light body, body {
-            background: radial-gradient(circle at top right, #f4f4f5, #fafafa 40%);
-            color: #09090b;
+        .dark .bento-card {
+            border: 1px solid rgba(255,255,255,0.05);
+            background: #111113;
         }
-        .dark body {
-            background: radial-gradient(circle at top right, #18181b, #09090b 40%);
-            color: #e4e4e7;
+        .bento-card:hover {
+            transform: scale(1.01);
+            border-color: #06b6d440;
         }
-        .glass-panel {
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            transition: all 0.3s ease;
-        }
-        .signature-text {
-            background: linear-gradient(45deg, #06b6d4, #8b5cf6, #ec4899);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .feature-card:hover {
-            transform: translateY(-8px);
-            border-color: #06b6d450;
+        .glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(6,182,212,0.15) 0%, rgba(139,92,246,0.05) 100%);
+            filter: blur(80px);
+            z-index: -1;
         }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="bg-[#fafafa] dark:bg-brand-zincDark text-zinc-900 dark:text-zinc-100 selection:bg-cyan-500/30">
 
-    <nav class="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto z-50 relative">
-        <div class="flex items-center gap-2">
-            <div class="w-10 h-10 bg-gradient-to-tr from-cyan-500/10 to-violet-500/10 border border-zinc-200/50 dark:border-[#27272a]/50 rounded-xl flex items-center justify-center shadow-sm">
-                <i data-lucide="brain-circuit" class="text-[#06b6d4] w-6 h-6"></i>
+    <nav class="fixed top-0 w-full z-50 border-b border-zinc-200/50 dark:border-zinc-800/50 bg-white/70 dark:bg-brand-zincDark/70 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <i data-lucide="brain-circuit" class="text-brand-cyan w-6 h-6"></i>
+                <span class="text-lg font-bold font-display">Study.AI</span>
             </div>
-            <span class="text-xl font-semibold tracking-tight font-display text-zinc-900 dark:text-white">Study.AI</span>
-        </div>
-        <div class="flex items-center gap-6">
-            <a href="/app" class="text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white font-medium transition-colors text-sm">Sign In</a>
-            <a href="/signup" class="bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 px-6 py-2.5 rounded-xl text-sm font-medium shadow-md text-white transition-all active:scale-95">Get Started</a>
-            <button id="theme-toggle" class="p-2.5 rounded-xl bg-white dark:bg-[#18181b] text-zinc-600 dark:text-zinc-300 border border-zinc-200 dark:border-[#27272a] shadow-sm">
-                <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
-                <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
-            </button>
+            <div class="flex items-center gap-4">
+                <a href="/app" class="text-sm font-semibold hover:text-brand-cyan transition-colors">Sign In</a>
+                <a href="/signup" class="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-5 py-2 rounded-full text-sm font-bold active:scale-95 transition-all">Get Started</a>
+                <button id="theme-toggle" class="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full transition-all">
+                    <i data-lucide="sun" class="w-4 h-4 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-4 h-4 block dark:hidden"></i>
+                </button>
+            </div>
         </div>
     </nav>
 
-    <header class="max-w-7xl mx-auto px-8 pt-20 pb-32 text-center relative z-10">
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] text-[#06b6d4] text-xs font-bold tracking-widest uppercase mb-8 shadow-sm">
-            <i data-lucide="binary" class="w-3 h-3"></i> Neural Academic Synthesis
-        </div>
-        <h1 class="text-5xl md:text-7xl font-bold tracking-tight font-display mb-6 leading-tight">
-            <span class="text-zinc-900 dark:text-white">From raw data to</span> <br>
-            <span class="signature-text font-bold">Deep Mastery.</span>
-        </h1>
-
-        <p class="text-zinc-600 dark:text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
-            Standard AI summarizes. Study.AI builds an interconnected knowledge graph of your entire semester to reveal insights that standard tools miss.
-        </p>
-        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="/signup" class="w-full sm:w-auto bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 px-10 py-5 rounded-2xl text-lg font-semibold shadow-md text-white transition-all active:scale-95">Start for Free</a>
-            <a href="/how-it-works" class="w-full sm:w-auto glass-panel bg-white/80 dark:bg-[#18181b]/80 px-10 py-5 rounded-2xl text-lg font-semibold text-zinc-900 dark:text-white border border-zinc-200 dark:border-[#27272a] shadow-sm flex items-center justify-center gap-2">
-                How it works <i data-lucide="arrow-down" class="w-5 h-5"></i>
-            </a>
-        </div>
-    </header>
-
-    <section class="max-w-7xl mx-auto px-8 pb-32 relative z-10">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            <div class="feature-card glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2.5rem] border border-zinc-200/60 dark:border-[#27272a]/60 shadow-sm">
-                <div class="w-12 h-12 bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-100 dark:border-cyan-900/30 rounded-2xl flex items-center justify-center mb-6">
-                    <i data-lucide="layers" class="text-[#06b6d4] w-6 h-6"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-3 font-display text-zinc-900 dark:text-white">Cross-Library Synthesis</h3>
-                <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">
-                    Stop studying PDFs in isolation. Our engine finds correlations between your lecture notes, textbooks, and research papers automatically.
-                </p>
-            </div>
-
-            <div class="feature-card glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2.5rem] border border-zinc-200/60 dark:border-[#27272a]/60 shadow-sm">
-                <div class="w-12 h-12 bg-violet-50 dark:bg-violet-900/20 border border-violet-100 dark:border-violet-900/30 rounded-2xl flex items-center justify-center mb-6">
-                    <i data-lucide="trending-up" class="text-[#8b5cf6] w-6 h-6"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-3 font-display text-zinc-900 dark:text-white">Predictive Exam Logic</h3>
-                <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">
-                    AI analyzes your curriculum density to predict high-probability exam topics and adjusts your study schedule based on your retention rate.
-                </p>
-            </div>
-
-            <div class="feature-card glass-panel bg-white/70 dark:bg-[#18181b]/70 p-8 rounded-[2.5rem] border border-zinc-200/60 dark:border-[#27272a]/60 shadow-sm">
-                <div class="w-12 h-12 bg-pink-50 dark:bg-pink-900/20 border border-pink-100 dark:border-pink-900/30 rounded-2xl flex items-center justify-center mb-6">
-                    <i data-lucide="mic" class="text-[#ec4899] w-6 h-6"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-3 font-display text-zinc-900 dark:text-white">Research Synthesis</h3>
-                <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">
-                    Convert messy voice recordings and whiteboard photos into structured, cited academic notes with automated bibliography generation.
-                </p>
+    <section class="pt-40 pb-20 px-6 relative overflow-hidden">
+        <div class="glow top-0 left-1/2 -translate-x-1/2"></div>
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl md:text-8xl font-bold font-display tracking-tight mb-8 leading-[1.1]">
+                Mastery, <br> <span class="bg-gradient-to-r from-brand-cyan to-brand-violet bg-clip-text text-transparent">Re-engineered.</span>
+            </h1>
+            <p class="text-lg md:text-xl text-zinc-500 dark:text-zinc-400 max-w-2xl mx-auto mb-10 leading-relaxed font-medium">
+                The first intelligence engine that connects your textbooks, lecture audio, and handwritten notes into a single cohesive knowledge graph.
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="/signup" class="w-full sm:w-auto px-10 py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-bold text-lg shadow-2xl shadow-cyan-500/20 active:scale-95 transition-all">
+                    Start Synthesizing
+                </a>
+                <a href="#roadmap" class="w-full sm:w-auto px-10 py-4 bg-white dark:bg-brand-zincSurface border border-zinc-200 dark:border-zinc-800 rounded-2xl font-bold text-lg hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all flex items-center justify-center gap-2">
+                    Future Roadmap <i data-lucide="chevron-down" class="w-5 h-5"></i>
+                </a>
             </div>
         </div>
     </section>
 
-    <section id="how-it-works" class="max-w-5xl mx-auto px-8 pb-40 scroll-mt-24 relative z-10">
+    <section class="max-w-7xl mx-auto px-6 py-20">
+        <div class="grid grid-cols-1 md:grid-cols-4 md:grid-rows-2 gap-4 h-auto md:h-[600px]">
+            <div class="md:col-span-2 md:row-span-2 bento-card rounded-[2.5rem] p-10 flex flex-col justify-between overflow-hidden relative">
+                <div>
+                    <span class="text-brand-cyan text-xs font-bold tracking-widest uppercase mb-4 block">Core Engine</span>
+                    <h3 class="text-3xl font-bold font-display mb-4">Semantic Linking</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 font-medium max-w-sm">Unlike standard AI, we index concepts across all your files. Search for "Cell Division" and see references from your Biology textbook, last week's lab notes, and your own recorded lecture simultaneously.</p>
+                </div>
+                <div class="mt-8 bg-gradient-to-br from-zinc-100 to-zinc-200 dark:from-zinc-800 dark:to-zinc-900 h-40 rounded-2xl border border-zinc-200 dark:border-zinc-700 flex items-center justify-center">
+                    <i data-lucide="network" class="w-16 h-16 text-brand-cyan opacity-50"></i>
+                </div>
+            </div>
+
+            <div class="md:col-span-2 bento-card rounded-[2.5rem] p-8 flex items-center gap-8">
+                <div class="w-16 h-16 bg-brand-violet/10 rounded-2xl flex-shrink-0 flex items-center justify-center">
+                    <i data-lucide="mic" class="text-brand-violet w-8 h-8"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold font-display mb-1">Lecture Capture</h3>
+                    <p class="text-zinc-500 dark:text-zinc-400 text-sm font-medium">Auto-transcribe and summarize 2-hour lectures into 5-minute study sprints.</p>
+                </div>
+            </div>
+
+            <div class="bento-card rounded-[2.5rem] p-8">
+                <div class="w-12 h-12 bg-pink-500/10 rounded-xl flex items-center justify-center mb-4">
+                    <i data-lucide="layers" class="text-pink-500 w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg font-bold font-display mb-1">Active Recall</h3>
+                <p class="text-zinc-500 dark:text-zinc-400 text-xs font-medium leading-relaxed">Dynamic card generation based on your weakest subjects.</p>
+            </div>
+
+            <div class="bento-card rounded-[2.5rem] p-8">
+                <div class="w-12 h-12 bg-emerald-500/10 rounded-xl flex items-center justify-center mb-4">
+                    <i data-lucide="file-text" class="text-emerald-500 w-6 h-6"></i>
+                </div>
+                <h3 class="text-lg font-bold font-display mb-1">Deep Cite</h3>
+                <p class="text-zinc-500 dark:text-zinc-400 text-xs font-medium leading-relaxed">Ask questions and get instant page-number references.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="roadmap" class="max-w-4xl mx-auto px-6 py-32">
         <div class="text-center mb-16">
-            <h2 class="text-3xl md:text-4xl font-bold font-display mb-4 text-zinc-900 dark:text-white">The Intelligence Loop</h2>
-            <p class="text-zinc-600 dark:text-zinc-400 font-medium">Three phases to transition from information to expert-level application.</p>
+            <h2 class="text-3xl font-bold font-display mb-4">The Next Frontier</h2>
+            <p class="text-zinc-500 dark:text-zinc-400 font-medium">Upcoming capabilities engineered for the next academic season.</p>
         </div>
 
-        <div class="glass-panel bg-white/70 dark:bg-[#18181b]/70 p-12 rounded-[2.5rem] shadow-xl border border-zinc-200/60 dark:border-[#27272a]/60 relative overflow-hidden">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-10 relative z-10">
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-16 h-16 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#06b6d4]">1</div>
-                    <h4 class="text-lg font-bold font-display text-zinc-900 dark:text-white mb-2">Ingestion</h4>
-                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Drop your entire course library. We map the semantic relationship between every file.</p>
+        <div class="space-y-4">
+            <div class="p-6 rounded-3xl bg-white dark:bg-brand-zincSurface border border-zinc-200 dark:border-zinc-800 flex items-center justify-between group">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-xs font-bold italic">Q3</div>
+                    <div>
+                        <h4 class="font-bold">Neural Handwriting OCR</h4>
+                        <p class="text-xs text-zinc-500 font-medium">Turn messy notebook sketches and ink-notes into searchable markdown.</p>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-16 h-16 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#8b5cf6]">2</div>
-                    <h4 class="text-lg font-bold font-display text-zinc-900 dark:text-white mb-2">Refining</h4>
-                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Our AI synthesizes the content, identifying core theories and secondary evidence.</p>
+                <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-500 border border-cyan-500/20">DEVELOPING</span>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-white dark:bg-brand-zincSurface border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-xs font-bold italic">Q4</div>
+                    <div>
+                        <h4 class="font-bold">Collaborative Synapse</h4>
+                        <p class="text-xs text-zinc-500 font-medium">Shared AI workspaces for study groups to synthesize research together.</p>
+                    </div>
                 </div>
-                <div class="flex flex-col items-center text-center">
-                    <div class="w-16 h-16 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-full flex items-center justify-center mb-6 text-2xl font-bold text-[#ec4899]">3</div>
-                    <h4 class="text-lg font-bold font-display text-zinc-900 dark:text-white mb-2">Mastery</h4>
-                    <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed font-medium">Apply your knowledge via deep-dive analysis and AI-driven Spaced Repetition.</p>
+                <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400">PLANNED</span>
+            </div>
+
+            <div class="p-6 rounded-3xl bg-white dark:bg-brand-zincSurface border border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full border border-zinc-200 dark:border-zinc-700 flex items-center justify-center text-xs font-bold italic">2027</div>
+                    <div>
+                        <h4 class="font-bold">Predictive Forgetting Models</h4>
+                        <p class="text-xs text-zinc-500 font-medium">AI-scheduled notifications that ping you exactly when you're about to forget a concept.</p>
+                    </div>
                 </div>
+                <span class="text-[10px] font-bold px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-400">PLANNED</span>
             </div>
         </div>
     </section>
 
-    <footer class="border-t border-zinc-200 dark:border-[#27272a] bg-transparent">
-        <div class="max-w-7xl mx-auto px-8 py-12 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-2">
-                <i data-lucide="brain-circuit" class="text-[#06b6d4] w-5 h-5"></i>
-                <span class="font-bold font-display text-zinc-900 dark:text-white">Study.AI</span>
+    <footer class="py-12 border-t border-zinc-200/50 dark:border-zinc-800/50 px-6">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2 grayscale opacity-50">
+                <i data-lucide="brain-circuit" class="w-5 h-5"></i>
+                <span class="font-bold text-sm">Study.AI</span>
             </div>
-            <div class="text-zinc-500 text-sm font-medium flex gap-8">
-                <a href="/terms" class="hover:text-[#06b6d4] transition-colors">Terms of Service</a>
-                <a href="/privacy" class="hover:text-[#06b6d4] transition-colors">Privacy Protocol</a>
-                <span>© 2026 Academic Systems</span>
+            <p class="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">© 2026 Neural Learning Systems</p>
+            <div class="flex gap-6 text-xs font-bold text-zinc-400">
+                <a href="#" class="hover:text-brand-cyan transition-colors">Privacy</a>
+                <a href="#" class="hover:text-brand-cyan transition-colors">Contact</a>
             </div>
         </div>
     </footer>
@@ -197,14 +203,8 @@
         const htmlElement = document.documentElement;
 
         themeToggleBtn.addEventListener('click', function() {
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.replace('dark', 'light');
-                localStorage.setItem('theme', 'light');
-            } else {
-                htmlElement.classList.replace('light', 'dark');
-                if(!htmlElement.classList.contains('dark')) htmlElement.classList.add('dark');
-                localStorage.setItem('theme', 'dark');
-            }
+            const isDark = htmlElement.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         });
     </script>
 </body>
