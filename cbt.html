@@ -334,7 +334,7 @@ function loadBooks() {
     examScreen.classList.remove("hidden");
     examScreen.classList.add("flex");
 
-    startTimer(parseInt(time.value) * 60); // fix time
+    startTimer(parseInt(time.value)); // fix time
     showQuestion();
 
     hideLoader(); // ✅ FIX
@@ -452,7 +452,7 @@ function submitExam(){
           const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
-            );
+            
         if(userAnswers[i]===correctIndex) correct++;
       });
 
@@ -474,7 +474,6 @@ function showCorrections(){
       const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
-           );
 
     corrections.innerHTML+=`
       <div class="p-5 bg-[#09090b] border border-[#27272a] rounded-2xl shadow-sm">
@@ -490,7 +489,9 @@ function showCorrections(){
    
     function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
-    const icon = document.getElementById('numQIcon');
+    const icon = menuId === "numQMenu"
+  ? document.getElementById('numQIcon')
+  : document.getElementById('timeIcon');
     const isHidden = menu.classList.contains('opacity-0');
 
     if (isHidden) {
