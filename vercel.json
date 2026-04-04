@@ -7,6 +7,7 @@
     { "source": "/how-it-works", "destination": "/how-it-works.html" }, 
     { "source": "/reset", "destination": "/reset.html" }, 
     { "source": "/privacy", "destination": "/privacy.html" }, 
-    { "source": "/terms", "destination": "/terms.html" }
+    { "source": "/terms", "destination": "/terms.html" },
+    { "source": "/cbt", "destination": "/cbt.html" }
   ]
 }
