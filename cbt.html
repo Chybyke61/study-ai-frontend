@@ -7,18 +7,15 @@ body {
   font-family: Inter, sans-serif;
   background: radial-gradient(circle at top right, #18181b, #09090b 40%);
 }
-</style></head><body class="text-white min-h-screen flex flex-col items-center justify-center p-4"><div class="w-full max-w-3xl"><!-- HEADER --><div class="flex items-center justify-between mb-6">
+</style></head><body class="text-white min-h-screen flex items-center justify-center p-4"><div class="w-full max-w-3xl"><!-- HEADER --><div class="flex justify-between items-center mb-6">
   <h1 class="text-2xl font-bold flex items-center gap-2">
     <i data-lucide="brain-circuit" class="text-cyan-400"></i>
     CBT Practice
-  </h1>  <button onclick="goBack()" class="text-sm px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700">
-    Back
-  </button>
+  </h1>
+  <button onclick="goBack()" class="px-3 py-1 bg-zinc-800 rounded-lg hover:bg-zinc-700">Back</button>
 </div><!-- SETUP --><div id="setupScreen" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <h2 class="text-lg font-semibold mb-4">Setup Your Test</h2>  <!-- BOOK SELECT -->  <div class="mb-4">
     <label class="text-sm text-zinc-400">Select Textbook</label>
-    <select id="bookSelect" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700">
-      <option>Loading books...</option>
-    </select>
+    <select id="bookSelect" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700"></select>
   </div>  <!-- QUESTIONS -->  <div class="mb-4">
     <label class="text-sm text-zinc-400">Number of Questions</label>
     <input id="numQ" type="number" min="5" max="100" value="20"
@@ -39,15 +36,14 @@ class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 font-
 Start Exam
 </button>
 
-</div><!-- EXAM --><div id="examScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <div class="flex justify-between mb-4">
+</div><!-- EXAM --><div id="examScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
+  <div class="flex justify-between mb-4">
     <span id="progress"></span>
     <span id="timer" class="text-cyan-400 font-bold"></span>
   </div>  <h3 id="question" class="text-lg mb-6"></h3>
-  <div id="options" class="flex flex-col gap-3"></div><button onclick="nextQuestion()" 
-class="mt-6 w-full py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700">
-Next
-</button>
-
+  <div id="options" class="flex flex-col gap-3"></div>  <button onclick="nextQuestion()" class="mt-6 w-full py-3 bg-zinc-800 rounded-xl hover:bg-zinc-700">
+    Next
+  </button>
 </div><!-- RESULT --><div id="resultScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl text-center">
   <h2 class="text-2xl font-bold mb-2">Result</h2>
   <p id="score" class="text-lg text-cyan-400"></p>
@@ -62,22 +58,14 @@ let index = 0;
 let score = 0;
 let timer;
 
-// ✅ GET USER ID (from main app session)
+// ✅ GET USER ID (passed from main app)
 function getUserId() {
   return localStorage.getItem("studyai_user");
-
-  try {
-    const session = JSON.parse(localStorage.getItem("supabase.auth.token"));
-    return session?.currentSession?.user?.id;
-  } catch {
-    return null;
-  }
 }
 
-// 🔥 LOAD BOOKS FROM MAIN APP (NO FETCH)
-function loadBooksFromApp() {
+// ✅ LOAD BOOKS FROM MAIN APP
+function loadBooks() {
   const books = JSON.parse(localStorage.getItem("studyai_books")) || [];
-
   const select = document.getElementById("bookSelect");
 
   if (!books.length) {
@@ -88,9 +76,8 @@ function loadBooksFromApp() {
   select.innerHTML = `<option value="">Select textbook</option>`;
 
   books.forEach(book => {
-    const fileName = book.filename || book.name;
+    const fileName = book.filename || book.name || "Unnamed File";
 
-    // 🔥 CLEAN NAME (REMOVE PREFIX)
     const displayName = fileName.includes("_")
       ? fileName.split("_").slice(1).join("_")
       : fileName;
@@ -118,7 +105,7 @@ async function startCBT() {
   const difficulty = document.getElementById("difficulty").value;
   const time = document.getElementById("time").value;
 
-  if (!filename) return alert("Select a textbook");
+  if (!filename) return alert("Please select a textbook");
 
   const res = await fetch(`${api}/generate-cbt`, {
     method: "POST",
@@ -155,8 +142,9 @@ function parseQuestions(text) {
 // SHOW QUESTION
 function showQuestion() {
   const q = questions[index];
+
   document.getElementById("question").innerText = q.question;
-  document.getElementById("progress").innerText = `${index+1}/${questions.length}`;
+  document.getElementById("progress").innerText = `${index + 1}/${questions.length}`;
 
   const optionsDiv = document.getElementById("options");
   optionsDiv.innerHTML = "";
@@ -170,13 +158,13 @@ function showQuestion() {
   });
 }
 
-// SELECT
+// SELECT ANSWER
 function selectAnswer(opt) {
   if (opt.includes(questions[index].answer)) score++;
   nextQuestion();
 }
 
-// NEXT
+// NEXT QUESTION
 function nextQuestion() {
   index++;
   if (index >= questions.length) endExam();
@@ -184,15 +172,15 @@ function nextQuestion() {
 }
 
 // TIMER
-function startTimer(t) {
+function startTimer(seconds) {
   timer = setInterval(() => {
-    document.getElementById("timer").innerText = t + "s";
-    t--;
-    if (t < 0) endExam();
+    document.getElementById("timer").innerText = seconds + "s";
+    seconds--;
+    if (seconds < 0) endExam();
   }, 1000);
 }
 
-// END
+// END EXAM
 function endExam() {
   clearInterval(timer);
   document.getElementById("examScreen").classList.add("hidden");
@@ -200,12 +188,13 @@ function endExam() {
   document.getElementById("score").innerText = `${score} / ${questions.length}`;
 }
 
+// BACK
 function goBack() {
   window.location.href = "/dashboard";
 }
 
 // INIT
-loadBooksFromApp();
+loadBooks();
 lucide.createIcons();
 </script></body>
 </html>
