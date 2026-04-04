@@ -1712,6 +1712,10 @@ titles[currentChatId] = text
         }
 
         function goToCBT() {
+    // Save books to localStorage
+    localStorage.setItem("studyai_books", JSON.stringify(allBooks));
+
+    // Go to CBT page
     window.location.href = "/cbt";
         }
        
