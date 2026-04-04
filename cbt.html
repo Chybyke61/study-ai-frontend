@@ -37,7 +37,7 @@
 
 <style>
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', sans-serif
   background: radial-gradient(circle at top right, #18181b, #09090b 40%);
   background-attachment: fixed;
   color: #e4e4e7;
@@ -152,11 +152,22 @@ body {
 
   </div>
 
-  <label class="block text-sm font-medium text-zinc-300 mb-1.5">Difficulty</label>
-  <select id="difficulty" class="w-full px-5 py-3.5 mb-8 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm">
-    <option value="easy">Easy</option>
-    <option value="medium">Medium</option>
-    <option value="hard">Hard</option>
+<label class="block text-sm font-medium text-zinc-300 mb-1.5">Difficulty</label>
+<div class="relative mb-8" id="difficultyContainer">
+    <input type="hidden" id="difficulty" value="medium">
+    
+    <button type="button" onclick="toggleDropdown('difficultyMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
+        <span id="difficultyDisplay">Medium</span>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="difficultyIcon"></i>
+    </button>
+
+    <div id="difficultyMenu" class="absolute left-0 right-0 mt-2 bg-[#09090b] border border-[#27272a] rounded-xl shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
+        <div onclick="selectDifficulty('easy')" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">Easy</div>
+        <div onclick="selectDifficulty('medium')" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">Medium</div>
+        <div onclick="selectDifficulty('hard')" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">Hard</div>
+    </div>
+</div>
+
   </select>  
 
   <button onclick="startCBT()" class="w-full py-4 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 rounded-xl font-bold text-white shadow-md transition-all active:scale-[0.98] text-sm">
@@ -487,12 +498,16 @@ function showCorrections(){
   });
 }
    
-    function toggleDropdown(menuId) {
-    const menu = document.getElementById(menuId);
-    const icon = menuId === "numQMenu"
-  ? document.getElementById('numQIcon')
-  : document.getElementById('timeIcon');
+  /*  function toggleDropdown(menuId) {
+        const menu = document.getElementById(menuId);
+    // Map menu IDs to their respective icons
+    const iconMap = {
+        'numQMenu': 'numQIcon',
+        'timeMenu': 'timeIcon',
+        'difficultyMenu': 'difficultyIcon'
+    };
     const isHidden = menu.classList.contains('opacity-0');
+
 
     if (isHidden) {
         // Show
@@ -505,6 +520,56 @@ function showCorrections(){
         menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
         icon.classList.remove('rotate-180');
     }
+}*/
+
+    function toggleDropdown(menuId) {
+    const menu = document.getElementById(menuId);
+    if (!menu) return;
+
+    // Mapping of Menu IDs to their respective Chevron Icons
+    const iconMap = {
+        'numQMenu': 'numQIcon',
+        'timeMenu': 'timeIcon',
+        'difficultyMenu': 'difficultyIcon'
+    };
+    
+    const icon = document.getElementById(iconMap[menuId]);
+    const isHidden = menu.classList.contains('opacity-0');
+
+    // Close ALL other menus first for a clean UI
+    Object.keys(iconMap).forEach(id => {
+        if (id !== menuId) {
+            const otherMenu = document.getElementById(id);
+            const otherIcon = document.getElementById(iconMap[id]);
+            if (otherMenu) {
+                otherMenu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+                otherMenu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+                if (otherIcon) otherIcon.classList.remove('rotate-180');
+            }
+        }
+    });
+
+    // Toggle the selected menu
+    if (isHidden) {
+        menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+        if (icon) icon.classList.add('rotate-180');
+    } else {
+        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+        if (icon) icon.classList.remove('rotate-180');
+    }
+}
+
+
+    // 1. Add the selection function
+function selectDifficulty(val) {
+    // Update the hidden input value
+    document.getElementById('difficulty').value = val;
+    // Update the display text (Capitalize first letter)
+    document.getElementById('difficultyDisplay').innerText = val.charAt(0).toUpperCase() + val.slice(1);
+    // Close the menu
+    toggleDropdown('difficultyMenu');
 }
 
 function selectNumQ(val) {
@@ -532,7 +597,7 @@ function selectNumQ(val) {
     }
 
 // Optional: Close dropdown if user clicks outside
-window.addEventListener('click', function(e) {
+/*window.addEventListener('click', function(e) {
     const container = document.getElementById('numQContainer');
     if (!container.contains(e.target)) {
         const menu = document.getElementById('numQMenu');
@@ -540,8 +605,70 @@ window.addEventListener('click', function(e) {
         menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
         icon.classList.remove('rotate-180');
     }
+});*/
+
+    window.addEventListener('click', function(e) {
+    // List of all dropdown containers to check
+    const menuConfigs = [
+        { container: 'numQContainer', menu: 'numQMenu', icon: 'numQIcon' },
+        { container: 'timeContainer', menu: 'timeMenu', icon: 'timeIcon' },
+        { container: 'difficultyContainer', menu: 'difficultyMenu', icon: 'difficultyIcon' }
+    ];
+
+    menuConfigs.forEach(item => {
+        const container = document.getElementById(item.container);
+        const menu = document.getElementById(item.menu);
+        const icon = document.getElementById(item.icon);
+        
+        // If the click was outside the container and the menu is currently open, close it
+        if (container && !container.contains(e.target) && menu && !menu.classList.contains('opacity-0')) {
+            menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+            if (icon) icon.classList.remove('rotate-180');
+        }
+    });
 });
 
+    
+
+  /*  
+
+// 2. Update toggleDropdown to handle the new icon
+function toggleDropdown(menuId) {
+    
+    const icon = document.getElementById(iconMap[menuId]);
+    const isHidden = menu.classList.contains('opacity-0');
+
+    if (isHidden) {
+        menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+        if (icon) icon.classList.add('rotate-180');
+    } else {
+        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+        if (icon) icon.classList.remove('rotate-180');
+    }
+}
+
+// 3. Update the click-outside listener to include difficulty
+window.addEventListener('click', function(e) {
+    const menus = [
+        { container: 'numQContainer', menu: 'numQMenu', icon: 'numQIcon' },
+        { container: 'timeContainer', menu: 'timeMenu', icon: 'timeIcon' },
+        { container: 'difficultyContainer', menu: 'difficultyMenu', icon: 'difficultyIcon' }
+    ];
+
+    menus.forEach(item => {
+        const container = document.getElementById(item.container);
+        if (container && !container.contains(e.target)) {
+            const menu = document.getElementById(item.menu);
+            const icon = document.getElementById(item.icon);
+            menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+            if (icon) icon.classList.remove('rotate-180');
+        }
+    });
+});
+*/
 
 
 // RESET
