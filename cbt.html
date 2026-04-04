@@ -4,63 +4,103 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Study.AI CBT</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
+
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    brand: {
+                        cyan: '#06b6d4',
+                        violet: '#8b5cf6',
+                        darkBg: '#09090b',
+                        darkSurface: '#18181b',
+                        darkBorder: '#27272a'
+                    }
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                    display: ['Outfit', 'sans-serif'],
+                }
+            }
+        }
+    }
+</script>
+
 <style>
 body {
-  font-family: Inter, sans-serif;
-  /* Deep dark blue Study.AI radial gradient */
-  background: radial-gradient(circle at top right, #0B1120, #04060A 60%);
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(circle at top right, #18181b, #09090b 40%);
   background-attachment: fixed;
+  color: #e4e4e7;
 }
-/* Custom scrollbar for the JAMB-style palette */
-::-webkit-scrollbar { width: 6px; }
+
+/* Custom scrollbar matching your app */
+::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+
+/* Glassmorphism helpers */
+.glass-panel {
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+/* Signature Gradient Text */
+.signature-text {
+    background: -webkit-linear-gradient(45deg, #06b6d4, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
 </style>
 </head>
-<body class="text-white min-h-screen p-4 md:p-6 flex justify-center items-start">
+<body class="min-h-screen p-4 md:p-6 flex justify-center items-start">
 <div class="w-full max-w-6xl mt-4">
 
-<div class="flex justify-between items-center mb-6 bg-slate-900/40 backdrop-blur-xl p-4 md:px-6 rounded-2xl border border-white/10 shadow-lg">
-  <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3 bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-violet-400">
-    <i data-lucide="brain-circuit" class="text-cyan-400 w-7 h-7"></i>
+<div class="flex justify-between items-center mb-6 glass-panel bg-[#18181b]/60 p-4 md:px-6 rounded-2xl border border-[#27272a]/50 shadow-lg">
+  <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3 font-display signature-text">
+    <i data-lucide="brain-circuit" class="text-[#06b6d4] w-7 h-7"></i>
     Study.AI CBT
   </h1>
-  <div class="bg-slate-950/50 px-4 py-2 rounded-xl border border-slate-800 flex items-center gap-2 shadow-inner">
-      <i data-lucide="clock" class="text-cyan-400 w-5 h-5"></i>
-      <div id="timer" class="text-cyan-400 font-mono text-lg md:text-xl font-bold">00:00</div>
+  <div class="bg-[#09090b]/80 px-4 py-2 rounded-xl border border-[#27272a] flex items-center gap-2 shadow-inner">
+      <i data-lucide="clock" class="text-[#06b6d4] w-5 h-5"></i>
+      <div id="timer" class="text-[#06b6d4] font-mono text-lg md:text-xl font-bold">00:00</div>
   </div>
 </div>
 
-<div id="setupScreen" class="bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl max-w-md mx-auto mt-12">
+<div id="setupScreen" class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 p-8 rounded-3xl shadow-2xl max-w-md mx-auto mt-12">
   <div class="text-center mb-8">
-      <h2 class="text-2xl font-bold text-white mb-2">Configure Exam</h2>
-      <p class="text-slate-400 text-sm">Set up your CBT parameters</p>
+      <h2 class="text-2xl font-bold text-white mb-2 font-display">Configure Exam</h2>
+      <p class="text-zinc-400 text-sm">Set up your CBT parameters</p>
   </div>
   
-  <label class="block text-sm font-medium text-slate-300 mb-1.5">Select Textbook</label>
-  <select id="bookSelect" class="w-full p-3.5 mb-5 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-200 backdrop-blur-sm transition-all"></select>  
+  <label class="block text-sm font-medium text-zinc-300 mb-1.5">Select Textbook</label>
+  <select id="bookSelect" class="w-full px-5 py-3.5 mb-5 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm"></select>  
   
   <div class="grid grid-cols-2 gap-4 mb-5">
       <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Questions</label>
-          <input id="numQ" type="number" value="20" class="w-full p-3.5 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-200 backdrop-blur-sm transition-all"/>
+          <label class="block text-sm font-medium text-zinc-300 mb-1.5">Questions</label>
+          <input id="numQ" type="number" value="20" class="w-full px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm"/>
       </div>
       <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1.5">Time (mins)</label>
-          <input id="time" type="number" value="20" class="w-full p-3.5 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-200 backdrop-blur-sm transition-all"/>
+          <label class="block text-sm font-medium text-zinc-300 mb-1.5">Time (mins)</label>
+          <input id="time" type="number" value="20" class="w-full px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm"/>
       </div>
   </div>
 
-  <label class="block text-sm font-medium text-slate-300 mb-1.5">Difficulty</label>
-  <select id="difficulty" class="w-full p-3.5 mb-8 bg-slate-800/50 border border-slate-700 rounded-xl focus:outline-none focus:border-cyan-500 text-slate-200 backdrop-blur-sm transition-all">
+  <label class="block text-sm font-medium text-zinc-300 mb-1.5">Difficulty</label>
+  <select id="difficulty" class="w-full px-5 py-3.5 mb-8 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm">
     <option value="easy">Easy</option>
     <option value="medium">Medium</option>
     <option value="hard">Hard</option>
   </select>  
 
-  <button onclick="startCBT()" class="w-full py-4 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 rounded-xl font-bold text-white shadow-[0_0_20px_rgba(6,182,212,0.25)] transition-all transform hover:scale-[1.02]">
+  <button onclick="startCBT()" class="w-full py-4 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 rounded-xl font-bold text-white shadow-md transition-all active:scale-[0.98] text-sm">
     Start Examination
   </button>
 </div>
@@ -68,73 +108,78 @@ body {
 <div id="examScreen" class="hidden flex flex-col lg:flex-row gap-6">  
   
   <div class="flex-1 flex flex-col gap-4">
-      <div class="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 md:p-8 shadow-xl flex-1">
-        <div class="flex justify-between items-center mb-6 pb-4 border-b border-white/5">
-            <span id="progress" class="bg-cyan-500/10 text-cyan-400 px-4 py-1.5 rounded-lg font-semibold border border-cyan-500/20 text-sm"></span>
-            <button onclick="toggleFlag()" class="flex items-center gap-2 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 px-4 py-1.5 rounded-lg border border-yellow-500/20 transition-all text-sm font-medium">
+      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-3xl p-6 md:p-8 shadow-xl flex-1">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-[#27272a]">
+            <span id="progress" class="bg-[#06b6d4]/10 text-[#06b6d4] px-4 py-1.5 rounded-lg font-semibold border border-[#06b6d4]/20 text-sm"></span>
+            <button onclick="toggleFlag()" class="flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-4 py-1.5 rounded-lg border border-amber-500/20 transition-all text-sm font-medium">
                 <i data-lucide="flag" class="w-4 h-4"></i> Flag 
             </button>
         </div>  
         
-        <h3 id="question" class="text-xl md:text-2xl font-medium mb-8 leading-relaxed text-slate-100 min-h-[80px]"></h3>  
+        <h3 id="question" class="text-lg md:text-xl font-medium mb-8 leading-relaxed text-white min-h-[80px]"></h3>  
         <div id="options" class="flex flex-col gap-3"></div>  
       </div>
 
-      <div class="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 flex gap-4 shadow-xl">
-        <button onclick="prevQuestion()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 p-3.5 rounded-xl transition-all border border-slate-700 hover:border-slate-500 font-medium flex justify-center items-center gap-2">
-            <i data-lucide="chevron-left" class="w-5 h-5"></i> Previous
+      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-2xl p-4 flex gap-4 shadow-xl">
+        <button onclick="prevQuestion()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 p-3.5 rounded-xl transition-all border border-[#27272a] font-medium flex justify-center items-center gap-2 text-sm">
+            <i data-lucide="chevron-left" class="w-4 h-4"></i> Previous
         </button>
-        <button onclick="nextQuestion()" class="flex-1 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white p-3.5 rounded-xl transition-all shadow-lg shadow-cyan-500/20 font-medium flex justify-center items-center gap-2">
-            Next <i data-lucide="chevron-right" class="w-5 h-5"></i>
+        <button onclick="nextQuestion()" class="flex-1 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 text-white p-3.5 rounded-xl transition-all shadow-md font-medium flex justify-center items-center gap-2 text-sm">
+            Next <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
       </div>  
   </div>
 
   <div class="w-full lg:w-80 flex flex-col gap-4">
-      <div class="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-xl">
-          <h4 class="font-semibold mb-4 text-slate-200 flex justify-between items-center">
+      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-3xl p-6 shadow-xl">
+          <h4 class="font-semibold mb-4 text-white flex justify-between items-center font-display">
               Question Map
           </h4>
-          <div class="flex gap-3 mb-5 text-xs text-slate-400 font-medium">
-             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-green-500/20 border border-green-500 rounded-[3px]"></div> Answered</div>
-             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-slate-800/40 border border-slate-600 rounded-[3px]"></div> Unanswered</div>
+          <div class="flex gap-3 mb-5 text-xs text-zinc-400 font-medium">
+             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-emerald-500/20 border border-emerald-500/50 rounded-[3px]"></div> Answered</div>
+             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-[#09090b] border border-[#27272a] rounded-[3px]"></div> Unanswered</div>
           </div>
           <div id="palette" class="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 max-h-[300px] lg:max-h-[500px] overflow-y-auto pr-1"></div>
       </div>
 
-      <div class="bg-slate-900/40 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
-          <button onclick="reviewUnanswered()" class="w-full bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 border border-orange-500/30 p-3.5 rounded-xl transition-all font-medium">Review Unanswered</button>
-          <button onclick="openModal()" class="w-full bg-green-600 hover:bg-green-500 text-white p-3.5 rounded-xl transition-all shadow-lg shadow-green-500/20 font-bold">Submit Exam</button>
+      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+          <button onclick="reviewUnanswered()" class="w-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 p-3.5 rounded-xl transition-all font-medium text-sm">Review Unanswered</button>
+          <button onclick="openModal()" class="w-full bg-white text-zinc-900 hover:bg-zinc-200 p-3.5 rounded-xl transition-all shadow-md font-bold text-sm">Submit Exam</button>
       </div>
   </div>
 </div>
 
-<div id="resultScreen" class="hidden max-w-3xl mx-auto text-center bg-slate-900/40 backdrop-blur-xl border border-white/10 p-8 rounded-3xl shadow-2xl">
-  <div class="w-20 h-20 bg-cyan-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyan-500/30">
-      <i data-lucide="award" class="text-cyan-400 w-10 h-10"></i>
+<div id="resultScreen" class="hidden max-w-3xl mx-auto text-center glass-panel bg-[#18181b]/80 border border-[#27272a]/50 p-8 rounded-3xl shadow-2xl">
+  <div class="w-20 h-20 bg-[#06b6d4]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[#06b6d4]/20">
+      <i data-lucide="award" class="text-[#06b6d4] w-10 h-10"></i>
   </div>
-  <h2 class="text-2xl font-bold text-white mb-2">Exam Submitted Successfully</h2>
-  <p class="text-slate-400 mb-6">Here is your final score</p>
+  <h2 class="text-2xl font-bold text-white mb-2 font-display">Exam Submitted</h2>
+  <p class="text-zinc-400 mb-6 text-sm">Here is your final score</p>
   
-  <div class="text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 to-blue-400 mb-8" id="score"></div>  
+  <div class="text-6xl font-bold font-display signature-text mb-8" id="score"></div>  
   
-  <button onclick="showCorrections()" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl border border-slate-700 transition-all font-medium inline-flex items-center gap-2">
-    <i data-lucide="check-circle-2" class="w-5 h-5 text-cyan-400"></i> Check Corrections
-  </button>  
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+      <button onclick="showCorrections()" class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-3.5 rounded-xl border border-[#27272a] transition-all font-medium inline-flex items-center justify-center gap-2 text-sm">
+        <i data-lucide="check-circle-2" class="w-4 h-4 text-[#06b6d4]"></i> Check Corrections
+      </button>  
+      <button onclick="resetToSetup()" class="w-full sm:w-auto bg-transparent hover:bg-zinc-900 text-zinc-400 hover:text-white px-6 py-3.5 rounded-xl border border-transparent hover:border-[#27272a] transition-all font-medium inline-flex items-center justify-center gap-2 text-sm">
+        <i data-lucide="arrow-left" class="w-4 h-4"></i> Start New Exam
+      </button>
+  </div>
   
   <div id="corrections" class="hidden mt-8 text-left space-y-4"></div>
 </div>
 
-<div id="submitModal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="bg-slate-900 border border-white/10 p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full transform scale-100">
-    <div class="w-16 h-16 bg-yellow-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-yellow-500/30">
-        <i data-lucide="alert-triangle" class="text-yellow-400 w-8 h-8"></i>
+<div id="submitModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-[#18181b] border border-[#27272a] p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full">
+    <div class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
+        <i data-lucide="alert-triangle" class="text-amber-400 w-8 h-8"></i>
     </div>
-    <h3 class="text-xl font-bold text-white mb-2">Submit Exam?</h3>
-    <p class="text-slate-400 mb-8 text-sm">Are you sure you want to submit? You won't be able to change your answers.</p>
+    <h3 class="text-xl font-bold text-white mb-2 font-display">Submit Exam?</h3>
+    <p class="text-zinc-400 mb-8 text-sm">Are you sure you want to submit? You won't be able to change your answers.</p>
     <div class="flex gap-3">
-        <button onclick="closeModal()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-white py-3 rounded-xl transition-all border border-slate-700">Cancel</button>
-        <button onclick="submitExam()" class="flex-1 bg-green-600 hover:bg-green-500 text-white py-3 rounded-xl transition-all shadow-lg shadow-green-500/20 font-bold">Yes, Submit</button>
+        <button onclick="closeModal()" class="flex-1 bg-[#09090b] hover:bg-zinc-900 text-white py-3 rounded-xl transition-all border border-[#27272a] text-sm font-medium">Cancel</button>
+        <button onclick="submitExam()" class="flex-1 bg-white hover:bg-zinc-200 text-zinc-900 py-3 rounded-xl transition-all shadow-md font-bold text-sm">Yes, Submit</button>
     </div>
   </div>
 </div>
@@ -232,10 +277,10 @@ function showQuestion() {
   q.options.forEach((opt,i)=>{
     const btn = document.createElement("button");
 
-    let color = "bg-slate-800/40 border-slate-700/50 hover:border-cyan-500/50 text-slate-300 hover:bg-slate-800/80";
-    if(userAnswers[index]===i) color="bg-cyan-500/10 border-cyan-500 text-cyan-100 shadow-[0_0_15px_rgba(6,182,212,0.15)]";
+    let color = "bg-[#09090b] border-[#27272a] hover:bg-[#27272a] text-zinc-300";
+    if(userAnswers[index]===i) color="bg-[#06b6d4]/10 border-[#06b6d4] text-[#06b6d4] shadow-[0_0_15px_rgba(6,182,212,0.15)]";
 
-    btn.className = `w-full text-left p-4 rounded-xl border transition-all ${color}`;
+    btn.className = `w-full text-left p-4 rounded-xl border transition-all text-[15px] font-medium ${color}`;
     btn.innerText = opt;
     btn.onclick = ()=>{userAnswers[index]=i;showQuestion();};
 
@@ -252,12 +297,12 @@ function renderPalette(){
   questions.forEach((_,i)=>{
     const btn=document.createElement("button");
 
-    let color="bg-slate-800/40 border-slate-700/50 text-slate-400 hover:bg-slate-700/60";
-    if(userAnswers[i]!=null) color="bg-green-500/20 border-green-500/50 text-green-400";
-    if(flagged[i]) color="bg-yellow-500/20 border-yellow-500/50 text-yellow-400";
-    if(i===index) color="bg-cyan-600 text-white border-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.4)] transform scale-105";
+    let color="bg-[#09090b] border-[#27272a] text-zinc-500 hover:bg-[#27272a]";
+    if(userAnswers[i]!=null) color="bg-emerald-500/10 border-emerald-500/40 text-emerald-400";
+    if(flagged[i]) color="bg-amber-500/10 border-amber-500/40 text-amber-400";
+    if(i===index) color="bg-gradient-to-tr from-[#06b6d4] to-[#8b5cf6] text-white border-transparent shadow-[0_0_10px_rgba(6,182,212,0.4)] transform scale-105";
 
-    btn.className=`p-2.5 rounded-lg border text-sm font-medium transition-all ${color}`;
+    btn.className=`p-2.5 rounded-lg border text-sm font-semibold transition-all ${color}`;
     btn.innerText=i+1;
     btn.onclick=()=>{index=i;showQuestion();};
 
@@ -318,15 +363,31 @@ function showCorrections(){
     const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
 
     corrections.innerHTML+=`
-      <div class="p-5 bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl shadow-lg">
-        <p class="font-medium text-slate-200 mb-3">${i+1}. ${q.question}</p>
+      <div class="p-5 bg-[#09090b] border border-[#27272a] rounded-2xl shadow-sm">
+        <p class="font-medium text-white mb-3 text-[15px]">${i+1}. ${q.question}</p>
         <div class="space-y-1 text-sm">
-            <p class="text-slate-400">Your Answer: <span class="${userAnswers[i]===correctIndex ? 'text-green-400 font-medium' : 'text-red-400 font-medium'}">${q.options[userAnswers[i]]||"None"}</span></p>
-            <p class="text-slate-400">Correct Answer: <span class="text-green-400 font-medium">${q.options[correctIndex]}</span></p>
+            <p class="text-zinc-400">Your Answer: <span class="${userAnswers[i]===correctIndex ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'}">${q.options[userAnswers[i]]||"None"}</span></p>
+            <p class="text-zinc-400">Correct Answer: <span class="text-emerald-400 font-semibold">${q.options[correctIndex]}</span></p>
         </div>
-        ${q.explanation ? `<div class="mt-4 p-3 bg-slate-900/50 rounded-xl text-sm text-slate-300 border border-white/5"><span class="text-cyan-400 font-medium mr-1">Explanation:</span>${q.explanation.replace('Explanation:', '')}</div>` : ""}
+        ${q.explanation ? `<div class="mt-4 p-3 bg-[#18181b] rounded-xl text-sm text-zinc-300 border border-[#27272a] font-medium"><span class="text-[#06b6d4] font-semibold mr-1">Explanation:</span>${q.explanation.replace('Explanation:', '')}</div>` : ""}
       </div>`;
   });
+}
+
+// NEW FUNCTION: RESET TO SETUP
+function resetToSetup() {
+  resultScreen.classList.add("hidden");
+  corrections.classList.add("hidden");
+  corrections.innerHTML = "";
+  setupScreen.classList.remove("hidden");
+  
+  // Reset state variables
+  index = 0;
+  score = 0;
+  userAnswers = [];
+  flagged = [];
+  clearInterval(timer);
+  document.getElementById("timer").innerText = "00:00";
 }
 
 // INIT
