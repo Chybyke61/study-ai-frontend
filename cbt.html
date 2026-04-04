@@ -112,8 +112,7 @@ body {
   <select id="bookSelect" class="w-full px-5 py-3.5 mb-5 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm"></select>  
   
   <div class="grid grid-cols-2 gap-4 mb-5">
-      <div>
-          <label class="block text-sm font-medium text-zinc-300 mb-1.5">Questions</label>
+      
           <div class="relative" id="numQContainer">
     <label class="block text-sm font-medium text-zinc-300 mb-1.5">Questions</label>
     
@@ -133,10 +132,24 @@ body {
 </div>
 
       </div>
-      <div>
-          <label class="block text-sm font-medium text-zinc-300 mb-1.5">Time (mins)</label>
-          <input id="time" type="number" value="20" class="w-full px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm"/>
-      </div>
+      <div class="relative" id="timeContainer">
+    <label class="block text-sm font-medium text-zinc-300 mb-1.5">Time Limit</label>
+    
+    <input type="hidden" id="time" value="20">
+    
+    <button type="button" onclick="toggleTimeDropdown()" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
+        <span id="timeDisplay">20 Minutes</span>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="timeIcon"></i>
+    </button>
+
+    <div id="timeMenu" class="absolute left-0 right-0 mt-2 bg-[#09090b] border border-[#27272a] rounded-xl shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
+        <div onclick="selectTime(5)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">5 Minutes</div>
+        <div onclick="selectTime(10)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">10 Minutes</div>
+        <div onclick="selectTime(20)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">20 Minutes</div>
+        <div onclick="selectTime(60)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">60 Minutes</div>
+    </div>
+</div>
+
   </div>
 
   <label class="block text-sm font-medium text-zinc-300 mb-1.5">Difficulty</label>
@@ -522,6 +535,24 @@ function showCorrections(){
       </div>`;
   });
 }
+   /* function toggleDropdown(menuId) {
+    const menu = document.getElementById(menuId);
+    const icon = document.getElementById('numQIcon');
+    const isHidden = menu.classList.contains('opacity-0');
+
+    if (isHidden) {
+        // Show
+        menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+        menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
+        icon.classList.add('rotate-180');
+    } else {
+        // Hide
+        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+        menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
+        icon.classList.remove('rotate-180');
+    }
+}*/
+
     function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
     const icon = document.getElementById('numQIcon');
@@ -561,6 +592,7 @@ window.addEventListener('click', function(e) {
         icon.classList.remove('rotate-180');
     }
 });
+
 
 
 // RESET
