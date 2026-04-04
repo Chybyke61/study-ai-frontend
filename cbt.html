@@ -64,6 +64,8 @@ let timer;
 
 // ✅ GET USER ID (from main app session)
 function getUserId() {
+  return localStorage.getItem("studyai_user");
+}
   try {
     const session = JSON.parse(localStorage.getItem("supabase.auth.token"));
     return session?.currentSession?.user?.id;
@@ -86,9 +88,17 @@ function loadBooksFromApp() {
   select.innerHTML = `<option value="">Select textbook</option>`;
 
   books.forEach(book => {
+    const fileName = book.filename || book.name;
+
+    // 🔥 CLEAN NAME (REMOVE PREFIX)
+    const displayName = fileName.includes("_")
+      ? fileName.split("_").slice(1).join("_")
+      : fileName;
+
     const opt = document.createElement("option");
-    opt.value = book.filename;
-    opt.textContent = book.filename;
+    opt.value = fileName;
+    opt.textContent = displayName;
+
     select.appendChild(opt);
   });
 }
