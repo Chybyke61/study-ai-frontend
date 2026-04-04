@@ -1712,7 +1712,12 @@ titles[currentChatId] = text
         }
 
         function goToCBT() {
-    window.location.href = "/cbt.html";
+    localStorage.setItem("studyai_books", JSON.stringify(allBooks));
+
+    // 🔥 ADD THIS
+    localStorage.setItem("studyai_user", currentUser.id);
+
+    window.location.href = "/cbt";
         }
        
     </script>
