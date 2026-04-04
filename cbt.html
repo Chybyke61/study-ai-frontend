@@ -373,7 +373,8 @@ function loadBooks() {
       answer: lines.find(l => l.startsWith("Answer"))
         ?.split(":")[1]
         ?.trim()
-        ?.charAt(0),
+        ?.charAt(0)
+        ?.toUpperCase(),
       explanation: lines.find(l => l.startsWith("Explanation"))
         ?.replace("Explanation:", "")
         ?.trim()
@@ -465,7 +466,9 @@ function submitExam(){
       questions.forEach((q,i)=>{
         //const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
           const correctIndex = q.options.findIndex(o =>
-                o.trim().startsWith(q.answer)
+                const correctIndex = q.options.findIndex(o =>
+  q.answer && o.trim().startsWith(q.answer)
+);
                 );
         if(userAnswers[i]===correctIndex) correct++;
       });
@@ -486,7 +489,9 @@ function showCorrections(){
   questions.forEach((q,i)=>{
     //const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
       const correctIndex = q.options.findIndex(o =>
-            o.trim().startsWith(q.answer)
+            const correctIndex = q.options.findIndex(o =>
+  q.answer && o.trim().startsWith(q.answer)
+);
            );
 
     corrections.innerHTML+=`
@@ -494,7 +499,7 @@ function showCorrections(){
         <p class="font-medium text-white mb-3 text-[15px]">${i+1}. ${q.question}</p>
         <div class="space-y-1 text-sm">
             <p class="text-zinc-400">Your Answer: <span class="${userAnswers[i]===correctIndex ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'}">${q.options[userAnswers[i]]||"None"}</span></p>
-            <p class="text-zinc-400">Correct Answer: <span class="text-emerald-400 font-semibold">${q.options[correctIndex]}</span></p>
+            <p class="text-zinc-400">Correct Answer: <span class="text-emerald-400 font-semibold">${correctIndex !== -1 ? q.options[correctIndex] : "Not found"}</span></p>
         </div>
         ${q.explanation ? `<div class="mt-4 p-3 bg-[#18181b] rounded-xl text-sm text-zinc-300 border border-[#27272a] font-medium"><span class="text-[#06b6d4] font-semibold mr-1">Explanation:</span>${q.explanation.replace('Explanation:', '')}</div>` : ""}
       </div>`;
