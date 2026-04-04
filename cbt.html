@@ -65,7 +65,7 @@ let timer;
 // ✅ GET USER ID (from main app session)
 function getUserId() {
   return localStorage.getItem("studyai_user");
-}
+
   try {
     const session = JSON.parse(localStorage.getItem("supabase.auth.token"));
     return session?.currentSession?.user?.id;
