@@ -14,10 +14,10 @@ body {
   </h1>  <button onclick="goBack()" class="text-sm px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700">
     Back
   </button>
-</div><!-- SETUP SCREEN --><div id="setupScreen" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <h2 class="text-lg font-semibold mb-4">Setup Your Test</h2>  <!-- BOOK -->  <div class="mb-4">
+</div><!-- SETUP --><div id="setupScreen" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <h2 class="text-lg font-semibold mb-4">Setup Your Test</h2>  <!-- BOOK SELECT -->  <div class="mb-4">
     <label class="text-sm text-zinc-400">Select Textbook</label>
     <select id="bookSelect" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700">
-      <option value="">Loading books...</option>
+      <option>Loading your books...</option>
     </select>
   </div>  <!-- QUESTIONS -->  <div class="mb-4">
     <label class="text-sm text-zinc-400">Number of Questions</label>
@@ -39,15 +39,16 @@ class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 font-
 Start Exam
 </button>
 
-</div><!-- EXAM SCREEN --><div id="examScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <div class="flex justify-between mb-4">
+</div><!-- EXAM --><div id="examScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <div class="flex justify-between mb-4">
     <span id="progress"></span>
     <span id="timer" class="text-cyan-400 font-bold"></span>
-  </div>  <h3 id="question" class="text-lg mb-6"></h3>  <div id="options" class="flex flex-col gap-3"></div><button onclick="nextQuestion()" 
+  </div>  <h3 id="question" class="text-lg mb-6"></h3>
+  <div id="options" class="flex flex-col gap-3"></div><button onclick="nextQuestion()" 
 class="mt-6 w-full py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700">
 Next
 </button>
 
-</div><!-- RESULT SCREEN --><div id="resultScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl text-center">
+</div><!-- RESULT --><div id="resultScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl text-center">
   <h2 class="text-2xl font-bold mb-2">Result</h2>
   <p id="score" class="text-lg text-cyan-400"></p>
   <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-violet-500 rounded-xl">
@@ -56,40 +57,68 @@ Next
 </div></div><script>
 const api = "https://study-ai-tq7i.onrender.com";
 
-const supabase = window.supabase.createClient(
-  "https://hffbjtbahfwudigywzzx.supabase.co",
-  "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
-);
+// ✅ GET USER FROM LOCAL STORAGE (RELIABLE FIX)
+function getUserId() {
+  try {
+    const session = JSON.parse(localStorage.getItem("supabase.auth.token"));
+    return session?.currentSession?.user?.id;
+  } catch {
+    return null;
+  }
+}
 
-let currentUser, questions = [], index = 0, score = 0, timer;
+let userId = null;
+let questions = [];
+let index = 0;
+let score = 0;
+let timer;
 
-// 🔥 LOAD USER + BOOKS
+// 🔥 LOAD USER BOOKS
 async function init() {
-  const { data } = await supabase.auth.getSession();
-  currentUser = data.session?.user;
+  userId = getUserId();
 
-  const res = await fetch(`${api}/books`, {
-    headers: { "x-user-id": currentUser.id }
-  });
+  if (!userId) {
+    alert("Session expired. Please login again.");
+    window.location.href = "/";
+    return;
+  }
 
-  const books = await res.json();
-  const select = document.getElementById("bookSelect");
-  select.innerHTML = '<option value="">Select textbook</option>';
+  try {
+    const res = await fetch(`${api}/books`, {
+      headers: { "x-user-id": userId }
+    });
 
-  books.forEach(b => {
-    const opt = document.createElement("option");
-    opt.value = b.filename;
-    opt.textContent = b.filename;
-    select.appendChild(opt);
-  });
+    const books = await res.json();
+
+    const select = document.getElementById("bookSelect");
+
+    if (!books.length) {
+      select.innerHTML = `<option>No books uploaded</option>`;
+      return;
+    }
+
+    select.innerHTML = `<option value="">Select textbook</option>`;
+
+    books.forEach(book => {
+      const opt = document.createElement("option");
+      opt.value = book.filename;
+      opt.textContent = book.filename;
+      select.appendChild(opt);
+    });
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("bookSelect").innerHTML =
+      `<option>Error loading books</option>`;
+  }
 }
 
 // 🚀 START CBT
 async function startCBT() {
-  const filename = bookSelect.value;
-  const numQ = numQInput.value;
-  const difficulty = difficultySelect.value;
-  const time = timeInput.value;
+  const filename = document.getElementById("bookSelect").value;
+  const numQ = document.getElementById("numQ").value;
+  const difficulty = document.getElementById("difficulty").value;
+  const time = document.getElementById("time").value;
 
   if (!filename) return alert("Select a textbook");
 
@@ -97,81 +126,84 @@ async function startCBT() {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-user-id": currentUser.id
+      "x-user-id": userId
     },
     body: JSON.stringify({ filename, numQuestions: numQ, difficulty })
   });
 
   const data = await res.json();
-  questions = parse(data.questions);
+
+  questions = parseQuestions(data.questions);
 
   document.getElementById("setupScreen").classList.add("hidden");
   document.getElementById("examScreen").classList.remove("hidden");
 
   startTimer(time * 60);
-  showQ();
+  showQuestion();
 }
 
-// 🧠 PARSE QUESTIONS
-function parse(text) {
+// 🧠 PARSER
+function parseQuestions(text) {
   return text.split("Question:").slice(1).map(q => {
-    const l = q.split("\n").filter(x => x.trim());
+    const lines = q.split("\n").filter(l => l.trim());
     return {
-      q: l[0],
-      opts: l.slice(1,5),
-      ans: l.find(x=>x.includes("Answer")).split(":")[1].trim(),
+      question: lines[0],
+      options: lines.slice(1, 5),
+      answer: lines.find(l => l.includes("Answer")).split(":")[1].trim()
     };
   });
 }
 
 // SHOW QUESTION
-function showQ() {
+function showQuestion() {
   const q = questions[index];
-  question.innerText = q.q;
-  progress.innerText = `${index+1}/${questions.length}`;
+  document.getElementById("question").innerText = q.question;
+  document.getElementById("progress").innerText = `${index+1}/${questions.length}`;
 
-  options.innerHTML = "";
-  q.opts.forEach(opt=>{
+  const optionsDiv = document.getElementById("options");
+  optionsDiv.innerHTML = "";
+
+  q.options.forEach(opt => {
     const btn = document.createElement("button");
-    btn.className="p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700";
+    btn.className = "p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700 text-left";
     btn.innerText = opt;
-    btn.onclick = ()=>select(opt);
-    options.appendChild(btn);
+    btn.onclick = () => selectAnswer(opt);
+    optionsDiv.appendChild(btn);
   });
 }
 
 // SELECT
-function select(opt){
-  if(opt.includes(questions[index].ans)) score++;
+function selectAnswer(opt) {
+  if (opt.includes(questions[index].answer)) score++;
   nextQuestion();
 }
 
 // NEXT
-function nextQuestion(){
+function nextQuestion() {
   index++;
-  if(index>=questions.length) endExam();
-  else showQ();
+  if (index >= questions.length) endExam();
+  else showQuestion();
 }
 
 // TIMER
-function startTimer(t){
-  timer = setInterval(()=>{
-    timerEl.innerText = t+"s";
+function startTimer(t) {
+  timer = setInterval(() => {
+    document.getElementById("timer").innerText = t + "s";
     t--;
-    if(t<0) endExam();
-  },1000);
+    if (t < 0) endExam();
+  }, 1000);
 }
 
 // END
-function endExam(){
+function endExam() {
   clearInterval(timer);
-  examScreen.classList.add("hidden");
-  resultScreen.classList.remove("hidden");
-  score.innerText = `${score} / ${questions.length}`;
+  document.getElementById("examScreen").classList.add("hidden");
+  document.getElementById("resultScreen").classList.remove("hidden");
+  document.getElementById("score").innerText = `${score} / ${questions.length}`;
 }
 
-function goBack(){
-  window.location.href="/dashboard";
+function goBack() {
+  window.location.href = "/dashboard";
 }
 
 init();
