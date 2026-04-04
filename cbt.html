@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CBT Mode</title>
+</head>
+<body>
+
+<h2>Start CBT</h2>
+
+<select id="bookSelect"></select>
+
+<input type="number" id="numQ" min="5" max="100" placeholder="Questions">
+<input type="number" id="time" min="10" max="60" placeholder="Minutes">
+
+<select id="difficulty">
+  <option value="easy">Easy</option>
+  <option value="medium">Medium</option>
+  <option value="hard">Hard</option>
+</select>
+
+<button onclick="startCBT()">Start</button>
+
+<hr>
+
+<div id="exam"></div>
+<h3 id="timer"></h3>
+
+<script>
+const api = "https://study-ai-tq7i.onrender.com";
+let questions = [];
+let index = 0;
+let score = 0;
+let timer;
+
+async function loadBooks() {
+  const user = JSON.parse(localStorage.getItem("supabase.auth.token"));
+  const res = await fetch(`${api}/books`, {
+    headers: { "x-user-id": user?.currentSession?.user?.id }
+  });
+
+  const books = await res.json();
+  const select = document.getElementById("bookSelect");
+
+  books.forEach(b => {
+    const opt = document.createElement("option");
+    opt.value = b.filename;
+    opt.textContent = b.filename;
+    select.appendChild(opt);
+  });
+}
+
+async function startCBT() {
+  const user = JSON.parse(localStorage.getItem("supabase.auth.token"));
+  const userId = user?.currentSession?.user?.id;
+
+  const filename = document.getElementById("bookSelect").value;
+  const numQ = document.getElementById("numQ").value;
+  const difficulty = document.getElementById("difficulty").value;
+  const time = document.getElementById("time").value;
+
+  const res = await fetch(`${api}/generate-cbt`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-user-id": userId
+    },
+    body: JSON.stringify({ filename, numQuestions: numQ, difficulty })
+  });
+
+  const data = await res.json();
+
+  questions = parseQuestions(data.questions);
+  startTimer(time * 60);
+  showQuestion();
+}
+
+function parseQuestions(text) {
+  return text.split("Question:").slice(1).map(q => {
+    const lines = q.split("\n").filter(l => l.trim());
+    return {
+      question: lines[0],
+      options: lines.slice(1, 5),
+      answer: lines.find(l => l.includes("Answer")).split(":")[1].trim(),
+      explanation: lines.find(l => l.includes("Explanation")).split(":")[1].trim()
+    };
+  });
+}
+
+function showQuestion() {
+  const q = questions[index];
+  const div = document.getElementById("exam");
+
+  div.innerHTML = `<h3>${q.question}</h3>` +
+    q.options.map(opt =>
+      `<button onclick="select('${opt}')">${opt}</button>`
+    ).join("<br>");
+}
+
+function select(opt) {
+  if (opt.includes(questions[index].answer)) score++;
+  index++;
+
+  if (index >= questions.length) endExam();
+  else showQuestion();
+}
+
+function endExam() {
+  clearInterval(timer);
+  document.getElementById("exam").innerHTML =
+    `<h2>Score: ${score}/${questions.length}</h2>`;
+}
+
+function startTimer(t) {
+  timer = setInterval(() => {
+    document.getElementById("timer").innerText = t;
+    t--;
+    if (t < 0) endExam();
+  }, 1000);
+}
+
+loadBooks();
+</script>
+
+</body>
+</html>
