@@ -267,7 +267,7 @@ function loadBooks() {
 }
 
 // START CBT
-async function startCBT() {
+/*async function startCBT() {
   const userId = getUserId();
   const filename = bookSelect.value;
 
@@ -304,7 +304,51 @@ async function startCBT() {
     alert("Error loading quiz");
     hideLoader();
   }
-}
+}*/
+
+    async function startCBT() {
+  const userId = getUserId();
+  const filename = bookSelect.value;
+
+  if (!userId) return alert("Session expired");
+  if (!filename) return alert("Select book");
+
+  try {
+    const res = await fetch(`${api}/generate-cbt`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": userId
+      },
+      body: JSON.stringify({
+        filename,
+        numQuestions: numQ.value,
+        difficulty: difficulty.value
+      })
+    });
+
+    if (!res.ok) throw new Error("Server error");
+
+    const data = await res.json();
+
+    if (!data.questions) throw new Error("No questions generated");
+
+    questions = parse(data.questions);
+
+    if (!questions.length) throw new Error("Parsing failed");
+
+    setupScreen.classList.add("hidden");
+    examScreen.classList.remove("hidden");
+    examScreen.classList.add("flex");
+
+    startTimer(time.value * 60);
+    showQuestion();
+
+  } catch (err) {
+    console.error(err);
+    alert("⚠️ Failed to generate CBT.\nPossible causes:\n- API limit reached\n- Network issue\n\nTry again later.");
+  }
+    }
 
 // PARSER
 function parse(text) {
