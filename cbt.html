@@ -58,13 +58,23 @@ Next
 const api = "https://study-ai-tq7i.onrender.com";
 
 // ✅ GET USER FROM LOCAL STORAGE (RELIABLE FIX)
-function getUserId() {
-  try {
-    const session = JSON.parse(localStorage.getItem("supabase.auth.token"));
-    return session?.currentSession?.user?.id;
-  } catch {
-    return null;
+const supabase = window.supabase.createClient(
+  "https://hffbjtbahfwudigywzzx.supabase.co",
+  "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
+);
+
+let userId = null;
+
+async function getUser() {
+  const { data } = await supabase.auth.getSession();
+
+  if (!data.session) {
+    alert("Session expired. Please login again.");
+    window.location.href = "/";
+    return;
   }
+
+  userId = data.session.user.id;
 }
 
 let userId = null;
@@ -75,42 +85,29 @@ let timer;
 
 // 🔥 LOAD USER BOOKS
 async function init() {
-  userId = getUserId();
+  await getUser();
 
-  if (!userId) {
-    alert("Session expired. Please login again.");
-    window.location.href = "/";
+  const res = await fetch(`${api}/books`, {
+    headers: { "x-user-id": userId }
+  });
+
+  const books = await res.json();
+
+  const select = document.getElementById("bookSelect");
+
+  if (!books.length) {
+    select.innerHTML = `<option>No books uploaded</option>`;
     return;
   }
 
-  try {
-    const res = await fetch(`${api}/books`, {
-      headers: { "x-user-id": userId }
-    });
+  select.innerHTML = `<option value="">Select textbook</option>`;
 
-    const books = await res.json();
-
-    const select = document.getElementById("bookSelect");
-
-    if (!books.length) {
-      select.innerHTML = `<option>No books uploaded</option>`;
-      return;
-    }
-
-    select.innerHTML = `<option value="">Select textbook</option>`;
-
-    books.forEach(book => {
-      const opt = document.createElement("option");
-      opt.value = book.filename;
-      opt.textContent = book.filename;
-      select.appendChild(opt);
-    });
-
-  } catch (err) {
-    console.error(err);
-    document.getElementById("bookSelect").innerHTML =
-      `<option>Error loading books</option>`;
-  }
+  books.forEach(book => {
+    const opt = document.createElement("option");
+    opt.value = book.filename;
+    opt.textContent = book.filename;
+    select.appendChild(opt);
+  });
 }
 
 // 🚀 START CBT
