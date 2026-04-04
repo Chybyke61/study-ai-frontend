@@ -333,7 +333,7 @@ function loadBooks() {
 
     if (!data.questions) throw new Error("No questions generated");
 
-    questions = parse(data.questions);
+    questions = parseQuestions(data.questions);
 
     if (!questions.length) throw new Error("Parsing failed");
 
