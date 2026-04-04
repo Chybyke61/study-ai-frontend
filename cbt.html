@@ -2,7 +2,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Study.AI CBT</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script><script src="https://unpkg.com/lucide@latest"></script><style>
+<title>Study.AI CBT</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/lucide@latest"></script><style>
 body {
   font-family: Inter, sans-serif;
   background: radial-gradient(circle at top right, #18181b, #09090b 40%);
@@ -17,7 +17,7 @@ body {
 </div><!-- SETUP --><div id="setupScreen" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <h2 class="text-lg font-semibold mb-4">Setup Your Test</h2>  <!-- BOOK SELECT -->  <div class="mb-4">
     <label class="text-sm text-zinc-400">Select Textbook</label>
     <select id="bookSelect" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700">
-      <option>Loading your books...</option>
+      <option>Loading books...</option>
     </select>
   </div>  <!-- QUESTIONS -->  <div class="mb-4">
     <label class="text-sm text-zinc-400">Number of Questions</label>
@@ -57,46 +57,29 @@ Next
 </div></div><script>
 const api = "https://study-ai-tq7i.onrender.com";
 
-// ✅ GET USER FROM LOCAL STORAGE (RELIABLE FIX)
-const supabase = window.supabase.createClient(
-  "https://hffbjtbahfwudigywzzx.supabase.co",
-  "sb_publishable_HLf2YIFAJsl7V7MKzqw0HA_Ud0lmej5"
-);
-
-let userId = null;
-
-async function getUser() {
-  const { data } = await supabase.auth.getSession();
-
-  if (!data.session) {
-    alert("Session expired. Please login again.");
-    window.location.href = "/";
-    return;
-  }
-
-  userId = data.session.user.id;
-}
-
-let userId = null;
 let questions = [];
 let index = 0;
 let score = 0;
 let timer;
 
-// 🔥 LOAD USER BOOKS
-async function init() {
-  await getUser();
+// ✅ GET USER ID (from main app session)
+function getUserId() {
+  try {
+    const session = JSON.parse(localStorage.getItem("supabase.auth.token"));
+    return session?.currentSession?.user?.id;
+  } catch {
+    return null;
+  }
+}
 
-  const res = await fetch(`${api}/books`, {
-    headers: { "x-user-id": userId }
-  });
-
-  const books = await res.json();
+// 🔥 LOAD BOOKS FROM MAIN APP (NO FETCH)
+function loadBooksFromApp() {
+  const books = JSON.parse(localStorage.getItem("studyai_books")) || [];
 
   const select = document.getElementById("bookSelect");
 
   if (!books.length) {
-    select.innerHTML = `<option>No books uploaded</option>`;
+    select.innerHTML = `<option>No books found</option>`;
     return;
   }
 
@@ -112,6 +95,14 @@ async function init() {
 
 // 🚀 START CBT
 async function startCBT() {
+  const userId = getUserId();
+
+  if (!userId) {
+    alert("Session expired. Please login again.");
+    window.location.href = "/";
+    return;
+  }
+
   const filename = document.getElementById("bookSelect").value;
   const numQ = document.getElementById("numQ").value;
   const difficulty = document.getElementById("difficulty").value;
@@ -203,7 +194,8 @@ function goBack() {
   window.location.href = "/dashboard";
 }
 
-init();
+// INIT
+loadBooksFromApp();
 lucide.createIcons();
 </script></body>
 </html>
