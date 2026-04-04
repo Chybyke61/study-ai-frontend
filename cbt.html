@@ -3,13 +3,18 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Study.AI CBT</title>
+<title>Study.AI | CBT Examination</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/lucide@latest"></script>
 
 <script>
+    // Check local storage for theme preference before page loads to prevent flashing
+    if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+    }
+
     tailwind.config = {
         darkMode: 'class',
         theme: {
@@ -37,15 +42,28 @@
 
 <style>
 body {
-  font-family: 'Inter', sans-serif
-  background: radial-gradient(circle at top right, #18181b, #09090b 40%);
+  font-family: 'Inter', sans-serif;
   background-attachment: fixed;
-  color: #e4e4e7;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Premium Gradient Backgrounds matching App */
+.dark body {
+    background: radial-gradient(circle at top right, #18181b, #09090b 40%);
+    color: #e4e4e7;
+    min-height: 100vh;
+}
+
+body {
+    background: radial-gradient(circle at top right, #f4f4f5, #fafafa 40%);
+    color: #09090b;
+    min-height: 100vh;
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+::-webkit-scrollbar-thumb { background: rgba(161, 161, 170, 0.4); border-radius: 10px; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); }
 
 .glass-panel {
     backdrop-filter: blur(16px);
@@ -74,124 +92,129 @@ body {
 .animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
 </style>
 </head>
-<body class="min-h-screen p-4 md:p-6 flex justify-center items-start">
+<body class="min-h-screen p-4 md:p-6 flex flex-col items-center justify-start relative transition-colors duration-300">
 
-<div id="globalLoader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#09090b]">
+<div class="absolute top-6 right-6 z-50 flex items-center gap-3">
+    <a href="/dashboard" class="p-2.5 rounded-xl bg-white dark:bg-[#18181b] hover:bg-zinc-100 dark:hover:bg-[#27272a] border border-zinc-200 dark:border-[#27272a] transition-all text-zinc-600 dark:text-zinc-300 shadow-sm flex items-center justify-center" title="Return to Home">
+        <i data-lucide="home" class="w-5 h-5"></i>
+    </a>
+    
+    <button onclick="toggleTheme()" class="p-2.5 rounded-xl bg-white dark:bg-[#18181b] hover:bg-zinc-100 dark:hover:bg-[#27272a] border border-zinc-200 dark:border-[#27272a] transition-all text-zinc-600 dark:text-zinc-300 shadow-sm flex items-center justify-center" title="Toggle Theme">
+        <i id="themeIcon" data-lucide="sun" class="w-5 h-5"></i>
+    </button>
+</div>
+
+<div id="globalLoader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-white dark:bg-[#09090b]">
     <div class="relative flex items-center justify-center mb-6">
-        <div class="w-20 h-20 rounded-full border-2 border-zinc-800 border-t-[#06b6d4] border-l-[#8b5cf6] animate-spin"></div>
+        <div class="w-20 h-20 rounded-full border-2 border-zinc-200 dark:border-zinc-800 border-t-[#06b6d4] border-l-[#8b5cf6] animate-spin"></div>
         <div class="absolute">
             <i data-lucide="brain-circuit" class="w-8 h-8 text-[#06b6d4] animate-pulse-soft"></i>
         </div>
     </div>
     <div class="text-center">
-        <h2 class="text-xl font-display font-bold signature-text mb-1">Study.AI</h2>
+        <h2 class="text-xl font-display font-bold text-zinc-900 dark:text-white mb-1">Study.AI</h2>
         <p id="loaderText" class="text-zinc-500 text-xs font-medium tracking-widest uppercase">Initializing Interface</p>
     </div>
 </div>
 
-<div class="w-full max-w-6xl mt-4">
+<div class="w-full max-w-6xl mt-16 md:mt-12">
 
-<div class="flex justify-between items-center mb-6 glass-panel bg-[#18181b]/60 p-4 md:px-6 rounded-2xl border border-[#27272a]/50 shadow-lg">
-  <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3 font-display signature-text">
+<div class="flex justify-between items-center mb-6 glass-panel bg-white/60 dark:bg-[#18181b]/60 p-4 md:px-6 rounded-2xl border border-zinc-200/50 dark:border-[#27272a]/50 shadow-sm dark:shadow-lg">
+  <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3 font-display text-zinc-900 dark:text-white">
     <i data-lucide="brain-circuit" class="text-[#06b6d4] w-7 h-7"></i>
     Study.AI CBT
   </h1>
-  <div class="bg-[#09090b]/80 px-4 py-2 rounded-xl border border-[#27272a] flex items-center gap-2 shadow-inner">
+  <div class="bg-zinc-50 dark:bg-[#09090b]/80 px-4 py-2 rounded-xl border border-zinc-200 dark:border-[#27272a] flex items-center gap-2 shadow-inner">
       <i data-lucide="clock" class="text-[#06b6d4] w-5 h-5"></i>
       <div id="timer" class="text-[#06b6d4] font-mono text-lg md:text-xl font-bold">00:00</div>
   </div>
 </div>
 
-<div id="setupScreen" class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 p-8 rounded-3xl shadow-2xl max-w-md mx-auto mt-12">
+<div id="setupScreen" class="glass-panel bg-white/80 dark:bg-[#18181b]/80 border border-zinc-200/50 dark:border-[#27272a]/50 p-8 rounded-3xl shadow-xl dark:shadow-2xl max-w-md mx-auto mt-12">
   <div class="text-center mb-8">
-      <h2 class="text-2xl font-bold text-white mb-2 font-display">Configure Exam</h2>
-      <p class="text-zinc-400 text-sm">Set up your CBT parameters</p>
+      <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2 font-display">Configure Exam</h2>
+      <p class="text-zinc-500 dark:text-zinc-400 text-sm">Set up your CBT parameters</p>
   </div>
   
-  <label class="block text-sm font-medium text-zinc-300 mb-1.5">Select Textbook</label>
-  <select id="bookSelect" class="w-full px-5 py-3.5 mb-5 bg-[#09090b] border border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-white transition-all text-sm"></select>  
+  <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5 ml-1">Select Textbook</label>
+  <select id="bookSelect" class="w-full px-5 py-3.5 mb-5 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl focus:outline-none focus:border-[#06b6d4] focus:ring-1 focus:ring-[#06b6d4] text-zinc-900 dark:text-white transition-all text-sm appearance-none cursor-pointer"></select>  
   
   <div class="grid grid-cols-2 gap-4 mb-5">
-      
-          <div class="relative" id="numQContainer">
-    <label class="block text-sm font-medium text-zinc-300 mb-1.5">Questions</label>
-    
-    <input type="hidden" id="numQ" value="20">
-    
-    <button type="button" onclick="toggleDropdown('numQMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
-        <span id="numQDisplay">20 Questions</span>
-        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="numQIcon"></i>
-    </button>
+      <div class="relative" id="numQContainer">
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5 ml-1">Questions</label>
+        
+        <input type="hidden" id="numQ" value="20">
+        
+        <button type="button" onclick="toggleDropdown('numQMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl text-zinc-900 dark:text-white text-sm transition-all hover:border-zinc-300 dark:hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
+            <span id="numQDisplay">20 Questions</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="numQIcon"></i>
+        </button>
 
-    <div id="numQMenu" class="absolute left-0 right-0 mt-2 bg-[#09090b] border border-[#27272a] rounded-xl shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
-        <div onclick="selectNumQ(5)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">5 Questions</div>
-        <div onclick="selectNumQ(10)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">10 Questions</div>
-        <div onclick="selectNumQ(20)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">20 Questions</div>
-        <div onclick="selectNumQ(50)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">50 Questions</div>
-    </div>
-</div>
-
+        <div id="numQMenu" class="absolute left-0 right-0 mt-2 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl shadow-xl dark:shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
+            <div onclick="selectNumQ(5)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">5 Questions</div>
+            <div onclick="selectNumQ(10)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">10 Questions</div>
+            <div onclick="selectNumQ(20)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">20 Questions</div>
+            <div onclick="selectNumQ(50)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">50 Questions</div>
+        </div>
       </div>
+
       <div class="relative" id="timeContainer">
-    <label class="block text-sm font-medium text-zinc-300 mb-1.5">Time Limit</label>
-    
-    <input type="hidden" id="time" value="20">
-    
-    <button type="button" onclick="toggleDropdown('timeMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
-        <span id="timeDisplay">20 Minutes</span>
-        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="timeIcon"></i>
-    </button>
+        <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5 ml-1">Time Limit</label>
+        
+        <input type="hidden" id="time" value="20">
+        
+        <button type="button" onclick="toggleDropdown('timeMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl text-zinc-900 dark:text-white text-sm transition-all hover:border-zinc-300 dark:hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
+            <span id="timeDisplay">20 Minutes</span>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="timeIcon"></i>
+        </button>
 
-    <div id="timeMenu" class="absolute left-0 right-0 mt-2 bg-[#09090b] border border-[#27272a] rounded-xl shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
-        <div onclick="selectTime(5)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">5 Minutes</div>
-        <div onclick="selectTime(10)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">10 Minutes</div>
-        <div onclick="selectTime(20)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">20 Minutes</div>
-        <div onclick="selectTime(60)" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">60 Minutes</div>
-    </div>
-</div>
-
+        <div id="timeMenu" class="absolute left-0 right-0 mt-2 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl shadow-xl dark:shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
+            <div onclick="selectTime(5)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">5 Minutes</div>
+            <div onclick="selectTime(10)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">10 Minutes</div>
+            <div onclick="selectTime(20)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">20 Minutes</div>
+            <div onclick="selectTime(60)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">60 Minutes</div>
+        </div>
+      </div>
   </div>
 
-<label class="block text-sm font-medium text-zinc-300 mb-1.5">Difficulty</label>
-<div class="relative mb-8" id="difficultyContainer">
-    <input type="hidden" id="difficulty" value="medium">
-    
-    <button type="button" onclick="toggleDropdown('difficultyMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
-        <span id="difficultyDisplay">Medium</span>
-        <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="difficultyIcon"></i>
-    </button>
+  <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5 ml-1">Difficulty</label>
+  <div class="relative mb-8" id="difficultyContainer">
+      <input type="hidden" id="difficulty" value="medium">
+      
+      <button type="button" onclick="toggleDropdown('difficultyMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl text-zinc-900 dark:text-white text-sm transition-all hover:border-zinc-300 dark:hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
+          <span id="difficultyDisplay">Medium</span>
+          <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="difficultyIcon"></i>
+      </button>
 
-    <div id="difficultyMenu" class="absolute left-0 right-0 mt-2 bg-[#09090b] border border-[#27272a] rounded-xl shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
-        <div onclick="selectDifficulty('easy')" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">Easy</div>
-        <div onclick="selectDifficulty('medium')" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">Medium</div>
-        <div onclick="selectDifficulty('hard')" class="px-5 py-3 text-sm text-zinc-400 hover:text-white hover:bg-[#18181b] cursor-pointer transition-colors">Hard</div>
-    </div>
-</div>
-
-  </select>  
+      <div id="difficultyMenu" class="absolute left-0 right-0 mt-2 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl shadow-xl dark:shadow-2xl z-50 overflow-hidden opacity-0 scale-95 pointer-events-none transition-all duration-200 origin-top">
+          <div onclick="selectDifficulty('easy')" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">Easy</div>
+          <div onclick="selectDifficulty('medium')" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">Medium</div>
+          <div onclick="selectDifficulty('hard')" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">Hard</div>
+      </div>
+  </div>
 
   <button onclick="startCBT()" class="w-full py-4 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 rounded-xl font-bold text-white shadow-md transition-all active:scale-[0.98] text-sm">
     Start Examination
   </button>
 </div>
 
-<div id="examScreen" class="hidden flex flex-col lg:flex-row gap-6">  
+<div id="examScreen" class="hidden flex-col lg:flex-row gap-6">  
   
   <div class="flex-1 flex flex-col gap-4">
-      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-3xl p-6 md:p-8 shadow-xl flex-1">
-        <div class="flex justify-between items-center mb-6 pb-4 border-b border-[#27272a]">
-            <span id="progress" class="bg-[#06b6d4]/10 text-[#06b6d4] px-4 py-1.5 rounded-lg font-semibold border border-[#06b6d4]/20 text-sm"></span>
-            <button onclick="toggleFlag()" class="flex items-center gap-2 bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-4 py-1.5 rounded-lg border border-amber-500/20 transition-all text-sm font-medium">
+      <div class="glass-panel bg-white/80 dark:bg-[#18181b]/80 border border-zinc-200/50 dark:border-[#27272a]/50 rounded-3xl p-6 md:p-8 shadow-xl flex-1">
+        <div class="flex justify-between items-center mb-6 pb-4 border-b border-zinc-200 dark:border-[#27272a]">
+            <span id="progress" class="bg-cyan-50 dark:bg-[#06b6d4]/10 text-[#06b6d4] px-4 py-1.5 rounded-lg font-semibold border border-cyan-100 dark:border-[#06b6d4]/20 text-sm"></span>
+            <button onclick="toggleFlag()" class="flex items-center gap-2 bg-amber-50 dark:bg-amber-500/10 hover:bg-amber-100 dark:hover:bg-amber-500/20 text-amber-500 dark:text-amber-400 px-4 py-1.5 rounded-lg border border-amber-200 dark:border-amber-500/20 transition-all text-sm font-medium">
                 <i data-lucide="flag" class="w-4 h-4"></i> Flag 
             </button>
         </div>  
         
-        <h3 id="question" class="text-lg md:text-xl font-medium mb-8 leading-relaxed text-white min-h-[80px]"></h3>  
+        <h3 id="question" class="text-lg md:text-xl font-medium mb-8 leading-relaxed text-zinc-900 dark:text-white min-h-[80px]"></h3>  
         <div id="options" class="flex flex-col gap-3"></div>  
       </div>
 
-      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-2xl p-4 flex gap-4 shadow-xl">
-        <button onclick="prevQuestion()" class="flex-1 bg-zinc-900 hover:bg-zinc-800 text-zinc-200 p-3.5 rounded-xl transition-all border border-[#27272a] font-medium flex justify-center items-center gap-2 text-sm">
+      <div class="glass-panel bg-white/80 dark:bg-[#18181b]/80 border border-zinc-200/50 dark:border-[#27272a]/50 rounded-2xl p-4 flex gap-4 shadow-xl">
+        <button onclick="prevQuestion()" class="flex-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 p-3.5 rounded-xl transition-all border border-zinc-200 dark:border-[#27272a] font-medium flex justify-center items-center gap-2 text-sm">
             <i data-lucide="chevron-left" class="w-4 h-4"></i> Previous
         </button>
         <button onclick="nextQuestion()" class="flex-1 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 text-white p-3.5 rounded-xl transition-all shadow-md font-medium flex justify-center items-center gap-2 text-sm">
@@ -201,38 +224,38 @@ body {
   </div>
 
   <div class="w-full lg:w-80 flex flex-col gap-4">
-      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-3xl p-6 shadow-xl">
-          <h4 class="font-semibold mb-4 text-white flex justify-between items-center font-display">
+      <div class="glass-panel bg-white/80 dark:bg-[#18181b]/80 border border-zinc-200/50 dark:border-[#27272a]/50 rounded-3xl p-6 shadow-xl">
+          <h4 class="font-semibold mb-4 text-zinc-900 dark:text-white flex justify-between items-center font-display">
               Question Map
           </h4>
-          <div class="flex gap-3 mb-5 text-xs text-zinc-400 font-medium">
-             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-emerald-500/20 border border-emerald-500/50 rounded-[3px]"></div> Answered</div>
-             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-[#09090b] border border-[#27272a] rounded-[3px]"></div> Unanswered</div>
+          <div class="flex gap-3 mb-5 text-xs text-zinc-500 dark:text-zinc-400 font-medium">
+             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-emerald-100 dark:bg-emerald-500/20 border border-emerald-300 dark:border-emerald-500/50 rounded-[3px]"></div> Answered</div>
+             <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-[3px]"></div> Unanswered</div>
           </div>
-          <div id="palette" class="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 max-h-[300px] lg:max-h-[500px] overflow-y-auto pr-1"></div>
+          <div id="palette" class="grid grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 max-h-[300px] lg:max-h-[500px] overflow-y-auto pr-1 custom-scrollbar"></div>
       </div>
 
-      <div class="glass-panel bg-[#18181b]/80 border border-[#27272a]/50 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
-          <button onclick="reviewUnanswered()" class="w-full bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 p-3.5 rounded-xl transition-all font-medium text-sm">Review Unanswered</button>
-          <button onclick="openModal()" class="w-full bg-white text-zinc-900 hover:bg-zinc-200 p-3.5 rounded-xl transition-all shadow-md font-bold text-sm">Submit Exam</button>
+      <div class="glass-panel bg-white/80 dark:bg-[#18181b]/80 border border-zinc-200/50 dark:border-[#27272a]/50 rounded-2xl p-4 shadow-xl flex flex-col gap-3">
+          <button onclick="reviewUnanswered()" class="w-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 p-3.5 rounded-xl transition-all font-medium text-sm">Review Unanswered</button>
+          <button onclick="openModal()" class="w-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 p-3.5 rounded-xl transition-all shadow-md font-bold text-sm">Submit Exam</button>
       </div>
   </div>
 </div>
 
-<div id="resultScreen" class="hidden max-w-3xl mx-auto text-center glass-panel bg-[#18181b]/80 border border-[#27272a]/50 p-8 rounded-3xl shadow-2xl">
-  <div class="w-20 h-20 bg-[#06b6d4]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-[#06b6d4]/20">
+<div id="resultScreen" class="hidden max-w-3xl mx-auto text-center glass-panel bg-white/80 dark:bg-[#18181b]/80 border border-zinc-200/50 dark:border-[#27272a]/50 p-8 rounded-3xl shadow-xl dark:shadow-2xl mt-12">
+  <div class="w-20 h-20 bg-cyan-50 dark:bg-[#06b6d4]/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-cyan-100 dark:border-[#06b6d4]/20">
       <i data-lucide="award" class="text-[#06b6d4] w-10 h-10"></i>
   </div>
-  <h2 class="text-2xl font-bold text-white mb-2 font-display">Exam Submitted</h2>
-  <p class="text-zinc-400 mb-6 text-sm">Here is your final score</p>
+  <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2 font-display">Exam Submitted</h2>
+  <p class="text-zinc-500 dark:text-zinc-400 mb-6 text-sm">Here is your final score</p>
   
   <div class="text-6xl font-bold font-display signature-text mb-8" id="score"></div>  
   
   <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <button onclick="showCorrections()" class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-3.5 rounded-xl border border-[#27272a] transition-all font-medium inline-flex items-center justify-center gap-2 text-sm">
+      <button onclick="showCorrections()" class="w-full sm:w-auto bg-zinc-900 hover:bg-zinc-800 text-white px-6 py-3.5 rounded-xl border border-zinc-900 transition-all font-medium inline-flex items-center justify-center gap-2 text-sm shadow-md">
         <i data-lucide="check-circle-2" class="w-4 h-4 text-[#06b6d4]"></i> Check Corrections
       </button>  
-      <button onclick="resetToSetup()" class="w-full sm:w-auto bg-transparent hover:bg-zinc-900 text-zinc-400 hover:text-white px-6 py-3.5 rounded-xl border border-transparent hover:border-[#27272a] transition-all font-medium inline-flex items-center justify-center gap-2 text-sm">
+      <button onclick="resetToSetup()" class="w-full sm:w-auto bg-transparent hover:bg-zinc-100 dark:hover:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white px-6 py-3.5 rounded-xl border border-transparent hover:border-zinc-200 dark:hover:border-[#27272a] transition-all font-medium inline-flex items-center justify-center gap-2 text-sm">
         <i data-lucide="arrow-left" class="w-4 h-4"></i> Start New Exam
       </button>
   </div>
@@ -241,15 +264,15 @@ body {
 </div>
 
 <div id="submitModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-  <div class="bg-[#18181b] border border-[#27272a] p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full">
-    <div class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
-        <i data-lucide="alert-triangle" class="text-amber-400 w-8 h-8"></i>
+  <div class="bg-white dark:bg-[#18181b] border border-zinc-200 dark:border-[#27272a] p-8 rounded-3xl shadow-2xl text-center max-w-sm w-full">
+    <div class="w-16 h-16 bg-amber-50 dark:bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-200 dark:border-amber-500/20">
+        <i data-lucide="alert-triangle" class="text-amber-500 dark:text-amber-400 w-8 h-8"></i>
     </div>
-    <h3 class="text-xl font-bold text-white mb-2 font-display">Submit Exam?</h3>
-    <p class="text-zinc-400 mb-8 text-sm">Are you sure you want to submit? You won't be able to change your answers.</p>
+    <h3 class="text-xl font-bold text-zinc-900 dark:text-white mb-2 font-display">Submit Exam?</h3>
+    <p class="text-zinc-500 dark:text-zinc-400 mb-8 text-sm">Are you sure you want to submit? You won't be able to change your answers.</p>
     <div class="flex gap-3">
-        <button onclick="closeModal()" class="flex-1 bg-[#09090b] hover:bg-zinc-900 text-white py-3 rounded-xl transition-all border border-[#27272a] text-sm font-medium">Cancel</button>
-        <button onclick="submitExam()" class="flex-1 bg-white hover:bg-zinc-200 text-zinc-900 py-3 rounded-xl transition-all shadow-md font-bold text-sm">Yes, Submit</button>
+        <button onclick="closeModal()" class="flex-1 bg-zinc-100 dark:bg-[#09090b] hover:bg-zinc-200 dark:hover:bg-zinc-900 text-zinc-900 dark:text-white py-3 rounded-xl transition-all border border-zinc-200 dark:border-[#27272a] text-sm font-medium">Cancel</button>
+        <button onclick="submitExam()" class="flex-1 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 hover:opacity-90 py-3 rounded-xl transition-all shadow-md font-bold text-sm">Yes, Submit</button>
     </div>
   </div>
 </div>
@@ -257,6 +280,32 @@ body {
 </div>
 
 <script>
+// --- Theme Toggle Logic ---
+function toggleTheme() {
+    const html = document.documentElement;
+    const icon = document.getElementById('themeIcon');
+    if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    } else {
+        html.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    }
+    // Re-render specifically for the sun/moon icon toggle
+    icon.setAttribute('data-lucide', html.classList.contains('dark') ? 'sun' : 'moon');
+    lucide.createIcons();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initial theme icon sync
+    const icon = document.getElementById('themeIcon');
+    if(icon) {
+        icon.setAttribute('data-lucide', document.documentElement.classList.contains('dark') ? 'sun' : 'moon');
+        lucide.createIcons();
+    }
+});
+// -------------------------
+
 const api = "https://study-ai-tq7i.onrender.com";
 
 let questions = [], index = 0, score = 0, timer;
@@ -389,8 +438,8 @@ function showQuestion() {
   q.options.forEach((opt,i)=>{
     const btn = document.createElement("button");
 
-    let color = "bg-[#09090b] border-[#27272a] hover:bg-[#27272a] text-zinc-300";
-    if(userAnswers[index]===i) color="bg-[#06b6d4]/10 border-[#06b6d4] text-[#06b6d4] shadow-[0_0_15px_rgba(6,182,212,0.15)]";
+    let color = "bg-white dark:bg-[#09090b] border-zinc-200 dark:border-[#27272a] hover:bg-zinc-50 dark:hover:bg-[#27272a] text-zinc-700 dark:text-zinc-300";
+    if(userAnswers[index]===i) color="bg-cyan-50 dark:bg-[#06b6d4]/10 border-[#06b6d4] text-[#06b6d4] shadow-[0_0_15px_rgba(6,182,212,0.15)]";
 
     btn.className = `w-full text-left p-4 rounded-xl border transition-all text-[15px] font-medium ${color}`;
     btn.innerText = opt;
@@ -409,9 +458,9 @@ function renderPalette(){
   questions.forEach((_,i)=>{
     const btn=document.createElement("button");
 
-    let color="bg-[#09090b] border-[#27272a] text-zinc-500 hover:bg-[#27272a]";
-    if(userAnswers[i]!=null) color="bg-emerald-500/10 border-emerald-500/40 text-emerald-400";
-    if(flagged[i]) color="bg-amber-500/10 border-amber-500/40 text-amber-400";
+    let color="bg-white dark:bg-[#09090b] border-zinc-200 dark:border-[#27272a] text-zinc-500 hover:bg-zinc-50 dark:hover:bg-[#27272a]";
+    if(userAnswers[i]!=null) color="bg-emerald-50 dark:bg-emerald-500/10 border-emerald-300 dark:border-emerald-500/40 text-emerald-600 dark:text-emerald-400";
+    if(flagged[i]) color="bg-amber-50 dark:bg-amber-500/10 border-amber-300 dark:border-amber-500/40 text-amber-600 dark:text-amber-400";
     if(i===index) color="bg-gradient-to-tr from-[#06b6d4] to-[#8b5cf6] text-white border-transparent shadow-[0_0_10px_rgba(6,182,212,0.4)] transform scale-105";
 
     btn.className=`p-2.5 rounded-lg border text-sm font-semibold transition-all ${color}`;
@@ -459,7 +508,6 @@ function submitExam(){
       let correct=0;
 
       questions.forEach((q,i)=>{
-        //const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
           const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
@@ -481,47 +529,22 @@ function showCorrections(){
   corrections.classList.remove("hidden");
 
   questions.forEach((q,i)=>{
-    //const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
       const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
 
     corrections.innerHTML+=`
-      <div class="p-5 bg-[#09090b] border border-[#27272a] rounded-2xl shadow-sm">
-        <p class="font-medium text-white mb-3 text-[15px]">${i+1}. ${q.question}</p>
+      <div class="p-5 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-2xl shadow-sm">
+        <p class="font-medium text-zinc-900 dark:text-white mb-3 text-[15px]">${i+1}. ${q.question}</p>
         <div class="space-y-1 text-sm">
-            <p class="text-zinc-400">Your Answer: <span class="${userAnswers[i]===correctIndex ? 'text-emerald-400 font-semibold' : 'text-rose-400 font-semibold'}">${q.options[userAnswers[i]]||"None"}</span></p>
-            <p class="text-zinc-400">Correct Answer: <span class="text-emerald-400 font-semibold">${correctIndex !== -1 ? q.options[correctIndex] : "Not found"}</span></p>
+            <p class="text-zinc-600 dark:text-zinc-400">Your Answer: <span class="${userAnswers[i]===correctIndex ? 'text-emerald-500 dark:text-emerald-400 font-semibold' : 'text-rose-500 dark:text-rose-400 font-semibold'}">${q.options[userAnswers[i]]||"None"}</span></p>
+            <p class="text-zinc-600 dark:text-zinc-400">Correct Answer: <span class="text-emerald-500 dark:text-emerald-400 font-semibold">${correctIndex !== -1 ? q.options[correctIndex] : "Not found"}</span></p>
         </div>
-        ${q.explanation ? `<div class="mt-4 p-3 bg-[#18181b] rounded-xl text-sm text-zinc-300 border border-[#27272a] font-medium"><span class="text-[#06b6d4] font-semibold mr-1">Explanation:</span>${q.explanation.replace('Explanation:', '')}</div>` : ""}
+        ${q.explanation ? `<div class="mt-4 p-3 bg-white dark:bg-[#18181b] rounded-xl text-sm text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-[#27272a] font-medium"><span class="text-[#06b6d4] font-semibold mr-1">Explanation:</span>${q.explanation.replace('Explanation:', '')}</div>` : ""}
       </div>`;
   });
 }
    
-  /*  function toggleDropdown(menuId) {
-        const menu = document.getElementById(menuId);
-    // Map menu IDs to their respective icons
-    const iconMap = {
-        'numQMenu': 'numQIcon',
-        'timeMenu': 'timeIcon',
-        'difficultyMenu': 'difficultyIcon'
-    };
-    const isHidden = menu.classList.contains('opacity-0');
-
-
-    if (isHidden) {
-        // Show
-        menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-        menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
-        icon.classList.add('rotate-180');
-    } else {
-        // Hide
-        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-        menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
-        icon.classList.remove('rotate-180');
-    }
-}*/
-
     function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
     if (!menu) return;
@@ -562,7 +585,6 @@ function showCorrections(){
 }
 
 
-    // 1. Add the selection function
 function selectDifficulty(val) {
     // Update the hidden input value
     document.getElementById('difficulty').value = val;
@@ -582,7 +604,7 @@ function selectNumQ(val) {
     // Close the menu
     toggleDropdown('numQMenu');
 }
-    function selectTime(val) {
+function selectTime(val) {
   // Convert minutes → seconds (IMPORTANT)
   const seconds = val * 60;
 
@@ -594,20 +616,9 @@ function selectNumQ(val) {
 
   // Close dropdown
   toggleDropdown('timeMenu');
-    }
+}
 
-// Optional: Close dropdown if user clicks outside
-/*window.addEventListener('click', function(e) {
-    const container = document.getElementById('numQContainer');
-    if (!container.contains(e.target)) {
-        const menu = document.getElementById('numQMenu');
-        const icon = document.getElementById('numQIcon');
-        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-        icon.classList.remove('rotate-180');
-    }
-});*/
-
-    window.addEventListener('click', function(e) {
+window.addEventListener('click', function(e) {
     // List of all dropdown containers to check
     const menuConfigs = [
         { container: 'numQContainer', menu: 'numQMenu', icon: 'numQIcon' },
@@ -628,48 +639,6 @@ function selectNumQ(val) {
         }
     });
 });
-
-    
-
-  /*  
-
-// 2. Update toggleDropdown to handle the new icon
-function toggleDropdown(menuId) {
-    
-    const icon = document.getElementById(iconMap[menuId]);
-    const isHidden = menu.classList.contains('opacity-0');
-
-    if (isHidden) {
-        menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-        menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
-        if (icon) icon.classList.add('rotate-180');
-    } else {
-        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-        menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
-        if (icon) icon.classList.remove('rotate-180');
-    }
-}
-
-// 3. Update the click-outside listener to include difficulty
-window.addEventListener('click', function(e) {
-    const menus = [
-        { container: 'numQContainer', menu: 'numQMenu', icon: 'numQIcon' },
-        { container: 'timeContainer', menu: 'timeMenu', icon: 'timeIcon' },
-        { container: 'difficultyContainer', menu: 'difficultyMenu', icon: 'difficultyIcon' }
-    ];
-
-    menus.forEach(item => {
-        const container = document.getElementById(item.container);
-        if (container && !container.contains(e.target)) {
-            const menu = document.getElementById(item.menu);
-            const icon = document.getElementById(item.icon);
-            menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-            if (icon) icon.classList.remove('rotate-180');
-        }
-    });
-});
-*/
-
 
 // RESET
 function resetToSetup() {
