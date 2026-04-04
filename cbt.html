@@ -7,63 +7,53 @@ body {
   font-family: Inter, sans-serif;
   background: radial-gradient(circle at top right, #18181b, #09090b 40%);
 }
-</style></head><body class="text-white min-h-screen flex items-center justify-center p-4"><div class="w-full max-w-3xl"><!-- HEADER --><div class="flex justify-between items-center mb-6">
-  <h1 class="text-2xl font-bold flex items-center gap-2">
+</style></head><body class="text-white min-h-screen flex items-center justify-center p-4"><div class="w-full max-w-4xl"><!-- HEADER --><div class="flex justify-between items-center mb-4">
+  <h1 class="text-xl font-bold flex items-center gap-2">
     <i data-lucide="brain-circuit" class="text-cyan-400"></i>
     CBT Practice
   </h1>
-  <button onclick="goBack()" class="px-3 py-1 bg-zinc-800 rounded-lg hover:bg-zinc-700">Back</button>
-</div><!-- SETUP --><div id="setupScreen" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <h2 class="text-lg font-semibold mb-4">Setup Your Test</h2>  <!-- BOOK SELECT -->  <div class="mb-4">
-    <label class="text-sm text-zinc-400">Select Textbook</label>
-    <select id="bookSelect" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700"></select>
-  </div>  <!-- QUESTIONS -->  <div class="mb-4">
-    <label class="text-sm text-zinc-400">Number of Questions</label>
-    <input id="numQ" type="number" min="5" max="100" value="20"
-      class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700"/>
-  </div>  <!-- TIME -->  <div class="mb-4">
-    <label class="text-sm text-zinc-400">Time (minutes)</label>
-    <input id="time" type="number" min="10" max="60" value="20"
-      class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700"/>
-  </div>  <!-- DIFFICULTY -->  <div class="mb-6">
-    <label class="text-sm text-zinc-400">Difficulty</label>
-    <select id="difficulty" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700">
-      <option value="easy">Easy</option>
-      <option value="medium">Medium</option>
-      <option value="hard">Hard</option>
-    </select>
-  </div><button onclick="startCBT()"
-class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 font-semibold hover:opacity-90">
-Start Exam
-</button>
-
-</div><!-- EXAM --><div id="examScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-  <div class="flex justify-between mb-4">
+  <div id="timer" class="text-cyan-400 font-bold"></div>
+</div><!-- SETUP --><div id="setupScreen" class="bg-zinc-900 p-6 rounded-xl">
+  <select id="bookSelect" class="w-full p-3 mb-4 bg-zinc-800 rounded-xl"></select>  <input id="numQ" type="number" value="20" class="w-full p-3 mb-4 bg-zinc-800 rounded-xl"/>
+  <input id="time" type="number" value="20" class="w-full p-3 mb-4 bg-zinc-800 rounded-xl"/>  <select id="difficulty" class="w-full p-3 mb-4 bg-zinc-800 rounded-xl">
+    <option value="easy">Easy</option>
+    <option value="medium">Medium</option>
+    <option value="hard">Hard</option>
+  </select>  <button onclick="startCBT()" class="w-full p-3 bg-gradient-to-r from-cyan-500 to-violet-500 rounded-xl">
+    Start Exam
+  </button>
+</div><!-- EXAM --><div id="examScreen" class="hidden">  <div class="mb-3 flex justify-between">
     <span id="progress"></span>
-    <span id="timer" class="text-cyan-400 font-bold"></span>
-  </div>  <h3 id="question" class="text-lg mb-6"></h3>
-  <div id="options" class="flex flex-col gap-3"></div>  <button onclick="nextQuestion()" class="mt-6 w-full py-3 bg-zinc-800 rounded-xl hover:bg-zinc-700">
-    Next
-  </button>
-</div><!-- RESULT --><div id="resultScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl text-center">
-  <h2 class="text-2xl font-bold mb-2">Result</h2>
-  <p id="score" class="text-lg text-cyan-400"></p>
-  <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-violet-500 rounded-xl">
-    Retry
-  </button>
+    <button onclick="toggleFlag()" class="bg-yellow-500 px-3 py-1 rounded">🚩 Flag</button>
+  </div>  <h3 id="question" class="mb-4"></h3>  <div id="options" class="space-y-2"></div>  <!-- NAV -->  <div class="flex gap-2 mt-4">
+    <button onclick="prevQuestion()" class="w-1/2 bg-zinc-800 p-3 rounded-xl">Previous</button>
+    <button onclick="nextQuestion()" class="w-1/2 bg-cyan-500 p-3 rounded-xl">Next</button>
+  </div>  <!-- ACTIONS -->  <div class="flex gap-2 mt-4">
+    <button onclick="reviewUnanswered()" class="w-1/2 bg-orange-500 p-2 rounded">Review Unanswered</button>
+    <button onclick="openModal()" class="w-1/2 bg-green-500 p-2 rounded">Submit</button>
+  </div>  <!-- PALETTE -->  <div id="palette" class="grid grid-cols-8 gap-2 mt-6"></div></div><!-- RESULT --><div id="resultScreen" class="hidden text-center">
+  <h2 class="text-xl mb-2">Result</h2>
+  <p id="score"></p>  <button onclick="showCorrections()" class="mt-4 bg-cyan-500 px-4 py-2 rounded">
+    Check Corrections
+  </button>  <div id="corrections" class="hidden mt-6 text-left"></div>
+</div><!-- MODAL --><div id="submitModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center">
+  <div class="bg-zinc-900 p-6 rounded-xl text-center">
+    <p class="mb-4">Submit exam?</p>
+    <button onclick="submitExam()" class="bg-green-500 px-4 py-2 rounded">Yes</button>
+    <button onclick="closeModal()" class="bg-red-500 px-4 py-2 rounded ml-2">Cancel</button>
+  </div>
 </div></div><script>
 const api = "https://study-ai-tq7i.onrender.com";
 
-let questions = [];
-let index = 0;
-let score = 0;
-let timer;
+let questions = [], index = 0, score = 0, timer;
+let userAnswers = [], flagged = [];
 
-// ✅ GET USER ID (passed from main app)
+// USER
 function getUserId() {
   return localStorage.getItem("studyai_user");
 }
 
-// ✅ LOAD BOOKS FROM MAIN APP
+// LOAD BOOKS
 function loadBooks() {
   const books = JSON.parse(localStorage.getItem("studyai_books")) || [];
   const select = document.getElementById("bookSelect");
@@ -76,36 +66,23 @@ function loadBooks() {
   select.innerHTML = `<option value="">Select textbook</option>`;
 
   books.forEach(book => {
-    const fileName = book.filename || book.name || "Unnamed File";
-
-    const displayName = fileName.includes("_")
-      ? fileName.split("_").slice(1).join("_")
-      : fileName;
+    const name = book.filename || book.name || "File";
+    const display = name.includes("_") ? name.split("_").slice(1).join("_") : name;
 
     const opt = document.createElement("option");
-    opt.value = fileName;
-    opt.textContent = displayName;
-
+    opt.value = name;
+    opt.textContent = display;
     select.appendChild(opt);
   });
 }
 
-// 🚀 START CBT
+// START CBT
 async function startCBT() {
   const userId = getUserId();
+  const filename = bookSelect.value;
 
-  if (!userId) {
-    alert("Session expired. Please login again.");
-    window.location.href = "/";
-    return;
-  }
-
-  const filename = document.getElementById("bookSelect").value;
-  const numQ = document.getElementById("numQ").value;
-  const difficulty = document.getElementById("difficulty").value;
-  const time = document.getElementById("time").value;
-
-  if (!filename) return alert("Please select a textbook");
+  if (!userId) return alert("Session expired");
+  if (!filename) return alert("Select book");
 
   const res = await fetch(`${api}/generate-cbt`, {
     method: "POST",
@@ -113,28 +90,32 @@ async function startCBT() {
       "Content-Type": "application/json",
       "x-user-id": userId
     },
-    body: JSON.stringify({ filename, numQuestions: numQ, difficulty })
+    body: JSON.stringify({
+      filename,
+      numQuestions: numQ.value,
+      difficulty: difficulty.value
+    })
   });
 
   const data = await res.json();
+  questions = parse(data.questions);
 
-  questions = parseQuestions(data.questions);
+  setupScreen.classList.add("hidden");
+  examScreen.classList.remove("hidden");
 
-  document.getElementById("setupScreen").classList.add("hidden");
-  document.getElementById("examScreen").classList.remove("hidden");
-
-  startTimer(time * 60);
+  startTimer(time.value * 60);
   showQuestion();
 }
 
-// 🧠 PARSER
-function parseQuestions(text) {
+// PARSER
+function parse(text) {
   return text.split("Question:").slice(1).map(q => {
-    const lines = q.split("\n").filter(l => l.trim());
+    const l = q.split("\n").filter(x=>x.trim());
     return {
-      question: lines[0],
-      options: lines.slice(1, 5),
-      answer: lines.find(l => l.includes("Answer")).split(":")[1].trim()
+      question: l[0],
+      options: l.slice(1,5),
+      answer: l.find(x=>x.includes("Answer")),
+      explanation: l.find(x=>x.includes("Explanation"))
     };
   });
 }
@@ -143,54 +124,106 @@ function parseQuestions(text) {
 function showQuestion() {
   const q = questions[index];
 
-  document.getElementById("question").innerText = q.question;
-  document.getElementById("progress").innerText = `${index + 1}/${questions.length}`;
+  question.innerText = q.question;
+  progress.innerText = `${index+1}/${questions.length}`;
 
-  const optionsDiv = document.getElementById("options");
-  optionsDiv.innerHTML = "";
+  options.innerHTML = "";
 
-  q.options.forEach(opt => {
+  q.options.forEach((opt,i)=>{
     const btn = document.createElement("button");
-    btn.className = "p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700 text-left";
+
+    let color = "bg-zinc-800";
+    if(userAnswers[index]===i) color="bg-cyan-500";
+
+    btn.className = `p-3 rounded ${color}`;
     btn.innerText = opt;
-    btn.onclick = () => selectAnswer(opt);
-    optionsDiv.appendChild(btn);
+    btn.onclick = ()=>{userAnswers[index]=i;showQuestion();};
+
+    options.appendChild(btn);
+  });
+
+  renderPalette();
+}
+
+// PALETTE
+function renderPalette(){
+  palette.innerHTML="";
+
+  questions.forEach((_,i)=>{
+    const btn=document.createElement("button");
+
+    let color="bg-zinc-800";
+    if(userAnswers[i]!=null) color="bg-green-500";
+    if(flagged[i]) color="bg-yellow-500";
+    if(i===index) color="bg-cyan-500";
+
+    btn.className=`p-2 ${color}`;
+    btn.innerText=i+1;
+    btn.onclick=()=>{index=i;showQuestion();};
+
+    palette.appendChild(btn);
   });
 }
 
-// SELECT ANSWER
-function selectAnswer(opt) {
-  if (opt.includes(questions[index].answer)) score++;
-  nextQuestion();
-}
+// NAV
+function nextQuestion(){ if(index<questions.length-1){index++;showQuestion();}}
+function prevQuestion(){ if(index>0){index--;showQuestion();}}
 
-// NEXT QUESTION
-function nextQuestion() {
-  index++;
-  if (index >= questions.length) endExam();
-  else showQuestion();
+// FLAG
+function toggleFlag(){ flagged[index]=!flagged[index]; showQuestion(); }
+
+// REVIEW
+function reviewUnanswered(){
+  let i=userAnswers.findIndex(a=>a==null);
+  if(i!==-1){index=i;showQuestion();}
 }
 
 // TIMER
-function startTimer(seconds) {
-  timer = setInterval(() => {
-    document.getElementById("timer").innerText = seconds + "s";
-    seconds--;
-    if (seconds < 0) endExam();
-  }, 1000);
+function startTimer(sec){
+  timer=setInterval(()=>{
+    let m=Math.floor(sec/60), s=sec%60;
+    timer.innerText=`${m}:${s<10?"0":""}${s}`;
+    sec--;
+    if(sec<0) submitExam();
+  },1000);
 }
 
-// END EXAM
-function endExam() {
+// MODAL
+function openModal(){submitModal.classList.remove("hidden");}
+function closeModal(){submitModal.classList.add("hidden");}
+
+// SUBMIT
+function submitExam(){
   clearInterval(timer);
-  document.getElementById("examScreen").classList.add("hidden");
-  document.getElementById("resultScreen").classList.remove("hidden");
-  document.getElementById("score").innerText = `${score} / ${questions.length}`;
+
+  let correct=0;
+
+  questions.forEach((q,i)=>{
+    const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
+    if(userAnswers[i]===correctIndex) correct++;
+  });
+
+  examScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+  score.innerText=`${correct}/${questions.length}`;
 }
 
-// BACK
-function goBack() {
-  window.location.href = "/dashboard";
+// CORRECTIONS
+function showCorrections(){
+  corrections.innerHTML="";
+  corrections.classList.remove("hidden");
+
+  questions.forEach((q,i)=>{
+    const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
+
+    corrections.innerHTML+=`
+      <div class="mb-4 p-3 bg-zinc-800 rounded">
+        <p>${i+1}. ${q.question}</p>
+        <p>Your: ${q.options[userAnswers[i]]||"None"}</p>
+        <p class="text-green-400">Correct: ${q.options[correctIndex]}</p>
+        <p>${q.explanation||""}</p>
+      </div>`;
+  });
 }
 
 // INIT
