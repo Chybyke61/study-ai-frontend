@@ -137,7 +137,7 @@ body {
     
     <input type="hidden" id="time" value="20">
     
-    <button type="button" onclick="toggleTimeDropdown()" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
+    <button type="button" onclick="toggleDropdown('timeMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-[#09090b] border border-[#27272a] rounded-xl text-white text-sm transition-all hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
         <span id="timeDisplay">20 Minutes</span>
         <i data-lucide="chevron-down" class="w-4 h-4 text-zinc-500 transition-transform duration-200" id="timeIcon"></i>
     </button>
@@ -297,51 +297,14 @@ function loadBooks() {
 }
 
 // START CBT
-/*async function startCBT() {
-  const userId = getUserId();
-  const filename = bookSelect.value;
-
-  if (!userId) return alert("Session expired");
-  if (!filename) return alert("Select book");
-
-  showLoader("Generating Questions...");
-
-  try {
-    const res = await fetch(`${api}/generate-cbt`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-user-id": userId
-      },
-      body: JSON.stringify({
-        filename,
-        numQuestions: numQ.value,
-        difficulty: difficulty.value
-      })
-    });
-
-    const data = await res.json();
-    questions = parse(data.questions);
-
-    setupScreen.classList.add("hidden");
-    examScreen.classList.remove("hidden");
-    examScreen.classList.add("flex");
-
-    startTimer(time.value * 60);
-    showQuestion();
-    hideLoader();
-  } catch (err) {
-    alert("Error loading quiz");
-    hideLoader();
-  }
-}*/
-
     async function startCBT() {
   const userId = getUserId();
   const filename = bookSelect.value;
 
   if (!userId) return alert("Session expired");
   if (!filename) return alert("Select book");
+
+  showLoader("Generating Questions..."); // ✅ FIX
 
   try {
     const res = await fetch(`${api}/generate-cbt`, {
@@ -371,28 +334,19 @@ function loadBooks() {
     examScreen.classList.remove("hidden");
     examScreen.classList.add("flex");
 
-    startTimer(time.value * 60);
+    startTimer(parseInt(time.value) * 60); // fix time
     showQuestion();
+
+    hideLoader(); // ✅ FIX
 
   } catch (err) {
     console.error(err);
-    alert("⚠️ Failed to generate CBT.\nPossible causes:\n- API limit reached\n- Network issue\n\nTry again later.");
+    hideLoader(); // ✅ FIX (important!)
+    alert("⚠️ Failed to generate CBT.\nTry again.");
   }
     }
 
 // PARSER
-/*function parse(text) {
-  return text.split("Question:").slice(1).map(q => {
-    const l = q.split("\n").filter(x=>x.trim());
-    return {
-      question: l[0],
-      options: l.slice(1,5),
-      answer: l.find(x=>x.includes("Answer")),
-      explanation: l.find(x=>x.includes("Explanation"))
-    };
-  });
-}*/
-
     function parseQuestions(text) {
   return text.split("Question:").slice(1).map(block => {
     const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
@@ -496,10 +450,9 @@ function submitExam(){
       questions.forEach((q,i)=>{
         //const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
           const correctIndex = q.options.findIndex(o =>
-                const correctIndex = q.options.findIndex(o =>
-  q.answer && o.trim().startsWith(q.answer)
+  q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
-                );
+            );
         if(userAnswers[i]===correctIndex) correct++;
       });
 
@@ -519,8 +472,7 @@ function showCorrections(){
   questions.forEach((q,i)=>{
     //const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
       const correctIndex = q.options.findIndex(o =>
-            const correctIndex = q.options.findIndex(o =>
-  q.answer && o.trim().startsWith(q.answer)
+  q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
            );
 
@@ -535,24 +487,7 @@ function showCorrections(){
       </div>`;
   });
 }
-   /* function toggleDropdown(menuId) {
-    const menu = document.getElementById(menuId);
-    const icon = document.getElementById('numQIcon');
-    const isHidden = menu.classList.contains('opacity-0');
-
-    if (isHidden) {
-        // Show
-        menu.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-        menu.classList.add('opacity-100', 'scale-100', 'pointer-events-auto');
-        icon.classList.add('rotate-180');
-    } else {
-        // Hide
-        menu.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
-        menu.classList.remove('opacity-100', 'scale-100', 'pointer-events-auto');
-        icon.classList.remove('rotate-180');
-    }
-}*/
-
+   
     function toggleDropdown(menuId) {
     const menu = document.getElementById(menuId);
     const icon = document.getElementById('numQIcon');
@@ -581,6 +516,19 @@ function selectNumQ(val) {
     // Close the menu
     toggleDropdown('numQMenu');
 }
+    function selectTime(val) {
+  // Convert minutes → seconds (IMPORTANT)
+  const seconds = val * 60;
+
+  // Store in hidden input
+  document.getElementById('time').value = seconds;
+
+  // Update UI text
+  document.getElementById('timeDisplay').innerText = `${val} Minutes`;
+
+  // Close dropdown
+  toggleDropdown('timeMenu');
+    }
 
 // Optional: Close dropdown if user clicks outside
 window.addEventListener('click', function(e) {
