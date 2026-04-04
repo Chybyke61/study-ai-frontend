@@ -26,6 +26,9 @@
                 fontFamily: {
                     sans: ['Inter', 'sans-serif'],
                     display: ['Outfit', 'sans-serif'],
+                },
+                animation: {
+                    'spin-slow': 'spin 3s linear infinite',
                 }
             }
         }
@@ -40,26 +43,52 @@ body {
   color: #e4e4e7;
 }
 
-/* Custom scrollbar matching your app */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
 
-/* Glassmorphism helpers */
 .glass-panel {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
 }
 
-/* Signature Gradient Text */
 .signature-text {
     background: -webkit-linear-gradient(45deg, #06b6d4, #8b5cf6);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }
+
+/* Loader Styles */
+#globalLoader {
+    transition: opacity 0.4s ease-out, visibility 0.4s;
+}
+.loader-ring {
+    border-top-color: #06b6d4;
+    border-left-color: #8b5cf6;
+    animation: spin 1s linear infinite;
+}
+@keyframes pulse-soft {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(0.95); }
+}
+.animate-pulse-soft { animation: pulse-soft 2s ease-in-out infinite; }
 </style>
 </head>
 <body class="min-h-screen p-4 md:p-6 flex justify-center items-start">
+
+<div id="globalLoader" class="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-[#09090b]">
+    <div class="relative flex items-center justify-center mb-6">
+        <div class="w-20 h-20 rounded-full border-2 border-zinc-800 border-t-[#06b6d4] border-l-[#8b5cf6] animate-spin"></div>
+        <div class="absolute">
+            <i data-lucide="brain-circuit" class="w-8 h-8 text-[#06b6d4] animate-pulse-soft"></i>
+        </div>
+    </div>
+    <div class="text-center">
+        <h2 class="text-xl font-display font-bold signature-text mb-1">Study.AI</h2>
+        <p id="loaderText" class="text-zinc-500 text-xs font-medium tracking-widest uppercase">Initializing Interface</p>
+    </div>
+</div>
+
 <div class="w-full max-w-6xl mt-4">
 
 <div class="flex justify-between items-center mb-6 glass-panel bg-[#18181b]/60 p-4 md:px-6 rounded-2xl border border-[#27272a]/50 shadow-lg">
@@ -192,6 +221,20 @@ const api = "https://study-ai-tq7i.onrender.com";
 let questions = [], index = 0, score = 0, timer;
 let userAnswers = [], flagged = [];
 
+// NEW: Loader Controller
+function showLoader(text = "Loading...") {
+    const loader = document.getElementById('globalLoader');
+    document.getElementById('loaderText').innerText = text;
+    loader.classList.remove('opacity-0', 'invisible');
+    loader.classList.add('opacity-100', 'visible');
+}
+
+function hideLoader() {
+    const loader = document.getElementById('globalLoader');
+    loader.classList.add('opacity-0', 'invisible');
+    loader.classList.remove('opacity-100', 'visible');
+}
+
 // USER
 function getUserId() {
   return localStorage.getItem("studyai_user");
@@ -218,6 +261,9 @@ function loadBooks() {
     opt.textContent = display;
     select.appendChild(opt);
   });
+  
+  // Hide initial page loader
+  setTimeout(hideLoader, 1000);
 }
 
 // START CBT
@@ -228,28 +274,36 @@ async function startCBT() {
   if (!userId) return alert("Session expired");
   if (!filename) return alert("Select book");
 
-  const res = await fetch(`${api}/generate-cbt`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-user-id": userId
-    },
-    body: JSON.stringify({
-      filename,
-      numQuestions: numQ.value,
-      difficulty: difficulty.value
-    })
-  });
+  showLoader("Generating Questions...");
 
-  const data = await res.json();
-  questions = parse(data.questions);
+  try {
+    const res = await fetch(`${api}/generate-cbt`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-user-id": userId
+      },
+      body: JSON.stringify({
+        filename,
+        numQuestions: numQ.value,
+        difficulty: difficulty.value
+      })
+    });
 
-  setupScreen.classList.add("hidden");
-  examScreen.classList.remove("hidden");
-  examScreen.classList.add("flex"); // Enforce flex layout correctly when revealed
+    const data = await res.json();
+    questions = parse(data.questions);
 
-  startTimer(time.value * 60);
-  showQuestion();
+    setupScreen.classList.add("hidden");
+    examScreen.classList.remove("hidden");
+    examScreen.classList.add("flex");
+
+    startTimer(time.value * 60);
+    showQuestion();
+    hideLoader();
+  } catch (err) {
+    alert("Error loading quiz");
+    hideLoader();
+  }
 }
 
 // PARSER
@@ -339,19 +393,24 @@ function closeModal(){submitModal.classList.add("hidden");}
 
 // SUBMIT
 function submitExam(){
-  clearInterval(timer);
+  showLoader("Calculating Results...");
+  closeModal();
+  
+  setTimeout(() => {
+      clearInterval(timer);
+      let correct=0;
 
-  let correct=0;
+      questions.forEach((q,i)=>{
+        const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
+        if(userAnswers[i]===correctIndex) correct++;
+      });
 
-  questions.forEach((q,i)=>{
-    const correctIndex=q.options.findIndex(o=>q.answer.includes(o));
-    if(userAnswers[i]===correctIndex) correct++;
-  });
-
-  examScreen.classList.add("hidden");
-  examScreen.classList.remove("flex");
-  resultScreen.classList.remove("hidden");
-  document.getElementById("score").innerText=`${correct} / ${questions.length}`;
+      examScreen.classList.add("hidden");
+      examScreen.classList.remove("flex");
+      resultScreen.classList.remove("hidden");
+      document.getElementById("score").innerText=`${correct} / ${questions.length}`;
+      hideLoader();
+  }, 1200);
 }
 
 // CORRECTIONS
@@ -374,14 +433,13 @@ function showCorrections(){
   });
 }
 
-// NEW FUNCTION: RESET TO SETUP
+// RESET
 function resetToSetup() {
   resultScreen.classList.add("hidden");
   corrections.classList.add("hidden");
   corrections.innerHTML = "";
   setupScreen.classList.remove("hidden");
   
-  // Reset state variables
   index = 0;
   score = 0;
   userAnswers = [];
