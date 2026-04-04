@@ -1,45 +1,80 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html lang="en" class="dark">
 <head>
-  <title>CBT Mode</title>
-</head>
-<body>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Study.AI CBT</title><script src="https://cdn.tailwindcss.com"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script><script src="https://unpkg.com/lucide@latest"></script><style>
+body {
+  font-family: Inter, sans-serif;
+  background: radial-gradient(circle at top right, #18181b, #09090b 40%);
+}
+</style></head><body class="text-white min-h-screen flex flex-col items-center justify-center p-4"><div class="w-full max-w-3xl"><!-- HEADER --><div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold flex items-center gap-2">
+    <i data-lucide="brain-circuit" class="text-cyan-400"></i>
+    CBT Practice
+  </h1>  <button onclick="goBack()" class="text-sm px-3 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700">
+    Back
+  </button>
+</div><!-- SETUP SCREEN --><div id="setupScreen" class="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <h2 class="text-lg font-semibold mb-4">Setup Your Test</h2>  <!-- BOOK -->  <div class="mb-4">
+    <label class="text-sm text-zinc-400">Select Textbook</label>
+    <select id="bookSelect" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700">
+      <option value="">Loading books...</option>
+    </select>
+  </div>  <!-- QUESTIONS -->  <div class="mb-4">
+    <label class="text-sm text-zinc-400">Number of Questions</label>
+    <input id="numQ" type="number" min="5" max="100" value="20"
+      class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700"/>
+  </div>  <!-- TIME -->  <div class="mb-4">
+    <label class="text-sm text-zinc-400">Time (minutes)</label>
+    <input id="time" type="number" min="10" max="60" value="20"
+      class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700"/>
+  </div>  <!-- DIFFICULTY -->  <div class="mb-6">
+    <label class="text-sm text-zinc-400">Difficulty</label>
+    <select id="difficulty" class="w-full mt-1 p-3 rounded-xl bg-zinc-800 border border-zinc-700">
+      <option value="easy">Easy</option>
+      <option value="medium">Medium</option>
+      <option value="hard">Hard</option>
+    </select>
+  </div><button onclick="startCBT()"
+class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-violet-500 font-semibold hover:opacity-90">
+Start Exam
+</button>
 
-<h2>Start CBT</h2>
+</div><!-- EXAM SCREEN --><div id="examScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">  <div class="flex justify-between mb-4">
+    <span id="progress"></span>
+    <span id="timer" class="text-cyan-400 font-bold"></span>
+  </div>  <h3 id="question" class="text-lg mb-6"></h3>  <div id="options" class="flex flex-col gap-3"></div><button onclick="nextQuestion()" 
+class="mt-6 w-full py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700">
+Next
+</button>
 
-<select id="bookSelect"></select>
-
-<input type="number" id="numQ" min="5" max="100" placeholder="Questions">
-<input type="number" id="time" min="10" max="60" placeholder="Minutes">
-
-<select id="difficulty">
-  <option value="easy">Easy</option>
-  <option value="medium">Medium</option>
-  <option value="hard">Hard</option>
-</select>
-
-<button onclick="startCBT()">Start</button>
-
-<hr>
-
-<div id="exam"></div>
-<h3 id="timer"></h3>
-
-<script>
+</div><!-- RESULT SCREEN --><div id="resultScreen" class="hidden bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl text-center">
+  <h2 class="text-2xl font-bold mb-2">Result</h2>
+  <p id="score" class="text-lg text-cyan-400"></p>
+  <button onclick="location.reload()" class="mt-4 px-4 py-2 bg-violet-500 rounded-xl">
+    Retry
+  </button>
+</div></div><script>
 const api = "https://study-ai-tq7i.onrender.com";
-let questions = [];
-let index = 0;
-let score = 0;
-let timer;
 
-async function loadBooks() {
-  const user = JSON.parse(localStorage.getItem("supabase.auth.token"));
+const supabase = window.supabase.createClient(
+  "https://hffbjtbahfwudigywzzx.supabase.co",
+  "YOUR_KEY"
+);
+
+let currentUser, questions = [], index = 0, score = 0, timer;
+
+// 🔥 LOAD USER + BOOKS
+async function init() {
+  const { data } = await supabase.auth.getSession();
+  currentUser = data.session?.user;
+
   const res = await fetch(`${api}/books`, {
-    headers: { "x-user-id": user?.currentSession?.user?.id }
+    headers: { "x-user-id": currentUser.id }
   });
 
   const books = await res.json();
   const select = document.getElementById("bookSelect");
+  select.innerHTML = '<option value="">Select textbook</option>';
 
   books.forEach(b => {
     const opt = document.createElement("option");
@@ -49,77 +84,97 @@ async function loadBooks() {
   });
 }
 
+// 🚀 START CBT
 async function startCBT() {
-  const user = JSON.parse(localStorage.getItem("supabase.auth.token"));
-  const userId = user?.currentSession?.user?.id;
+  const filename = bookSelect.value;
+  const numQ = numQInput.value;
+  const difficulty = difficultySelect.value;
+  const time = timeInput.value;
 
-  const filename = document.getElementById("bookSelect").value;
-  const numQ = document.getElementById("numQ").value;
-  const difficulty = document.getElementById("difficulty").value;
-  const time = document.getElementById("time").value;
+  if (!filename) return alert("Select a textbook");
 
   const res = await fetch(`${api}/generate-cbt`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-user-id": userId
+      "x-user-id": currentUser.id
     },
     body: JSON.stringify({ filename, numQuestions: numQ, difficulty })
   });
 
   const data = await res.json();
+  questions = parse(data.questions);
 
-  questions = parseQuestions(data.questions);
+  document.getElementById("setupScreen").classList.add("hidden");
+  document.getElementById("examScreen").classList.remove("hidden");
+
   startTimer(time * 60);
-  showQuestion();
+  showQ();
 }
 
-function parseQuestions(text) {
+// 🧠 PARSE QUESTIONS
+function parse(text) {
   return text.split("Question:").slice(1).map(q => {
-    const lines = q.split("\n").filter(l => l.trim());
+    const l = q.split("\n").filter(x => x.trim());
     return {
-      question: lines[0],
-      options: lines.slice(1, 5),
-      answer: lines.find(l => l.includes("Answer")).split(":")[1].trim(),
-      explanation: lines.find(l => l.includes("Explanation")).split(":")[1].trim()
+      q: l[0],
+      opts: l.slice(1,5),
+      ans: l.find(x=>x.includes("Answer")).split(":")[1].trim(),
     };
   });
 }
 
-function showQuestion() {
+// SHOW QUESTION
+function showQ() {
   const q = questions[index];
-  const div = document.getElementById("exam");
+  question.innerText = q.q;
+  progress.innerText = `${index+1}/${questions.length}`;
 
-  div.innerHTML = `<h3>${q.question}</h3>` +
-    q.options.map(opt =>
-      `<button onclick="select('${opt}')">${opt}</button>`
-    ).join("<br>");
+  options.innerHTML = "";
+  q.opts.forEach(opt=>{
+    const btn = document.createElement("button");
+    btn.className="p-3 bg-zinc-800 rounded-xl hover:bg-zinc-700";
+    btn.innerText = opt;
+    btn.onclick = ()=>select(opt);
+    options.appendChild(btn);
+  });
 }
 
-function select(opt) {
-  if (opt.includes(questions[index].answer)) score++;
+// SELECT
+function select(opt){
+  if(opt.includes(questions[index].ans)) score++;
+  nextQuestion();
+}
+
+// NEXT
+function nextQuestion(){
   index++;
-
-  if (index >= questions.length) endExam();
-  else showQuestion();
+  if(index>=questions.length) endExam();
+  else showQ();
 }
 
-function endExam() {
-  clearInterval(timer);
-  document.getElementById("exam").innerHTML =
-    `<h2>Score: ${score}/${questions.length}</h2>`;
-}
-
-function startTimer(t) {
-  timer = setInterval(() => {
-    document.getElementById("timer").innerText = t;
+// TIMER
+function startTimer(t){
+  timer = setInterval(()=>{
+    timerEl.innerText = t+"s";
     t--;
-    if (t < 0) endExam();
-  }, 1000);
+    if(t<0) endExam();
+  },1000);
 }
 
-loadBooks();
-</script>
+// END
+function endExam(){
+  clearInterval(timer);
+  examScreen.classList.add("hidden");
+  resultScreen.classList.remove("hidden");
+  score.innerText = `${score} / ${questions.length}`;
+}
 
-</body>
+function goBack(){
+  window.location.href="/dashboard";
+}
+
+init();
+lucide.createIcons();
+</script></body>
 </html>
