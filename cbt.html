@@ -114,9 +114,7 @@ body {
     <div class="text-center">
         <h2 class="text-xl font-display font-bold text-zinc-900 dark:text-white mb-1">Study.AI</h2>
         <p id="loaderText" class="text-zinc-500 text-xs font-medium tracking-widest uppercase">Initializing Interface</p>
-        <p id="studyTip"
-   class="mt-4 text-[11px] text-zinc-400 italic max-w-[220px] mx-auto opacity-0 transition-opacity duration-500">
-        </p>
+        <p id="studyTip" class="mt-4 text-[10px] text-zinc-400 italic max-w-[200px] mx-auto opacity-0 transition-opacity duration-500"></p>
     </div>
 </div>
 
@@ -287,42 +285,7 @@ body {
 
 </div>
 
-    <div id="globalLoader" class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 invisible transition-all duration-300">
-
-  <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl text-center">
-    
-    <h2 class="text-xl font-bold mb-2">Study.AI</h2>
-
-    <p id="loaderText" class="text-zinc-500">
-      Initializing Interface
-    </p>
-
-    <p id="studyTip" class="mt-4 text-[10px] text-zinc-400 italic max-w-[200px] mx-auto opacity-0 transition-opacity duration-500">
-    </p>
-
-  </div>
-    </div>
-
 <script>
-    let loaderInterval;
-
-const loadingMessages = [
-  "📖 Analyzing textbook context...",
-  "🧠 Extracting key concepts...",
-  "✍️ Drafting unique questions...",
-  "📚 Generating explanations...",
-  "⚙️ Structuring your exam...",
-  "🎯 Fine-tuning difficulty...",
-  "🚀 Optimizing your session..."
-];
-
-const studyTips = [
-  "Tip: Active recall is 3x more effective than re-reading.",
-  "Tip: Take short breaks every 25 mins.",
-  "Tip: Teach someone to master it.",
-  "Tip: Testing beats highlighting."
-];
-    
 // --- Theme Toggle Logic ---
 function toggleTheme() {
     const html = document.documentElement;
@@ -354,69 +317,62 @@ const api = "https://study-ai-tq7i.onrender.com";
 let questions = [], index = 0, score = 0, timer;
 let userAnswers = [], flagged = [];
 
+// NEW: Dynamic Loader Controller Variables
+let loaderInterval;
+const loadingMessages = [
+    "Analyzing textbook content...",
+    "Extracting key concepts...",
+    "Drafting unique questions...",
+    "Generating detailed explanations...",
+    "Structuring your exam...",
+    "Fine-tuning difficulty...",
+    "Almost ready..."
+];
+
+const studyTips = [
+    "Tip: Active recall is 3x more effective than re-reading.",
+    "Tip: Taking short breaks every 25 mins improves focus.",
+    "Tip: Explaining a concept to someone else helps you master it.",
+    "Tip: Testing yourself is better than highlighting text."
+];
+
 // NEW: Loader Controller
-/*function showLoader(text = "Loading...") {
+function showLoader(initialText = "Loading...") {
     const loader = document.getElementById('globalLoader');
-    document.getElementById('loaderText').innerText = text;
+    const textElement = document.getElementById('loaderText');
+    const tipElement = document.getElementById('studyTip');
+
     loader.classList.remove('opacity-0', 'invisible');
     loader.classList.add('opacity-100', 'visible');
+
+    // Set initial text and a random study tip
+    textElement.innerText = initialText;
+    if (tipElement) {
+        tipElement.innerText = studyTips[Math.floor(Math.random() * studyTips.length)];
+        tipElement.classList.replace('opacity-0', 'opacity-100');
+    }
+
+    // Start the message rotation
+    let i = 0;
+    clearInterval(loaderInterval); // Safety clear
+    loaderInterval = setInterval(() => {
+        textElement.innerText = loadingMessages[i % loadingMessages.length];
+        i++;
+    }, 1200); // Changes message every 1.2 seconds
 }
 
 function hideLoader() {
     const loader = document.getElementById('globalLoader');
+    const tipElement = document.getElementById('studyTip');
+
     loader.classList.add('opacity-0', 'invisible');
     loader.classList.remove('opacity-100', 'visible');
-}*/
 
-    let loaderStartTime = 0;
-
-function showLoader(initialText = "Loading...") {
-  const loader = document.getElementById('globalLoader');
-  const textElement = document.getElementById('loaderText');
-  const tipElement = document.getElementById('studyTip');
-
-  loaderStartTime = Date.now();
-
-  // Show loader
-  loader.classList.remove('invisible');
-  setTimeout(() => loader.classList.remove('opacity-0'), 10);
-
-  // Initial text
-  textElement.innerText = initialText;
-
-  // Random tip
-  tipElement.innerText =
-    studyTips[Math.floor(Math.random() * studyTips.length)];
-  tipElement.classList.replace('opacity-0', 'opacity-100');
-
-  // Rotate messages
-  let i = 0;
-  clearInterval(loaderInterval);
-
-  loaderInterval = setInterval(() => {
-    textElement.innerText =
-      loadingMessages[i % loadingMessages.length];
-    i++;
-  }, 1200);
-}
-
-function hideLoader() {
-  const loader = document.getElementById('globalLoader');
-  const tipElement = document.getElementById('studyTip');
-
-  const elapsed = Date.now() - loaderStartTime;
-  const minTime = 800; // smooth UX
-
-  const delay = Math.max(0, minTime - elapsed);
-
-  setTimeout(() => {
-    loader.classList.add('opacity-0');
-    loader.classList.add('invisible');
-
+    // CRITICAL: Stop the timer and hide the tip
     clearInterval(loaderInterval);
-
-    tipElement.classList.replace('opacity-100', 'opacity-0');
-  }, delay);
+    if (tipElement) {
+        tipElement.classList.replace('opacity-100', 'opacity-0');
+    }
 }
 
 // USER
@@ -684,7 +640,7 @@ function submitExam(){
       clearInterval(timer);
       let correct=0;
 
-    /*  questions.forEach((q,i)=>{
+    /* questions.forEach((q,i)=>{
           const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
@@ -873,8 +829,6 @@ function resetToSetup() {
   corrections.classList.add("hidden");
   corrections.innerHTML = "";
   setupScreen.classList.remove("hidden");
-  examScreen.classList.add("hidden");
-  examScreen.classList.remove("flex");
   
   index = 0;
   score = 0;
@@ -986,44 +940,6 @@ updateCountdown(msg, remaining);
   localStorage.removeItem("cbtFlagged");
   localStorage.removeItem("cbtExamEnd");
     }
-
-  /*  function showLoader(initialText = "Loading...") {
-  const loader = document.getElementById('globalLoader');
-  const textElement = document.getElementById('loaderText');
-  const tipElement = document.getElementById('studyTip');
-
-  loader.classList.remove('opacity-0', 'invisible');
-  loader.classList.add('opacity-100', 'visible');
-
-  // Initial message
-  textElement.innerText = initialText;
-
-  // Random tip
-  tipElement.innerText = studyTips[Math.floor(Math.random() * studyTips.length)];
-  tipElement.classList.replace('opacity-0', 'opacity-100');
-
-  // Rotate messages
-  let i = 0;
-  clearInterval(loaderInterval);
-
-  loaderInterval = setInterval(() => {
-    textElement.innerText = loadingMessages[i % loadingMessages.length];
-    i++;
-  }, 1200);
-}
-
-function hideLoader() {
-  const loader = document.getElementById('globalLoader');
-  const tipElement = document.getElementById('studyTip');
-
-  loader.classList.add('opacity-0', 'invisible');
-  loader.classList.remove('opacity-100', 'visible');
-
-  clearInterval(loaderInterval);
-
-  tipElement.classList.replace('opacity-100', 'opacity-0');
-}*/
-    
 // INIT
 loadBooks();
 restoreCooldown();
