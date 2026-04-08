@@ -708,35 +708,25 @@ function handleRateLimit(message) {
     const endTime = Date.now() + remaining * 1000;
 localStorage.setItem("cbtCooldownEnd", endTime);
 
-  updateCountdown(msg, remaining);
-
- //  clearInterval(cooldownTimer);
-
- /* cooldownTimer = setInterval(() => {
-    remaining--;
-
+//  updateCountdown(msg, remaining);
+    
     updateCountdown(msg, remaining);
-
-    if (remaining <= 0) {
-      clearInterval(cooldownTimer);
-
-      btn.disabled = false;
-      btn.classList.remove("opacity-50", "cursor-not-allowed");
-
-      msg.innerText = "";
-      msg.classList.add("hidden");
-    }
-
-  }, 1000);*/
-
     startCooldownCountdown(remaining);
 }
+ 
+
     function updateCountdown(element, seconds) {
   let m = Math.floor(seconds / 60);
   let s = seconds % 60;
 
-  element.innerText = `CBT resets in ${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}`;
+  element.innerHTML = `
+    <i data-lucide="alert-circle" class="w-4 h-4 inline-block mr-2 mb-0.5"></i>
+    CBT resets in ${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}
+  `;
+
+  lucide.createIcons();
     }
+    
     
 // RESET
 function resetToSetup() {
@@ -786,7 +776,7 @@ function resetToSetup() {
   clearInterval(cooldownTimer);
 
   cooldownTimer = setInterval(() => {
-    remaining--;
+    remaining = Math.max(0, remaining - 1);
 
     updateCountdown(msg, remaining);
 
@@ -807,6 +797,7 @@ function resetToSetup() {
     
 // INIT
 loadBooks();
+restoreCooldown();
 lucide.createIcons();
 </script>
 </body>
