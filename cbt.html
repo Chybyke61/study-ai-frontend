@@ -154,7 +154,7 @@ body {
             <div onclick="selectNumQ(5)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">5 Questions</div>
             <div onclick="selectNumQ(10)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">10 Questions</div>
             <div onclick="selectNumQ(20)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">20 Questions</div>
-            <div onclick="selectNumQ(50)" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">50 Questions</div>
+           
         </div>
       </div>
 
@@ -508,13 +508,20 @@ function submitExam(){
       clearInterval(timer);
       let correct=0;
 
-      questions.forEach((q,i)=>{
+    /*  questions.forEach((q,i)=>{
           const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
 );
             
-        if(userAnswers[i]===correctIndex) correct++;
-      });
+       // if(userAnswers[i]===correctIndex) correct++;
+          if (userAnswers[i] === q.answer) correct++;
+      });*/
+
+      questions.forEach((q,i)=>{
+  const correctIndex = q.answer;
+
+  if (userAnswers[i] === correctIndex) correct++;
+});
 
       examScreen.classList.add("hidden");
       examScreen.classList.remove("flex");
@@ -530,9 +537,10 @@ function showCorrections(){
   corrections.classList.remove("hidden");
 
   questions.forEach((q,i)=>{
-      const correctIndex = q.options.findIndex(o =>
+     /*const correctIndex = q.options.findIndex(o =>
   q.answer && o.trim().toUpperCase().startsWith(q.answer)
-);
+);*/
+      const correctIndex = q.answer;
 
     corrections.innerHTML+=`
       <div class="p-5 bg-zinc-50 dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-2xl shadow-sm">
