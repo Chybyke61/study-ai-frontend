@@ -386,7 +386,8 @@ function loadBooks() {
 
     if (!data.questions) throw new Error("No questions generated");
 
-    questions = parseQuestions(data.questions);
+    //questions = parseQuestions(data.questions);
+      questions = data.questions;
 
     if (!questions.length) throw new Error("Parsing failed");
 
@@ -407,7 +408,7 @@ function loadBooks() {
     }
 
 // PARSER
-    function parseQuestions(text) {
+   /* function parseQuestions(text) {
   return text.split("Question:").slice(1).map(block => {
     const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
 
@@ -424,7 +425,7 @@ function loadBooks() {
         ?.trim()
     };
   });
-    }
+    }*/
 
 // SHOW QUESTION
 function showQuestion() {
