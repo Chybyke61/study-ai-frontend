@@ -402,6 +402,16 @@ if (!res.ok) throw new Error("Server error");
     //questions = parseQuestions(data.questions);
       questions = data.questions;
 
+      // SAVE EXAM STATE
+localStorage.setItem("cbtQuestions", JSON.stringify(questions));
+localStorage.setItem("cbtIndex", 0);
+localStorage.setItem("cbtAnswers", JSON.stringify([]));
+localStorage.setItem("cbtFlagged", JSON.stringify([]));
+
+// Save timer end
+const examEnd = Date.now() + parseInt(time.value) * 1000;
+localStorage.setItem("cbtExamEnd", examEnd);
+
     if (!questions.length) throw new Error("Parsing failed");
 
     setupScreen.classList.add("hidden");
@@ -409,6 +419,8 @@ if (!res.ok) throw new Error("Server error");
     examScreen.classList.add("flex");
 
     startTimer(parseInt(time.value)); // fix time
+      const examEnd = Date.now() + parseInt(time.value) * 1000;
+localStorage.setItem("cbtExamEnd", examEnd);
     showQuestion();
 
     hideLoader(); // ✅ FIX
@@ -457,7 +469,16 @@ function showQuestion() {
 
     btn.className = `w-full text-left p-4 rounded-xl border transition-all text-[15px] font-medium ${color}`;
     btn.innerText = opt;
-    btn.onclick = ()=>{userAnswers[index]=i;showQuestion();};
+    //btn.onclick = ()=>{userAnswers[index]=i;showQuestion();};
+      btn.onclick = () => {
+  userAnswers[index] = i;
+
+  // SAVE ANSWERS
+  localStorage.setItem("cbtAnswers", JSON.stringify(userAnswers));
+  localStorage.setItem("cbtIndex", index);
+
+  showQuestion();
+};
 
     options.appendChild(btn);
   });
@@ -486,11 +507,35 @@ function renderPalette(){
 }
 
 // NAV
-function nextQuestion(){ if(index<questions.length-1){index++;showQuestion();}}
-function prevQuestion(){ if(index>0){index--;showQuestion();}}
+//function nextQuestion(){ if(index<questions.length-1){index++;showQuestion();}}
+// function prevQuestion(){ if(index>0){index--;showQuestion();}}
+
+    function nextQuestion(){
+  if(index < questions.length - 1){
+    index++;
+    localStorage.setItem("cbtIndex", index); // ✅ SAVE
+    showQuestion();
+  }
+}
+
+function prevQuestion(){
+  if(index > 0){
+    index--;
+    localStorage.setItem("cbtIndex", index); // ✅ SAVE
+    showQuestion();
+  }
+}
 
 // FLAG
-function toggleFlag(){ flagged[index]=!flagged[index]; showQuestion(); }
+//function toggleFlag(){ flagged[index]=!flagged[index]; showQuestion(); }
+
+    function toggleFlag(){
+  flagged[index] = !flagged[index];
+
+  localStorage.setItem("cbtFlagged", JSON.stringify(flagged)); // ✅ SAVE
+
+  showQuestion();
+    }
 
 // REVIEW
 function reviewUnanswered(){
@@ -541,7 +586,6 @@ function closeModal(){submitModal.classList.add("hidden");}
 function submitExam(){
   showLoader("Calculating Results...");
   closeModal();
-  
   setTimeout(() => {
       clearInterval(timer);
       let correct=0;
@@ -566,6 +610,7 @@ function submitExam(){
       resultScreen.classList.remove("hidden");
       document.getElementById("score").innerText=`${correct} / ${questions.length}`;
       hideLoader();
+      restoreExam();
   }, 1200);
 }
 
@@ -766,6 +811,7 @@ function resetToSetup() {
   msg.classList.remove("hidden");
 
   startCooldownCountdown(remaining);
+        clearExamStorage();
     }
 
 
@@ -794,10 +840,50 @@ function resetToSetup() {
 
   }, 1000);
     }
-    
+
+    function restoreExam() {
+  const savedQuestions = localStorage.getItem("cbtQuestions");
+  const savedEnd = localStorage.getItem("cbtExamEnd");
+
+  if (!savedQuestions || !savedEnd) return;
+
+  const remaining = Math.floor((savedEnd - Date.now()) / 1000);
+
+  if (remaining <= 0) {
+    clearExamStorage();
+    return;
+  }
+
+  // Restore data
+  questions = JSON.parse(savedQuestions);
+  userAnswers = JSON.parse(localStorage.getItem("cbtAnswers")) || [];
+  flagged = JSON.parse(localStorage.getItem("cbtFlagged")) || [];
+  index = parseInt(localStorage.getItem("cbtIndex")) || 0;
+
+  // Switch UI
+  setupScreen.classList.add("hidden");
+  examScreen.classList.remove("hidden");
+  examScreen.classList.add("flex");
+
+  // Restore timer
+  startTimer(remaining);
+
+  // Show question
+  showQuestion();
+    }
+
+
+    function clearExamStorage() {
+  localStorage.removeItem("cbtQuestions");
+  localStorage.removeItem("cbtAnswers");
+  localStorage.removeItem("cbtIndex");
+  localStorage.removeItem("cbtFlagged");
+  localStorage.removeItem("cbtExamEnd");
+    }
 // INIT
 loadBooks();
 restoreCooldown();
+    restoreExam();
 lucide.createIcons();
 </script>
 </body>
