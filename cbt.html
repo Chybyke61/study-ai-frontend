@@ -161,7 +161,7 @@ body {
       <div class="relative" id="timeContainer">
         <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5 ml-1">Time Limit</label>
         
-        <input type="hidden" id="time" value="20">
+        <input type="hidden" id="time" value="1200">
         
         <button type="button" onclick="toggleDropdown('timeMenu')" class="w-full flex items-center justify-between px-5 py-3.5 bg-white dark:bg-[#09090b] border border-zinc-200 dark:border-[#27272a] rounded-xl text-zinc-900 dark:text-white text-sm transition-all hover:border-zinc-300 dark:hover:border-[#3f3f46] focus:outline-none focus:border-[#06b6d4]">
             <span id="timeDisplay">20 Minutes</span>
@@ -486,13 +486,38 @@ function reviewUnanswered(){
 }
 
 // TIMER
-function startTimer(sec){
+/*function startTimer(sec){
   timer=setInterval(()=>{
     let m=Math.floor(sec/60), s=sec%60;
     document.getElementById("timer").innerText=`${m}:${s<10?"0":""}${s}`;
     sec--;
     if(sec<0) submitExam();
   },1000);
+}*/
+
+    let endTime = null;
+
+function startTimer(duration) {
+  clearInterval(timer); // stop old timer
+
+  endTime = Date.now() + duration * 1000;
+
+  timer = setInterval(() => {
+    const now = Date.now();
+    const remaining = Math.max(0, Math.floor((endTime - now) / 1000));
+
+    let m = Math.floor(remaining / 60);
+    let s = remaining % 60;
+
+    document.getElementById("timer").innerText =
+      `${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}`;
+
+    if (remaining <= 0) {
+      clearInterval(timer);
+      submitExam();
+    }
+
+  }, 1000);
 }
 
 // MODAL
