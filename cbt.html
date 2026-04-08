@@ -192,10 +192,11 @@ body {
           <div onclick="selectDifficulty('hard')" class="px-5 py-3 text-sm text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-[#18181b] cursor-pointer transition-colors">Hard</div>
       </div>
   </div>
-
-  <button onclick="startCBT()" class="w-full py-4 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 rounded-xl font-bold text-white shadow-md transition-all active:scale-[0.98] text-sm">
+    
+  <button id="startBtn" onclick="startCBT()" class="w-full py-4 bg-gradient-to-r from-[#06b6d4] to-[#8b5cf6] hover:opacity-90 rounded-xl font-bold text-white shadow-md transition-all active:scale-[0.98] text-sm">
     Start Examination
   </button>
+    <p id="limitMsg" class="text-xs text-red-500 mt-3 text-center hidden"></p>
 </div>
 
 <div id="examScreen" class="hidden flex-col lg:flex-row gap-6">  
@@ -380,7 +381,15 @@ function loadBooks() {
       })
     });
 
-    if (!res.ok) throw new Error("Server error");
+    //if (!res.ok) throw new Error("Server error");
+      if (res.status === 429) {
+  const data = await res.json();
+  hideLoader();
+  handleRateLimit(data.error);
+  return;
+}
+
+if (!res.ok) throw new Error("Server error");
 
     const data = await res.json();
 
@@ -674,6 +683,53 @@ window.addEventListener('click', function(e) {
     });
 });
 
+
+    let cooldownTimer = null;
+
+function handleRateLimit(message) {
+  const btn = document.getElementById("startBtn");
+  const msg = document.getElementById("limitMsg");
+
+  // Disable button
+  btn.disabled = true;
+  btn.classList.add("opacity-50", "cursor-not-allowed");
+
+  msg.classList.remove("hidden");
+
+  // Extract minutes from backend message
+  const match = message.match(/(\d+)/);
+  let minutes = match ? parseInt(match[1]) : 10;
+
+  let remaining = minutes * 60;
+
+  updateCountdown(msg, remaining);
+
+  clearInterval(cooldownTimer);
+
+  cooldownTimer = setInterval(() => {
+    remaining--;
+
+    updateCountdown(msg, remaining);
+
+    if (remaining <= 0) {
+      clearInterval(cooldownTimer);
+
+      btn.disabled = false;
+      btn.classList.remove("opacity-50", "cursor-not-allowed");
+
+      msg.innerText = "";
+      msg.classList.add("hidden");
+    }
+
+  }, 1000);
+}
+    function updateCountdown(element, seconds) {
+  let m = Math.floor(seconds / 60);
+  let s = seconds % 60;
+
+  element.innerText = `CBT resets in ${m < 10 ? "0" : ""}${m}:${s < 10 ? "0" : ""}${s}`;
+    }
+    
 // RESET
 function resetToSetup() {
   resultScreen.classList.add("hidden");
