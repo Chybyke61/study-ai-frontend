@@ -284,7 +284,42 @@ body {
 
 </div>
 
+    <div id="globalLoader" class="fixed inset-0 z-[100] bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 invisible transition-all duration-300">
+
+  <div class="bg-white dark:bg-zinc-900 p-6 rounded-2xl shadow-xl text-center">
+    
+    <h2 class="text-xl font-bold mb-2">Study.AI</h2>
+
+    <p id="loaderText" class="text-zinc-500">
+      Initializing Interface
+    </p>
+
+    <p id="studyTip" class="mt-4 text-[10px] text-zinc-400 italic max-w-[200px] mx-auto opacity-0 transition-opacity duration-500">
+    </p>
+
+  </div>
+    </div>
+
 <script>
+    let loaderInterval;
+
+const loadingMessages = [
+  "📖 Analyzing textbook context...",
+  "🧠 Extracting key concepts...",
+  "✍️ Drafting unique questions...",
+  "📚 Generating explanations...",
+  "⚙️ Structuring your exam...",
+  "🎯 Fine-tuning difficulty...",
+  "🚀 Optimizing your session..."
+];
+
+const studyTips = [
+  "Tip: Active recall is 3x more effective than re-reading.",
+  "Tip: Take short breaks every 25 mins.",
+  "Tip: Teach someone to master it.",
+  "Tip: Testing beats highlighting."
+];
+    
 // --- Theme Toggle Logic ---
 function toggleTheme() {
     const html = document.documentElement;
@@ -895,6 +930,44 @@ updateCountdown(msg, remaining);
   localStorage.removeItem("cbtFlagged");
   localStorage.removeItem("cbtExamEnd");
     }
+
+    function showLoader(initialText = "Loading...") {
+  const loader = document.getElementById('globalLoader');
+  const textElement = document.getElementById('loaderText');
+  const tipElement = document.getElementById('studyTip');
+
+  loader.classList.remove('opacity-0', 'invisible');
+  loader.classList.add('opacity-100', 'visible');
+
+  // Initial message
+  textElement.innerText = initialText;
+
+  // Random tip
+  tipElement.innerText = studyTips[Math.floor(Math.random() * studyTips.length)];
+  tipElement.classList.replace('opacity-0', 'opacity-100');
+
+  // Rotate messages
+  let i = 0;
+  clearInterval(loaderInterval);
+
+  loaderInterval = setInterval(() => {
+    textElement.innerText = loadingMessages[i % loadingMessages.length];
+    i++;
+  }, 1200);
+}
+
+function hideLoader() {
+  const loader = document.getElementById('globalLoader');
+  const tipElement = document.getElementById('studyTip');
+
+  loader.classList.add('opacity-0', 'invisible');
+  loader.classList.remove('opacity-100', 'visible');
+
+  clearInterval(loaderInterval);
+
+  tipElement.classList.replace('opacity-100', 'opacity-0');
+}
+    
 // INIT
 loadBooks();
 restoreCooldown();
