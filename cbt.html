@@ -498,7 +498,14 @@ function renderPalette(){
 
     btn.className=`p-2.5 rounded-lg border text-sm font-semibold transition-all ${color}`;
     btn.innerText=i+1;
-    btn.onclick=()=>{index=i;showQuestion();};
+    //btn.onclick=()=>{index=i;showQuestion();};
+      btn.onclick = () => {
+      index = i;
+
+  localStorage.setItem("cbtIndex", index); // ✅ ADD THIS
+
+  showQuestion();
+};
 
     palette.appendChild(btn);
   });
@@ -842,9 +849,12 @@ updateCountdown(msg, remaining);
 
     function restoreExam() {
   const savedQuestions = localStorage.getItem("cbtQuestions");
-  const savedEnd = localStorage.getItem("cbtExamEnd");
+  //const savedEnd = localStorage.getItem("cbtExamEnd");
+        const savedEnd = parseInt(localStorage.getItem("cbtExamEnd"));
+        if (!savedEnd || isNaN(savedEnd)) return;
 
-  if (!savedQuestions || !savedEnd) return;
+ // if (!savedQuestions || !savedEnd) return;
+        if (!savedQuestions) return;
 
   const remaining = Math.floor((savedEnd - Date.now()) / 1000);
 
@@ -854,7 +864,13 @@ updateCountdown(msg, remaining);
   }
 
   // Restore data
+//  questions = JSON.parse(savedQuestions);
+        try {
   questions = JSON.parse(savedQuestions);
+} catch {
+  clearExamStorage();
+  return;
+        }
   userAnswers = JSON.parse(localStorage.getItem("cbtAnswers")) || [];
   flagged = JSON.parse(localStorage.getItem("cbtFlagged")) || [];
   index = parseInt(localStorage.getItem("cbtIndex")) || 0;
